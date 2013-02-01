@@ -19,7 +19,8 @@
  *
  * @package    qtype
  * @subpackage combined
- * @copyright  2009 The Open University
+ * @copyright  2013 The Open University
+ * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,7 +31,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Generates the output for combined questions.
  *
- * @copyright  2009 The Open University
+ * @copyright  2013 The Open University
+ * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_combined_renderer extends qtype_renderer {

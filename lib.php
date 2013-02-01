@@ -19,7 +19,8 @@
  *
  * @since      2.0
  * @package    qtype_combined
- * @copyright  Dongsheng Cai <dongsheng@moodle.com>
+ * @copyright  2013 The Open University
+ * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
