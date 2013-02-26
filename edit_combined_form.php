@@ -27,6 +27,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot .'/question/type/combined/combiner.php');
 
 /**
  * Combined question editing form definition.
@@ -37,16 +38,58 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_combined_edit_form extends question_edit_form {
 
+    /**
+     * @var qtype_combined_combiner used throughout the form
+     */
+    protected $combiner;
+
+    public function __construct($submiturl, $question, $category, $contexts, $formeditable = true) {
+        $this->combiner = new qtype_combined_combiner();
+        parent::__construct($submiturl, $question, $category, $contexts, $formeditable);
+    }
+
     protected function definition_inner($mform) {
+        $mform->addElement('submit', 'updateform', get_string('updateform', 'qtype_combined'));
+        $mform->closeHeaderBefore('updateform');
+        //we are using a hook in questiontype to resdisplay the form and it expects a parameter
+        //wizard, which we won't actually use but we need to pass it to avoid an error notice.
+        $mform->addElement('hidden', 'wizard', '');
+
+        $this->combiner->form_for_subqs($this->question->questiontext, $this, $mform,
+                                        $this->question->formoptions->repeatelements);
+
         $this->add_interactive_settings();
+    }
+
+    protected function definition_for_subqs($mform) {
+
     }
 
     protected function data_preprocessing($question) {
         $question = parent::data_preprocessing($question);
         $question = $this->data_preprocessing_hints($question);
-
+        if (empty($question->id)) {
+            $defaulttext = "[[1:numeric:__10__]]\n\n".
+                                                "[[2:pmatch]]\n\n".
+                                                "[[3:multiresponse:v]]\n\n".
+                                                "[[4:selectmenu]]\n";
+            if ($question->questiontext['format'] === FORMAT_HTML) {
+                $question->questiontext['text'] = format_text($defaulttext, FORMAT_PLAIN);
+            } else {
+                $question->questiontext['text'] = $defaulttext;
+            }
+        }
         return $question;
     }
+
+    public function validation($fromform, $files) {
+        $errors = parent::validation($fromform, $files);
+
+        $errors += $this->combiner->validate_question_text($fromform['questiontext']['text']);
+
+        return $errors;
+    }
+
 
     public function qtype() {
         return 'combined';

@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->dirroot . '/question/engine/lib.php');
 require_once($CFG->dirroot . '/question/type/combined/question.php');
-
+require_once($CFG->dirroot .'/question/type/combined/combiner.php');
 
 /**
  * The combined question type.
@@ -68,5 +68,15 @@ class qtype_combined extends question_type {
     public function get_possible_responses($questiondata) {
         // TODO needs to pass through to sub-questions.
         return array();
+    }
+
+    public function finished_edit_wizard($fromform) {
+        //keep browser from moving onto next page after saving question and
+        //recalculating variable values.
+        if (!empty($fromform->updateform)) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

@@ -23,6 +23,38 @@
  * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+$string['correct'] = 'Correct';
+$string['err_accepts_vertical_or_horizontal_layout_param'] = '<p>The \'{$a}\' question type allows you to specify the layout of your question
+type as follows :<ul>
+ <li>[[{question identifier}:{$a}:v]] vertical OR</li>
+  <li>[[{question identifier}:{$a}:h]] horizontal.</li></ul>
+  <p>You should not enter anything else after the second colon.</p>';
+$string['err_insufficientnoofcodeparts'] = 'Error, your code to embed a question control \'{$a->fullcode}\' has too few colon
+separated
+parts. You should have at least a question indentifier id, followed by a question type identifier.';
+$string['err_invalid_number'] = 'The \'{$a}\' question type expects a number after the question type identifier, your embed code
+should be [[{your question id}:{$a}:{a number here}]]';
+$string['err_invalid_width_specifier_postfix'] = '<p>The \'{$a}\' question type allows you to specify the width of your question
+type as
+follows
+ :<ul>
+ <li>[[{question identifier}:{$a}:____]] where the width of the input box will depend on
+  the number of underscores or</li>
+  <li>[[{question identifier}:{$a}:__10__]] where the width of the input box will depend on
+  the number.</li></ul>
+  <p>You should not enter anything else after the second colon.</p>';
+$string['err_invalidquestionidentifier'] = 'Your question identifier code consist of one or more alphanumeric characters.';
+$string['err_thisqtypecannothavemorethanonecontrol'] = 'You have tried to embed more than one control for question type
+\'{$a->qtype}\' with question
+instance name \'{$a->qid}\'. This question type only allows you to embed one control per question instance.';
+$string['err_thisqtypedoesnotacceptextrainfo'] = 'This question type is embedded with the code [[{your question id}:{$a}]].
+You should not include anything after the qtype identifier, even a second colon.';
+$string['err_twodifferentqtypessameidentifier'] = 'You seem to have two different question instances embedded
+with the same identifier \'{$a->qid}\'. This is not allowed.';
+$string['err_unrecognisedqtype'] = 'The question type identifier \'{$a->qtype}\' you entered in embedded code
+\'{$a->fullcode}\'is not known.';
+$string['err_you_must_provide_third_param'] = 'You must provide a third param for question type {$a}.';
+$string['incorrectfeedback'] = 'Feedback for any incorrect response';
 $string['pluginname'] = 'Combined';
 $string['pluginname_help'] = 'Create a cloze question type with embedded response fields in the question text to enter a numeric
 or text value or select a value from a number of options.';
@@ -34,3 +66,8 @@ sub questions in the question text.
 
 So the student can enter a numeric or short text answer or choose an answer or answer(s) from
  using a select box, check boxes or radio boxes.';
+$string['scinotation'] = 'Scientific notation';
+$string['subqheader'] = 'Input \'{$a->qid}\':{$a->qtype}';
+$string['updateform'] = 'Verify the question text and update the form';
+$string['weighting'] = 'Weighting';
+
