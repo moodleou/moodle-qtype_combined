@@ -26,51 +26,74 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot.'/question/type/varnumericset/number_interpreter.php');
+
 class qtype_combined_combinable_type_varnumeric extends qtype_combined_combinable_type_base {
 
     protected $identifier = 'numeric';
 
+    protected function extra_question_properties() {
+        return array();
+    }
+
+    protected function extra_answer_properties() {
+        return array();
+    }
+    public function is_empty($subqformdata) {
+
+        if (!empty($subqformdata->scinotation)) {
+            return false;
+        }
+        foreach (array('answer', 'error') as $field) {
+            if ('' !== trim($subqformdata->{$field}[0])) {
+                return false;
+            }
+        }
+        return parent::is_empty($subqformdata);
+    }
 }
 
 class qtype_combined_combinable_varnumeric extends qtype_combined_combinable_accepts_width_specifier {
 
-    /**
-     * string used to identify this question type, in question type syntax after first colon
-     * @throws coding_exception
-     */
-    static public function qtype_identifier_in_question_text() {
-        return 'numeric';
-    }
-
-    /**
-     * @return mixed
-     */
     public function add_form_fragment(moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
 
         $answergroupels = array();
         $answergroupels[] = $mform->createElement('text',
-                                                 $this->field_name('answer'),
+                                                 $this->field_name('answer[0]'),
                                                  get_string('answer', 'question'),
                                                  array('size' => 25));
         $answergroupels[] = $mform->createElement('text',
-                                                 $this->field_name('error'),
+                                                 $this->field_name('error[0]'),
                                                  get_string('error', 'qtype_varnumericset'),
                                                  array('size' => 25));
-        $mform->addGroup($answergroupels,
-                         $this->field_name('answergroup'),
-                         get_string('answer', 'question'),
-                         '&nbsp;'.get_string('error', 'qtype_varnumericset'),
-                         true);
+        $mform->setType($this->field_name('answer'), PARAM_TEXT);
+        $mform->setType($this->field_name('answer'), PARAM_TEXT);
+        $mform->addElement('group',
+                           $this->field_name('answergroup'),
+                           get_string('answer', 'question'),
+                           $answergroupels,
+                           '&nbsp;'.get_string('error', 'qtype_varnumericset'),
+                           false);
         $mform->addElement('selectyesno', $this->field_name('scinotation'),
                            get_string('scinotation', 'qtype_combined'));
     }
 
-    /**
-     * @return mixed
-     */
     public function set_form_data() {
 
     }
 
+    public function validate($subqdata) {
+        $errors = array();
+        $interpret = new qtype_varnumericset_number_interpreter_number_with_optional_sci_notation(false);
+        if ('' !== trim($subqdata->error[0])) {
+            if (!$interpret->match($subqdata->error[0])) {
+                $errors[$this->field_name('answergroup')] = get_string('err_notavalidnumberinerrortolerance', 'qtype_combined');
+            }
+        }
+        if (!$interpret->match($subqdata->answer[0])) {
+            $errors[$this->field_name('answergroup')] = get_string('err_notavalidnumberinanswer', 'qtype_combined');
+        }
 
+        return $errors;
+    }
 }

@@ -55,24 +55,21 @@ class qtype_combined_edit_form extends question_edit_form {
         //wizard, which we won't actually use but we need to pass it to avoid an error notice.
         $mform->addElement('hidden', 'wizard', '');
 
-        $this->combiner->form_for_subqs($this->question->questiontext, $this, $mform,
-                                        $this->question->formoptions->repeatelements);
+        if (isset($this->question->questiontext)) {
+            $qt = $this->question->questiontext;
+        } else {
+            $qt = null;
+        }
+        $this->combiner->form_for_subqs($qt, $this, $mform, $this->question->formoptions->repeatelements);
 
         $this->add_interactive_settings();
-    }
-
-    protected function definition_for_subqs($mform) {
-
     }
 
     protected function data_preprocessing($question) {
         $question = parent::data_preprocessing($question);
         $question = $this->data_preprocessing_hints($question);
         if (empty($question->id)) {
-            $defaulttext = "[[1:numeric:__10__]]\n\n".
-                                                "[[2:pmatch]]\n\n".
-                                                "[[3:multiresponse:v]]\n\n".
-                                                "[[4:selectmenu]]\n";
+            $defaulttext = $this->combiner->default_question_text();
             if ($question->questiontext['format'] === FORMAT_HTML) {
                 $question->questiontext['text'] = format_text($defaulttext, FORMAT_PLAIN);
             } else {
@@ -85,7 +82,7 @@ class qtype_combined_edit_form extends question_edit_form {
     public function validation($fromform, $files) {
         $errors = parent::validation($fromform, $files);
 
-        $errors += $this->combiner->validate_question_text($fromform['questiontext']['text']);
+        $errors += $this->combiner->validate_subqs_data_in_form($fromform, $files);
 
         return $errors;
     }

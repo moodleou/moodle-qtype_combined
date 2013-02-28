@@ -29,6 +29,12 @@ type as follows :<ul>
  <li>[[{question identifier}:{$a}:v]] vertical OR</li>
   <li>[[{question identifier}:{$a}:h]] horizontal.</li></ul>
   <p>You should not enter anything else after the second colon.</p>';
+$string['err_correctanswerblank'] = 'You have marked this choice as correct but it is blank!';
+$string['err_fillinthedetailsforsubq'] = 'You need to fill in the details to describe the sub question \'{$a}\'.';
+$string['err_fillinthedetailshere'] = 'You need to fill in the details for this sub question.';
+$string['err_nonecorrect'] = 'You have not marked any choices as correct.';
+$string['err_notavalidnumberinanswer'] = 'You need to enter a valid number here in the answer field.';
+$string['err_notavalidnumberinerrortolerance'] = 'You have entered an invalid number in the error response field.';
 $string['err_insufficientnoofcodeparts'] = 'Error, your code to embed a question control \'{$a->fullcode}\' has too few colon
 separated
 parts. You should have at least a question indentifier id, followed by a question type identifier.';
@@ -44,6 +50,9 @@ follows
   the number.</li></ul>
   <p>You should not enter anything else after the second colon.</p>';
 $string['err_invalidquestionidentifier'] = 'Your question identifier code consist of one or more alphanumeric characters.';
+$string['err_pressupdateformandfillin'] = 'You have a new embedded question in this form \'{$a}\',
+you need to press the \'Verify the question text and update the form\' button and when the form is redisplayed fill in the part
+of the form for this embedded question\'s settings.';
 $string['err_thisqtypecannothavemorethanonecontrol'] = 'You have tried to embed more than one control for question type
 \'{$a->qtype}\' with question
 instance name \'{$a->qid}\'. This question type only allows you to embed one control per question instance.';
@@ -53,7 +62,9 @@ $string['err_twodifferentqtypessameidentifier'] = 'You seem to have two differen
 with the same identifier \'{$a->qid}\'. This is not allowed.';
 $string['err_unrecognisedqtype'] = 'The question type identifier \'{$a->qtype}\' you entered in embedded code
 \'{$a->fullcode}\'is not known.';
+$string['err_weightingsdonotaddup'] = 'Weightings for sub questions do not add up to 1.';
 $string['err_you_must_provide_third_param'] = 'You must provide a third param for question type {$a}.';
+$string['err_youneedmorechoices'] = 'You need to enter two or more choices.';
 $string['incorrectfeedback'] = 'Feedback for any incorrect response';
 $string['pluginname'] = 'Combined';
 $string['pluginname_help'] = 'Create a cloze question type with embedded response fields in the question text to enter a numeric

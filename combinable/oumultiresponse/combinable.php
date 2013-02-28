@@ -30,17 +30,32 @@ class qtype_combined_combinable_type_oumultiresponse extends qtype_combined_comb
 
     protected $identifier = 'multiresponse';
 
+    protected function extra_question_properties() {
+        return array();
+    }
+
+    protected function extra_answer_properties() {
+        return array();
+    }
+    public function is_empty($subqformdata) {
+        foreach ($subqformdata->correct as $value) {
+            if (!empty($value)) {
+                return false;
+            }
+        }
+        foreach ($subqformdata->answer as $value) {
+            if ('' !== trim($value)) {
+                return false;
+            }
+        }
+        if (!empty($subqformdata->shuffleanswers)) {
+            return false;
+        }
+        return parent::is_empty($subqformdata);
+    }
 }
 
 class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinable_accepts_vertical_or_horizontal_layout_param {
-
-    /**
-     * string used to identify this question type, in question type syntax after first colon
-     * @throws coding_exception
-     */
-    static public function qtype_identifier_in_question_text() {
-        return 'multiresponse';
-    }
 
     /**
      * @param moodleform      $combinedform
@@ -55,6 +70,7 @@ class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinabl
                             $this->field_name('answer'),
                             get_string('choicex', 'qtype_gapselect'),
                             array('size'=>30, 'class'=>'tweakcss'));
+        $mform->setType($this->field_name('answer'), PARAM_TEXT);
         $answerels[] = $mform->createElement('advcheckbox',
                                              $this->field_name('correct'),
                                              get_string('correct', 'qtype_combined'),
@@ -98,6 +114,25 @@ class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinabl
      */
     public function set_form_data() {
 
+    }
+
+    public function validate($subqdata) {
+        $errors = array();
+        $nonemptyanswerblanks = array();
+        foreach ($subqdata->answer as $anskey => $answer) {
+            if ('' !== trim($answer)) {
+                $nonemptyanswerblanks[] = $anskey;
+            } else if ($subqdata->correct[$anskey]) {
+                $errors[$this->field_name("answergroup[{$anskey}]")] = get_string('err_correctanswerblank', 'qtype_combined');
+            }
+        }
+        if (count($nonemptyanswerblanks) < 2) {
+            $errors[$this->field_name("answergroup[0]")] = get_string('err_youneedmorechoices', 'qtype_combined');
+        }
+        if (count(array_filter($subqdata->correct)) === 0) {
+            $errors[$this->field_name("answergroup[0]")] = get_string('err_nonecorrect', 'qtype_combined');
+        }
+        return $errors;
     }
 
 }

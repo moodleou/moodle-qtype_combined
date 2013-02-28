@@ -30,6 +30,26 @@ class qtype_combined_combinable_type_gapselect extends qtype_combined_combinable
 
     protected $identifier = 'selectmenu';
 
+    protected function extra_question_properties() {
+        return array();
+    }
+
+    protected function extra_answer_properties() {
+        return array();
+    }
+
+    public function is_empty($subqformdata) {
+
+        if (!empty($subqformdata->shuffleanswers)) {
+            return false;
+        }
+        foreach ($subqformdata->answer as $value) {
+            if ('' !== trim($value)) {
+                return false;
+            }
+        }
+        return parent::is_empty($subqformdata);
+    }
 }
 
 class qtype_combined_combinable_gapselect extends qtype_combined_combinable_accepts_numerical_param {
@@ -72,6 +92,7 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
                                         QUESTION_NUMANS_ADD,
                                         get_string('addmorechoiceblanks', 'qtype_gapselect'),
                                         true);
+        $mform->setType($this->field_name('answer'), PARAM_TEXT);
 
     }
 
@@ -82,13 +103,51 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
 
     }
 
+    /**
+     * @var array of correct choices found in question text.
+     */
+    protected $correctchoices = array();
+
+    public function can_be_more_than_one_of_same_instance() {
+        return true;
+    }
+
     public function validate_third_param($thirdparam) {
         if ($thirdparam === null) {
-            $qtype = static::qtype_identifier_in_question_text();
+            $qtype = $this->type->get_identifier();
             return get_string('err_you_must_provide_third_param', 'qtype_combined', $qtype);
         } else {
+            $this->correctchoices[] = $thirdparam;
             return parent::validate_third_param($thirdparam);
         }
+    }
+
+
+
+    public function validate($subqdata) {
+        $errors = array();
+        $nonemptyanswerblanks = array();
+        foreach ($subqdata->answer as $anskey => $answer) {
+            if ('' !== trim($answer)) {
+                $nonemptyanswerblanks[] = $anskey;
+            }
+        }
+
+        foreach ($this->correctchoices as $correctchoice) {
+            $answerindex = $correctchoice-1;
+            if (!isset($subqdata->answer[$answerindex])) {
+                $errors['questiontext'] = get_string('errormissingchoice', 'qtype_gapselect', $correctchoice);
+            } else if ('' === trim($subqdata->answer[$answerindex])) {
+                $errors[$this->field_name("answer[{$answerindex}]")] =
+                                                                get_string('errorblankchoice', 'qtype_gapselect', $correctchoice);
+                $errors['questiontext'] = get_string('errormissingchoice', 'qtype_gapselect', $correctchoice);
+            }
+        }
+
+        if (count($nonemptyanswerblanks) < 2) {
+            $errors[$this->field_name("answer[0]")] = get_string('err_youneedmorechoices', 'qtype_combined');
+        }
+        return $errors;
     }
 
 }
