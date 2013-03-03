@@ -201,9 +201,11 @@ class qtype_combined_combiner {
                 }
 
             }
-            $fractionsum += $fromsubqformfragments[$subqid]->defaultmark;
+            if (isset($fromsubqformfragments[$subqid])) {
+                $fractionsum += $fromsubqformfragments[$subqid]->defaultmark;
+            }
         }
-        if ($fractionsum != 1) {
+        if ((!isset($fromform['updateform'])) && $fractionsum != 1) {
             foreach (array_keys($this->subqsfoundinquestiontext) as $subqid) {
                 $errors += array($this->field_name($subqid, 'defaultmark') =>
                                  get_string('err_weightingsdonotaddup', 'qtype_combined'));
@@ -354,6 +356,17 @@ abstract class qtype_combined_combinable_type_base {
         return $this->identifier;
     }
 
+    protected function combined_feedback_properties($withparts = true) {
+        $properties = array();
+        foreach (array('correct', 'partiallycorrect', 'incorrect') as $feedbacktype) {
+            $properties[$feedbacktype.'feedback'] = array('text' => '', 'format' => FORMAT_HTML);
+        }
+        if ($withparts) {
+            $properties['shownumcorrect'] = 1;
+        }
+        return $properties;
+    }
+    
     abstract protected function extra_question_properties();
 
     abstract protected function extra_answer_properties();
@@ -392,7 +405,7 @@ abstract class qtype_combined_combinable_type_base {
         }
         $qtype = $this->get_qtype_obj();
         $oldsubq->qtype = $this->get_qtype_name();
-        $subqdata = $this->add_question_properties($subqdata);
+        $subqdata = $this->transform_subq_form_data_to_full($subqdata);
         $qtype->save_question($oldsubq, $subqdata);
     }
 

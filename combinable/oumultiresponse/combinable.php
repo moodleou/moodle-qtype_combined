@@ -31,11 +31,11 @@ class qtype_combined_combinable_type_oumultiresponse extends qtype_combined_comb
     protected $identifier = 'multiresponse';
 
     protected function extra_question_properties() {
-        return array();
+        return array('answernumbering' => 'ABCD') + $this->combined_feedback_properties();
     }
 
     protected function extra_answer_properties() {
-        return array();
+        return array('feedback' => array('text' => '', 'format' => FORMAT_PLAIN));
     }
     public function is_empty($subqformdata) {
         foreach ($subqformdata->correct as $value) {
@@ -52,6 +52,14 @@ class qtype_combined_combinable_type_oumultiresponse extends qtype_combined_comb
             return false;
         }
         return parent::is_empty($subqformdata);
+    }
+
+    protected function transform_subq_form_data_to_full($subqdata) {
+        $data = parent::transform_subq_form_data_to_full($subqdata);
+        foreach ($data->answer as $anskey => $answer) {
+            $data->answer[$anskey] = array('text' => $answer, 'format' => FORMAT_PLAIN);
+        }
+        return $this->add_per_answer_properties($data);
     }
 }
 

@@ -31,11 +31,20 @@ class qtype_combined_combinable_type_gapselect extends qtype_combined_combinable
     protected $identifier = 'selectmenu';
 
     protected function extra_question_properties() {
-        return array();
+        return $this->combined_feedback_properties();
     }
 
     protected function extra_answer_properties() {
         return array();
+    }
+
+    protected function transform_subq_form_data_to_full($subqdata) {
+        $data = parent::transform_subq_form_data_to_full($subqdata);
+        $data->choices = array();
+        foreach ($data->answer as $anskey => $answer) {
+            $data->choices[$anskey] = array('answer' => $answer, 'choicegroup' => '1');
+        }
+        return $this->add_per_answer_properties($data);
     }
 
     public function is_empty($subqformdata) {

@@ -33,11 +33,13 @@ class qtype_combined_combinable_type_varnumeric extends qtype_combined_combinabl
     protected $identifier = 'numeric';
 
     protected function extra_question_properties() {
-        return array();
+        return array('randomseed' => '', 'vartype' => array(0), 'varname' => array(''), 'variant' => array(''), 'novars' => 1);
     }
 
     protected function extra_answer_properties() {
-        return array();
+        return array('sigfigs' => 0, 'fraction' => '1.0', 'feedback'  => array('text' => '', 'format' => FORMAT_PLAIN),
+                        'checknumerical' => 0, 'checkscinotation' => 0, 'checkpowerof10' => 0, 'checkrounding' => 0,
+                        'syserrorpenalty' => '0.0');
     }
     public function is_empty($subqformdata) {
 
@@ -67,7 +69,7 @@ class qtype_combined_combinable_varnumeric extends qtype_combined_combinable_acc
                                                  get_string('error', 'qtype_varnumericset'),
                                                  array('size' => 25));
         $mform->setType($this->field_name('answer'), PARAM_TEXT);
-        $mform->setType($this->field_name('answer'), PARAM_TEXT);
+        $mform->setType($this->field_name('error'), PARAM_TEXT);
         $mform->addElement('group',
                            $this->field_name('answergroup'),
                            get_string('answer', 'question'),

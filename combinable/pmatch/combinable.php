@@ -33,7 +33,7 @@ class qtype_combined_combinable_type_pmatch extends qtype_combined_combinable_ty
     protected $identifier = 'pmatch';
 
     protected function extra_question_properties() {
-        return array('forcelength' => '0', 'extenddictionary' => '', 'converttospace' => ',;:');
+        return array('forcelength' => '0', 'extenddictionary' => '', 'converttospace' => ',;:', 'synonymsdata' => array());
     }
 
     protected function extra_answer_properties() {
