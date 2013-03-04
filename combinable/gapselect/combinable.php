@@ -133,10 +133,10 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
 
 
 
-    public function validate($subqdata) {
+    public function validate() {
         $errors = array();
         $nonemptyanswerblanks = array();
-        foreach ($subqdata->answer as $anskey => $answer) {
+        foreach ($this->formdata->answer as $anskey => $answer) {
             if ('' !== trim($answer)) {
                 $nonemptyanswerblanks[] = $anskey;
             }
@@ -144,9 +144,9 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
 
         foreach ($this->correctchoices as $correctchoice) {
             $answerindex = $correctchoice-1;
-            if (!isset($subqdata->answer[$answerindex])) {
+            if (!isset($this->formdata->answer[$answerindex])) {
                 $errors['questiontext'] = get_string('errormissingchoice', 'qtype_gapselect', $correctchoice);
-            } else if ('' === trim($subqdata->answer[$answerindex])) {
+            } else if ('' === trim($this->formdata->answer[$answerindex])) {
                 $errors[$this->field_name("answer[{$answerindex}]")] =
                                                                 get_string('errorblankchoice', 'qtype_gapselect', $correctchoice);
                 $errors['questiontext'] = get_string('errormissingchoice', 'qtype_gapselect', $correctchoice);

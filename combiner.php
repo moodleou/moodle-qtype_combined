@@ -27,33 +27,26 @@
 class qtype_combined_combiner {
 
     /**
-     * @var array of qtype_combined_combinable_base child objects for questions embedded in question type.
+     * @var qtype_combined_combinable_base[] array of sub questions, in question text, in form and in db. One instance for each
+     *                                          question instance.
      */
-    protected $subqsfoundinquestiontext;
-
-
-    /**
-     * @var array of qtype_combined_combinable_base child objects for questions embedded in question type.
-     */
-    protected $subqsnotfoundinquestiontext;
-
-    /**
-     * @var array with alphanumeric keys which are the identifiers of questions from in the question text, in order.
-     *            The values in the array are instances of child classes of qtype_combined_combinable_base
-     */
-    protected $subqsidentifiersinquestiontext;
+    protected $subqs = array();
 
 
     const EMBEDDED_CODE_PREFIX = '[[';
     const EMBEDDED_CODE_POSTFIX = ']]';
     const EMBEDDED_CODE_SEPARATOR = ':';
 
-    const FIELD_NAME_PREFIX = 'subq_{qid}_';
+    const FIELD_NAME_PREFIX = 'subq:{qtype}:{qid}:';
 
     /**
      * Question identifier must be one or more alphanumeric characters
      */
     const VALID_QUESTION_IDENTIFIER_PATTTERN = '[a-zA-Z0-9]+';
+    /**
+     * Question identifier must be one or more alphanumeric characters
+     */
+    const VALID_QUESTION_TYPE_IDENTIFIER_PATTTERN = '[a-zA-Z0-9_-]+';
 
     public function default_question_text() {
         return "[[1:numeric:__10__]]\n\n".
@@ -67,12 +60,12 @@ class qtype_combined_combiner {
             $questiontext = $this->default_question_text();
         }
         $this->find_included_subqs_in_question_text($questiontext);
-        $weightingdefault = round(1/count($this->subqsfoundinquestiontext), 7);
+        $weightingdefault = round(1/count($this->subqs), 7);
         $weightingdefault = "$weightingdefault";
-        foreach ($this->subqsfoundinquestiontext as $questionidentifier => $subq) {
+        foreach ($this->subqs as $subq) {
             $a = new stdClass();
             $a->qtype = $subq->type->get_identifier();
-            $a->qid = $questionidentifier;
+            $a->qid = $subq->get_identifier();
             $mform->addElement('header', $subq->field_name('subqheader'), get_string('subqheader', 'qtype_combined', $a));
             $gradeoptions = question_bank::fraction_options();
             $mform->addElement('select', $subq->field_name('defaultmark'), get_string('weighting', 'qtype_combined'),
@@ -89,12 +82,12 @@ class qtype_combined_combiner {
 
     public function validate_subqs_data_in_form($fromform, $files) {
         $errors = $this->validate_question_text($fromform['questiontext']['text']);
-        $errors += $this->validate_subqs($fromform);
+        $errors += $this->validate_subqs((object)$fromform);
         return $errors;
     }
 
 
-    public function validate_question_text($questiontext) {
+    protected function validate_question_text($questiontext) {
         $questiontexterror = $this->find_included_subqs_in_question_text($questiontext);
         if ($questiontexterror !== null) {
             $errors = array('questiontext' => $questiontexterror);
@@ -105,11 +98,11 @@ class qtype_combined_combiner {
     }
 
     /**
-     * @param $questiontext the question text
+     * @param $questiontext string the question text
      * @return null|string either null if no error or an error message.
      */
     protected function find_included_subqs_in_question_text($questiontext) {
-        $this->subqsfoundinquestiontext = array();
+        $this->subqs = array();
         $pattern = '!'.
                     preg_quote(static::EMBEDDED_CODE_PREFIX, '!') .
                     '(.*?)'.
@@ -127,7 +120,7 @@ class qtype_combined_combiner {
     }
 
     /**
-     * @param $codeinsideprepostfix The embedded code minus the enclosing brackets.
+     * @param $codeinsideprepostfix string The embedded code minus the enclosing brackets.
      * @return string|null first error encountered or null if no error.
      */
     protected function make_combinable_instance_from_code_in_question_text($codeinsideprepostfix) {
@@ -144,26 +137,37 @@ class qtype_combined_combiner {
         if (1 !== preg_match($qidpattern, $questionidentifier)) {
             return get_string('err_invalidquestionidentifier', 'qtype_combined', $getstringhash);
         }
-
         if (!qtype_combined_type_manager::is_identifier_known($qtypeidentifier)) {
             return get_string('err_unrecognisedqtype', 'qtype_combined', $getstringhash);
         }
-        if (!isset($this->subqsfoundinquestiontext[$questionidentifier])) {
-            $this->subqsfoundinquestiontext[$questionidentifier] =
-                                            qtype_combined_type_manager::new_subq_instance($qtypeidentifier, $questionidentifier);
-        } else if ($qtypeidentifier !==
-                        $this->subqsfoundinquestiontext[$questionidentifier]->type->get_identifier()) {
-            return get_string('err_twodifferentqtypessameidentifier', 'qtype_combined', $getstringhash);
 
-        } else if (!$this->subqsfoundinquestiontext[$questionidentifier]->can_be_more_than_one_of_same_instance()) {
-            return get_string('err_thisqtypecannothavemorethanonecontrol', 'qtype_combined', $getstringhash);
-        }
-        $subq = $this->subqsfoundinquestiontext[$questionidentifier];
-        $error = $subq->process_third_param($thirdparam);
+        $subq = $this->get_question_instance($qtypeidentifier, $questionidentifier);
+
+        $error = $subq->found_in_question_text($thirdparam);
         if (null !== $error) {
             return $error;
         }
         return null; // Done, no error.
+    }
+
+    protected function find_question_instance($qtypeidentifier, $questionidentifier) {
+        foreach ($this->subqs as $subq) {
+            if ($subq->get_identifier() == $questionidentifier && $subq->type->get_identifier() == $qtypeidentifier) {
+                return $subq;
+            }
+        }
+        return null;
+    }
+
+    protected function get_question_instance($qtypeidentifier, $questionidentifier) {
+        $existing = $this->find_question_instance($qtypeidentifier, $questionidentifier);
+        if ($existing !== null) {
+            return $existing;
+        } else {
+            $new = qtype_combined_type_manager::new_subq_instance($qtypeidentifier, $questionidentifier);
+            $this->subqs[] = $new;
+            return $new;
+        }
     }
 
     protected function decode_code_in_question_text($codeinsideprepostfix) {
@@ -173,27 +177,21 @@ class qtype_combined_combiner {
         return $codeparts;
     }
 
-    protected static function field_name_prefix($questionid) {
-        return str_replace('{qid}', $questionid, self::FIELD_NAME_PREFIX);
-    }
-
-    public static function field_name($questionid, $elementname) {
-        return self::field_name_prefix($questionid).$elementname;
-    }
-
     protected function validate_subqs($fromform) {
-        $fromsubqformfragments = $this->find_subq_data_in_form_data($fromform);
+        $this->get_subq_data_from_form_data($fromform);
         $errors = array();
         $fractionsum = 0;
-        foreach ($this->subqsfoundinquestiontext as $subqid => $subq) {
+        foreach ($this->subqs as $subq) {
             // If verifying the question text and updating the form then formdata for subq can be not set or empty but
             // if not empty then need to validate.
 
-            if (isset($fromsubqformfragments[$subqid]) && !$subq->type->is_empty($fromsubqformfragments[$subqid])) {
-                $errors += $this->subqsfoundinquestiontext[$subqid]->validate($fromsubqformfragments[$subqid]);
-            } else if (!isset($fromform['updateform'])) {
-                if (isset($fromsubqformfragments[$subqid])) {
-                    $errors += array($this->field_name($subqid, 'defaultmark') =>
+            $subqid = $subq->get_identifier();
+
+            if ($subq->is_in_form() && !$subq->form_is_empty()) {
+                $errors += $subq->validate();
+            } else if (!isset($fromform->updateform)) {
+                if ($subq->is_in_form()) {
+                    $errors += array($subq->field_name('defaultmark') =>
                                                             get_string('err_fillinthedetailshere', 'qtype_combined'));
                     $errors += array('questiontext' => get_string('err_fillinthedetailsforsubq', 'qtype_combined', $subqid));
                 } else {
@@ -201,73 +199,61 @@ class qtype_combined_combiner {
                 }
 
             }
-            if (isset($fromsubqformfragments[$subqid])) {
-                $fractionsum += $fromsubqformfragments[$subqid]->defaultmark;
+            if ($subq->is_in_form() && $subq->is_in_question_text()) {
+                $defaultmarkfieldname = $subq->field_name('defaultmark');
+                $fractionsum += $fromform->$defaultmarkfieldname;
             }
         }
-        if ((!isset($fromform['updateform'])) && $fractionsum != 1) {
-            foreach (array_keys($this->subqsfoundinquestiontext) as $subqid) {
-                $errors += array($this->field_name($subqid, 'defaultmark') =>
-                                 get_string('err_weightingsdonotaddup', 'qtype_combined'));
+        if ((!isset($fromform->updateform)) && $fractionsum != 1) {
+            foreach ($this->subqs as $subq) {
+                if ($subq->is_in_question_text()) {
+                    $errors += array($subq->field_name('defaultmark') => get_string('err_weightingsdonotaddup', 'qtype_combined'));
+                }
             }
         }
 
         return $errors;
     }
 
-    protected function find_subq_data_in_form_data($questiondata) {
-        $subqdata = array();
-        $questiondata = (array)$questiondata;
-        foreach (array_keys($questiondata) as $key) {
-            $find = preg_quote('{qid}', '!');
-            $subject = preg_quote(self::FIELD_NAME_PREFIX, '!');
-            $patternforprefix = str_replace($find, '('.self::VALID_QUESTION_IDENTIFIER_PATTTERN.')', $subject);
+    protected function get_subq_data_from_form_data($questiondata) {
+        $subqs = array();
+        foreach ($questiondata as $key => $unused) {
+            $qidpart = preg_quote('{qid}', '!');
+            $qtypepart = preg_quote('{qtype}', '!');
+            $pregquotedprefixpattern = preg_quote(self::FIELD_NAME_PREFIX, '!');
+            $patternforprefix = str_replace($qidpart, '(?P<qid>'.self::VALID_QUESTION_IDENTIFIER_PATTTERN.')',
+                                            $pregquotedprefixpattern);
+            $patternforprefix = str_replace($qtypepart, '(?P<qtype>'.self::VALID_QUESTION_TYPE_IDENTIFIER_PATTTERN.')',
+                                            $patternforprefix);
             $matches = array();
             if (preg_match("!{$patternforprefix}qtypeid$!A", $key, $matches)) {
-                $subqid = $matches[1];
-                $prefix = self::field_name_prefix($subqid);
-                $subqdata[$subqid] = new stdClass();
-                foreach ($questiondata as $key2 => $value) {
-                    if (strpos($key2, $prefix) === 0) {
-                        $afterprefix = substr($key2, strlen($prefix));
-                        $subqdata[$subqid]->$afterprefix = $value;
-                    }
-                }
+                $subq = $this->get_question_instance($matches['qtype'], $matches['qid']);
+                $subq->get_this_form_data_from($questiondata);
             }
         }
-        return $subqdata;
+        return $subqs;
     }
 
     public function save_subqs($fromform) {
-        global $USER;
-        $oldsubqs = $this->load_all_subqs($fromform->id);
-        $fromsubqformfragments = $this->find_subq_data_in_form_data($fromform);
-        foreach ($fromsubqformfragments as $subqid => $subqdata) {
-            $subqdata->name = $subqid;
-            $subqdata->parent = $fromform->id;
-            $subqdata->category = $fromform->category;
-            if (isset($oldsubqs[$subqid])) {
-                $oldsubq = $oldsubqs[$subqid];
-            } else {
-                $oldsubq = new stdClass();
-            }
-            qtype_combined_type_manager::save_subq($oldsubq, $subqdata);
+        $this->load_subq_data_from_db($fromform->id);
+        $this->get_subq_data_from_form_data($fromform);
+        foreach ($this->subqs as $subq) {
+            $subq->save();
         }
     }
 
-    protected function load_all_subqs($questionid) {
+    protected function load_subq_data_from_db($questionid) {
         global $DB;
-        $subqsindexedbyname = array();
-        if ($subqs = $DB->get_records('question', array('parent' => $questionid))) {
-            foreach ($subqs as $subq) {
-                if (isset($subqsindexedbyname[$subq->name])) {
-                    throw new invalid_state_exception('More than one combined subq in db with the same identifier!');
-                }
-                $subqsindexedbyname[$subq->name] = $subq;
+        if ($subqrecs = $DB->get_records('question', array('parent' => $questionid))) {
+            foreach ($subqrecs as $subqrec) {
+                $qtypeid = qtype_combined_type_manager::translate_qtype_to_qtype_identifier($subqrec->qtype);
+                $subq = $this->get_question_instance($qtypeid, $subqrec->name);
+                $subq->found_in_db($subqrec);
             }
         }
-        return $subqsindexedbyname;
     }
+
+
 }
 
 class qtype_combined_type_manager {
@@ -310,18 +296,29 @@ class qtype_combined_type_manager {
         self::find_and_load_all_combinable_qtype_hook_classes();
         return isset(self::$combinableplugins[$typeidentifier]);
     }
+
+    /**
+     * @param $typeidentifier string
+     * @param $questionidentifier string
+     * @return qtype_combined_combinable_base
+     */
     public static function new_subq_instance($typeidentifier, $questionidentifier) {
         self::find_and_load_all_combinable_qtype_hook_classes();
         $type = self::$combinableplugins[$typeidentifier];
         return $type->new_subq_instance($questionidentifier);
     }
 
-    public static function save_subq($oldsubq, $subqdata) {
+    public static function translate_qtype_to_qtype_identifier($qtypename) {
         self::find_and_load_all_combinable_qtype_hook_classes();
-        $type = self::$combinableplugins[$subqdata->qtypeid];
-        unset($subqdata->qtypeid);
-        return $type->save_subq($oldsubq, $subqdata);
+        foreach (self::$combinableplugins as $type) {
+            if ($type->get_qtype_name() === $qtypename) {
+                return $type->get_identifier();
+            }
+        }
+
+
     }
+
 }
 
 
@@ -399,20 +396,10 @@ abstract class qtype_combined_combinable_type_base {
         return $this->add_per_answer_properties($data);
     }
 
-    public function save_subq($oldsubq, $subqdata) {
-        if ($this->is_empty($subqdata)) {
-            return;
-        }
-        $qtype = $this->get_qtype_obj();
-        $oldsubq->qtype = $this->get_qtype_name();
-        $subqdata = $this->transform_subq_form_data_to_full($subqdata);
-        $qtype->save_question($oldsubq, $subqdata);
-    }
-
     /**
      * @return string question type name as per directory name in question/type/
      */
-    protected function get_qtype_name() {
+    public function get_qtype_name() {
         return $this->qtypename;
     }
 
@@ -431,17 +418,42 @@ abstract class qtype_combined_combinable_type_base {
     public function is_empty($subqformdata) {
         return html_is_blank($subqformdata->generalfeedback['text']);
     }
+
+    public function save($oldsubq, $subqdata) {
+        if ($this->is_empty($subqdata)) {
+            return;
+        }
+        unset($subqdata->qtypeid);
+        if ($oldsubq === null) {
+            $oldsubq = new stdClass();
+        }
+        $oldsubq->qtype = $this->get_qtype_name();
+        $subqdata = $this->transform_subq_form_data_to_full($subqdata);
+        $qtype = $this->get_qtype_obj();
+        $qtype->save_question($oldsubq, $subqdata);
+    }
+
 }
 
 abstract class qtype_combined_combinable_base {
 
-    protected $questionrec;
+    /**
+     * @var bool whether found in question text.
+     */
+    protected $foundinquestiontext = false;
+
+    protected $questionrec = null;
 
 
     /**
      * @var string question identifier found in question text for this instance
      */
     protected $questionidentifier;
+
+    /**
+     * @var object form data from form fragment for this sub question
+     */
+    protected $formdata = null;
 
     /**
      * @var qtype_combined_combinable_type_base
@@ -460,9 +472,15 @@ abstract class qtype_combined_combinable_base {
         return false;
     }
 
-    public function field_name($elementname) {
-        return qtype_combined_combiner::field_name($this->questionidentifier, $elementname);
+    protected function field_name_prefix() {
+        $prefix = str_replace('{qid}', $this->questionidentifier, qtype_combined_combiner::FIELD_NAME_PREFIX);
+        return str_replace('{qtype}', $this->type->get_identifier(), $prefix);
     }
+
+    public function field_name($elementname) {
+        return $this->field_name_prefix().$elementname;
+    }
+
 
     /**
      * @param moodleform      $combinedform
@@ -477,16 +495,71 @@ abstract class qtype_combined_combinable_base {
      */
     abstract public function set_form_data();
 
-    public function process_third_param($thirdparam) {
-        $qtypename = $this->type->get_identifier();
-        return get_string('err_thisqtypedoesnotacceptextrainfo', 'qtype_combined', $qtypename);
+    public function found_in_question_text($thirdparam) {
+        if ($this->foundinquestiontext && !$this->can_be_more_than_one_of_same_instance()) {
+            $getstringhash = new stdClass();
+            $getstringhash->qtype = $this->type->get_identifier();
+            $getstringhash->qid = $this->get_identifier();
+            return get_string('err_thisqtypecannothavemorethanonecontrol', 'qtype_combined', $getstringhash);
+        }
+        $this->foundinquestiontext = true;
+        return $this->process_third_param($thirdparam);
+    }
+
+    protected function process_third_param($thirdparam) {
+        if ($thirdparam !== null) {
+            $qtypename = $this->type->get_identifier();
+            return get_string('err_thisqtypedoesnotacceptextrainfo', 'qtype_combined', $qtypename);
+        }
     }
 
     /**
      * @param $subqdata
      * @return array empty or containing errors with field name keys.
      */
-    abstract public function validate($subqdata);
+    abstract public function validate();
+
+    public function get_this_form_data_from($allformdata) {
+        $this->formdata = new stdClass();
+        foreach ($allformdata as $key => $value) {
+            if (strpos($key, $this->field_name_prefix()) === 0) {
+                $afterprefix = substr($key, strlen($this->field_name_prefix()));
+                $this->formdata->$afterprefix = $value;
+            }
+        }
+        //stuff to copy from parent question
+        foreach (array('parent' => 'id', 'category' => 'category') as $thisprop => $parentprop) {
+            $this->formdata->$thisprop = $allformdata->$parentprop;
+        }
+
+    }
+
+    public function is_in_form() {
+        return $this->formdata !== null;
+    }
+    public function is_in_question_text() {
+        return $this->foundinquestiontext;
+    }
+
+    public function form_is_empty() {
+        return $this->type->is_empty($this->formdata);
+    }
+
+    public function get_identifier() {
+        return $this->questionidentifier;
+    }
+
+    public function found_in_db($questionrec) {
+        $this->questionrec = $questionrec;
+    }
+
+    public function save() {
+        if ($this->is_in_form() && !$this->form_is_empty()) {
+            $this->formdata->name = $this->get_identifier();
+            $this->type->save($this->questionrec, $this->formdata);
+        }
+    }
+
 }
 
 

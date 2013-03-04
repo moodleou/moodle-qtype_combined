@@ -96,9 +96,9 @@ class qtype_combined_combinable_pmatch extends qtype_combined_combinable_accepts
     }
 
 
-    public function validate($subqdata) {
+    public function validate() {
         $errors = array();
-        $trimmedanswer = $subqdata->answer[0];
+        $trimmedanswer = $this->formdata->answer[0];
         if ('' !== $trimmedanswer) {
             $expression = new pmatch_expression($trimmedanswer);
             if (!$expression->is_valid()) {

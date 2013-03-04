@@ -124,20 +124,20 @@ class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinabl
 
     }
 
-    public function validate($subqdata) {
+    public function validate() {
         $errors = array();
         $nonemptyanswerblanks = array();
-        foreach ($subqdata->answer as $anskey => $answer) {
+        foreach ($this->formdata->answer as $anskey => $answer) {
             if ('' !== trim($answer)) {
                 $nonemptyanswerblanks[] = $anskey;
-            } else if ($subqdata->correct[$anskey]) {
+            } else if ($this->formdata->correct[$anskey]) {
                 $errors[$this->field_name("answergroup[{$anskey}]")] = get_string('err_correctanswerblank', 'qtype_combined');
             }
         }
         if (count($nonemptyanswerblanks) < 2) {
             $errors[$this->field_name("answergroup[0]")] = get_string('err_youneedmorechoices', 'qtype_combined');
         }
-        if (count(array_filter($subqdata->correct)) === 0) {
+        if (count(array_filter($this->formdata->correct)) === 0) {
             $errors[$this->field_name("answergroup[0]")] = get_string('err_nonecorrect', 'qtype_combined');
         }
         return $errors;

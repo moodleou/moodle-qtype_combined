@@ -84,15 +84,15 @@ class qtype_combined_combinable_varnumeric extends qtype_combined_combinable_acc
 
     }
 
-    public function validate($subqdata) {
+    public function validate() {
         $errors = array();
         $interpret = new qtype_varnumericset_number_interpreter_number_with_optional_sci_notation(false);
-        if ('' !== trim($subqdata->error[0])) {
-            if (!$interpret->match($subqdata->error[0])) {
+        if ('' !== trim($this->formdata->error[0])) {
+            if (!$interpret->match($this->formdata->error[0])) {
                 $errors[$this->field_name('answergroup')] = get_string('err_notavalidnumberinerrortolerance', 'qtype_combined');
             }
         }
-        if (!$interpret->match($subqdata->answer[0])) {
+        if (!$interpret->match($this->formdata->answer[0])) {
             $errors[$this->field_name('answergroup')] = get_string('err_notavalidnumberinanswer', 'qtype_combined');
         }
 
