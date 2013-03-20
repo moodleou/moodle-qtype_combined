@@ -51,8 +51,8 @@ class qtype_combined_edit_form extends question_edit_form {
     protected function definition_inner($mform) {
         $mform->addElement('submit', 'updateform', get_string('updateform', 'qtype_combined'));
         $mform->closeHeaderBefore('updateform');
-        //we are using a hook in questiontype to resdisplay the form and it expects a parameter
-        //wizard, which we won't actually use but we need to pass it to avoid an error notice.
+        // We are using a hook in question type to redisplay the form and it expects a parameter
+        // wizard, which we won't actually use but we need to pass it to avoid an error notice.
         $mform->addElement('hidden', 'wizard', '');
 
         if (isset($this->question->questiontext)) {

@@ -74,8 +74,8 @@ class qtype_combined extends question_type {
     }
 
     public function finished_edit_wizard($fromform) {
-        //keep browser from moving onto next page after saving question and
-        //recalculating variable values.
+        // Keep browser from moving onto next page after saving question and
+        // recalculating variable values.
         if (!empty($fromform->updateform)) {
             return false;
         } else {

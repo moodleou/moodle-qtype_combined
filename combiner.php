@@ -172,7 +172,7 @@ class qtype_combined_combiner {
 
     protected function decode_code_in_question_text($codeinsideprepostfix) {
         $codeparts = explode(static::EMBEDDED_CODE_SEPARATOR, $codeinsideprepostfix, 3);
-        //replace any missing parts with null before return.
+        // Replace any missing parts with null before return.
         $codeparts = $codeparts + array(null, null, null);
         return $codeparts;
     }
@@ -315,8 +315,6 @@ class qtype_combined_type_manager {
                 return $type->get_identifier();
             }
         }
-
-
     }
 
 }
@@ -363,7 +361,7 @@ abstract class qtype_combined_combinable_type_base {
         }
         return $properties;
     }
-    
+
     abstract protected function extra_question_properties();
 
     abstract protected function extra_answer_properties();
@@ -527,7 +525,7 @@ abstract class qtype_combined_combinable_base {
                 $this->formdata->$afterprefix = $value;
             }
         }
-        //stuff to copy from parent question
+        // Stuff to copy from parent question.
         foreach (array('parent' => 'id', 'category' => 'category') as $thisprop => $parentprop) {
             $this->formdata->$thisprop = $allformdata->$parentprop;
         }
@@ -626,7 +624,7 @@ abstract class qtype_combined_combinable_accepts_vertical_or_horizontal_layout_p
 abstract class qtype_combined_combinable_accepts_numerical_param
         extends qtype_combined_combinable_accepts_third_param_validated_with_pattern {
     const THIRD_PARAM_PATTERN = '![0-9]+$!A';
-    
+
     protected function error_string_when_third_param_fails_validation($thirdparam) {
         $qtypeid = $this->type->get_identifier();
         return get_string('err_invalid_number', 'qtype_combined', $qtypeid);
