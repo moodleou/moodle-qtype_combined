@@ -24,6 +24,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Class qtype_combined_combiner
+ * An instance of this class stores everything to do with the sub questions for one combined question.
+ */
 class qtype_combined_combiner {
 
     /**
@@ -55,11 +59,14 @@ class qtype_combined_combiner {
             "[[4:selectmenu:1]]\n";
     }
 
-    public function form_for_subqs($questiontext, moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
+    public function form_for_subqs($questionid, $questiontext, moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
         if ($questiontext === null) {
             $questiontext = $this->default_question_text();
         }
         $this->find_included_subqs_in_question_text($questiontext);
+        if ($questionid !== null) {
+            $this->load_subq_data_from_db($questionid, true);
+        }
         $weightingdefault = round(1/count($this->subqs), 7);
         $weightingdefault = "$weightingdefault";
         foreach ($this->subqs as $subq) {

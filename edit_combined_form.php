@@ -60,7 +60,12 @@ class qtype_combined_edit_form extends question_edit_form {
         } else {
             $qt = null;
         }
-        $this->combiner->form_for_subqs($qt, $this, $mform, $this->question->formoptions->repeatelements);
+        if (isset($this->question->id)) {
+            $qid = $this->question->id;
+        } else {
+            $qid = null;
+        }
+        $this->combiner->form_for_subqs($qid, $qt, $this, $mform, $this->question->formoptions->repeatelements);
 
         $this->add_interactive_settings();
     }

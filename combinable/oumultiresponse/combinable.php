@@ -92,18 +92,16 @@ class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinabl
                                                $answerels,
                                                null,
                                                false);
-        /* TODO need some way to check no of choices in db
-        if (isset($this->question->options)) {
-            $countanswers = count($this->question->options->answers);
+        if ($this->questionrec !== null) {
+            $countanswers = count($this->questionrec->options->answers);
         } else {
             $countanswers = 0;
-        }*/
-        $countanswers = 1;
+        }
 
 
         if ($repeatenabled) {
             $defaultstartnumbers = QUESTION_NUMANS_START * 2;
-            $repeatsatstart = max($defaultstartnumbers, QUESTION_NUMANS_START, $countanswers + QUESTION_NUMANS_ADD);
+            $repeatsatstart = max($defaultstartnumbers, $countanswers + QUESTION_NUMANS_ADD);
         } else {
             $repeatsatstart = $countanswers;
         }
