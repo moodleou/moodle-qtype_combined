@@ -31,14 +31,14 @@ class qtype_combined_combinable_type_oumultiresponse extends qtype_combined_comb
     protected $identifier = 'multiresponse';
 
     protected function extra_question_properties() {
-        return array('answernumbering' => 'ABCD') + $this->combined_feedback_properties();
+        return array('answernumbering' => 'abc') + $this->combined_feedback_properties();
     }
 
     protected function extra_answer_properties() {
         return array('feedback' => array('text' => '', 'format' => FORMAT_PLAIN));
     }
     public function is_empty($subqformdata) {
-        foreach ($subqformdata->correct as $value) {
+        foreach ($subqformdata->correctanswer as $value) {
             if (!empty($value)) {
                 return false;
             }
@@ -80,7 +80,7 @@ class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinabl
                             array('size'=>30, 'class'=>'tweakcss'));
         $mform->setType($this->field_name('answer'), PARAM_TEXT);
         $answerels[] = $mform->createElement('advcheckbox',
-                                             $this->field_name('correct'),
+                                             $this->field_name('correctanswer'),
                                              get_string('correct', 'qtype_combined'),
                                              get_string('correct', 'qtype_combined'));
 
@@ -117,12 +117,9 @@ class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinabl
 
     }
 
-    /**
-     * @return mixed
-     */
-    public function set_form_data() {
+/*    public function data_to_form() {
 
-    }
+    }*/
 
     public function validate() {
         $errors = array();
@@ -130,14 +127,14 @@ class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinabl
         foreach ($this->formdata->answer as $anskey => $answer) {
             if ('' !== trim($answer)) {
                 $nonemptyanswerblanks[] = $anskey;
-            } else if ($this->formdata->correct[$anskey]) {
+            } else if ($this->formdata->correctanswer[$anskey]) {
                 $errors[$this->field_name("answergroup[{$anskey}]")] = get_string('err_correctanswerblank', 'qtype_combined');
             }
         }
         if (count($nonemptyanswerblanks) < 2) {
             $errors[$this->field_name("answergroup[0]")] = get_string('err_youneedmorechoices', 'qtype_combined');
         }
-        if (count(array_filter($this->formdata->correct)) === 0) {
+        if (count(array_filter($this->formdata->correctanswer)) === 0) {
             $errors[$this->field_name("answergroup[0]")] = get_string('err_nonecorrect', 'qtype_combined');
         }
         return $errors;
