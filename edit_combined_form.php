@@ -65,18 +65,21 @@ class qtype_combined_edit_form extends question_edit_form {
         $this->add_interactive_settings();
     }
 
-    protected function data_preprocessing($question) {
-        $question = parent::data_preprocessing($question);
-        $question = $this->data_preprocessing_hints($question);
-        if (empty($question->id)) {
+    protected function data_preprocessing($toform) {
+        $toform = parent::data_preprocessing($toform);
+        $toform = $this->data_preprocessing_hints($toform);
+        if (empty($toform->id)) {
             $defaulttext = $this->combiner->default_question_text();
-            if ($question->questiontext['format'] === FORMAT_HTML) {
-                $question->questiontext['text'] = format_text($defaulttext, FORMAT_PLAIN);
+            if ($toform->questiontext['format'] === FORMAT_HTML) {
+                $toform->questiontext['text'] = format_text($defaulttext, FORMAT_PLAIN);
             } else {
-                $question->questiontext['text'] = $defaulttext;
+                $toform->questiontext['text'] = $defaulttext;
             }
+        } else {
+            $toform = $this->combiner->data_to_form($toform->id, $toform, $this->context, $this->fileoptions);
         }
-        return $question;
+
+        return $toform;
     }
 
     public function validation($fromform, $files) {

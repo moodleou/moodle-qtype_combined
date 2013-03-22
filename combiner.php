@@ -242,15 +242,30 @@ class qtype_combined_combiner {
         }
     }
 
-    protected function load_subq_data_from_db($questionid) {
+    protected function load_subq_data_from_db($questionid, $getoptions = false) {
         global $DB;
         if ($subqrecs = $DB->get_records('question', array('parent' => $questionid))) {
             foreach ($subqrecs as $subqrec) {
                 $qtypeid = qtype_combined_type_manager::translate_qtype_to_qtype_identifier($subqrec->qtype);
                 $subq = $this->get_question_instance($qtypeid, $subqrec->name);
                 $subq->found_in_db($subqrec);
+                if ($getoptions) {
+                    $subq->type->get_question_options($subqrec);
+                }
             }
         }
+    }
+
+    public function data_to_form($questionid, $toform, $context, $fileoptions) {
+        $this->load_subq_data_from_db($questionid, true);
+        foreach ($this->subqs as $subq) {
+            $fromsubqtoform = $subq->data_to_form($context, $fileoptions);
+            foreach ($fromsubqtoform as $property => $value) {
+                $fieldname = $subq->field_name($property);
+                $toform->{$fieldname} = $value;
+            }
+        }
+        return $toform;
     }
 
 
@@ -409,6 +424,13 @@ abstract class qtype_combined_combinable_type_base {
     }
 
     /**
+     * @param $questiondata question record object to add extra options to.
+     */
+    public function get_question_options($questiondata) {
+        $this->get_qtype_obj()->get_question_options($questiondata);
+    }
+
+    /**
      * Overridden by child classes, but they also call this parent class.
      * @param $subqformdata data extracted from form fragment for this subq
      * @return bool Has the user left this form fragment for this subq empty?
@@ -488,10 +510,41 @@ abstract class qtype_combined_combinable_base {
     abstract public function add_form_fragment(moodleform $combinedform, MoodleQuickForm $mform,
                                                $repeatenabled);
 
+
+    protected function editor_data_to_form($component, $fieldname, $object, $context, $fileoptions) {
+        if ($object !== null) {
+            $subquestionid = $this->questionrec->id;
+            $text = $object->{$fieldname};
+            $format = $object->{"{$fieldname}format"};
+        } else {
+            $subquestionid = null;
+            $text = '';
+            $format = editors_get_preferred_format();
+        }
+        $editorfieldname = $this->field_name($fieldname);
+        $draftid = file_get_submitted_draft_itemid($editorfieldname);
+
+        $text = file_prepare_draft_area($draftid, $context, $component, $fieldname, $subquestionid, $fileoptions, $text);
+
+        return array($fieldname => array('text' =>  $text,
+                                        'format' => $format,
+                                        'itemid' => $draftid));
+    }
+
     /**
-     * @return mixed
+     * @param $context
+     * @param $fileoptions
+     * @return array data to go in form from db with field name as array key not yet with additional question instance prefix.
      */
-    abstract public function set_form_data();
+    public function data_to_form($context, $fileoptions) {
+        $generalfb =$this->editor_data_to_form('question', 'generalfeedback', $this->questionrec, $context->id, $fileoptions);
+
+        if ($this->questionrec === null) {
+            return $generalfb;
+        } else {
+            return array('defaultmark' => $this->questionrec->defaultmark) + $generalfb;
+        }
+    }
 
     public function found_in_question_text($thirdparam) {
         if ($this->foundinquestiontext && !$this->can_be_more_than_one_of_same_instance()) {

@@ -80,8 +80,8 @@ class qtype_combined_combinable_varnumeric extends qtype_combined_combinable_acc
                            get_string('scinotation', 'qtype_combined'));
     }
 
-    public function set_form_data() {
-
+    public function data_to_form($context, $fileoptions) {
+        return parent::data_to_form($context, $fileoptions);
     }
 
     public function validate() {

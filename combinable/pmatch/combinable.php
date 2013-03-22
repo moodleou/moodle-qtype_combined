@@ -88,11 +88,8 @@ class qtype_combined_combinable_pmatch extends qtype_combined_combinable_accepts
         $mform->setType($this->field_name('answer'), PARAM_RAW_TRIMMED);
     }
 
-    /**
-     * @return mixed
-     */
-    public function set_form_data() {
-
+    public function data_to_form($context, $fileoptions) {
+        return parent::data_to_form($context, $fileoptions);
     }
 
 

@@ -105,11 +105,8 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
 
     }
 
-    /**
-     * @return mixed
-     */
-    public function set_form_data() {
-
+    public function data_to_form($context, $fileoptions) {
+        return parent::data_to_form($context, $fileoptions);
     }
 
     /**

@@ -117,9 +117,9 @@ class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinabl
 
     }
 
-/*    public function data_to_form() {
-
-    }*/
+    public function data_to_form($context, $fileoptions) {
+        return parent::data_to_form($context, $fileoptions);
+    }
 
     public function validate() {
         $errors = array();
