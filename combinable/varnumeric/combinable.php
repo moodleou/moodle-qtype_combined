@@ -41,11 +41,12 @@ class qtype_combined_combinable_type_varnumeric extends qtype_combined_combinabl
                         'checknumerical' => 0, 'checkscinotation' => 0, 'checkpowerof10' => 0, 'checkrounding' => 0,
                         'syserrorpenalty' => '0.0');
     }
-    public function is_empty($subqformdata) {
 
-        if (!empty($subqformdata->scinotation)) {
-            return false;
-        }
+    public function get_question_option_fields() {
+        return array('requirescinotation' => false);
+    }
+
+    public function is_empty($subqformdata) {
         foreach (array('answer', 'error') as $field) {
             if ('' !== trim($subqformdata->{$field}[0])) {
                 return false;
@@ -76,12 +77,20 @@ class qtype_combined_combinable_varnumeric extends qtype_combined_combinable_acc
                            $answergroupels,
                            '&nbsp;'.get_string('error', 'qtype_varnumericset'),
                            false);
-        $mform->addElement('selectyesno', $this->field_name('scinotation'),
+        $mform->addElement('selectyesno', $this->field_name('requirescinotation'),
                            get_string('scinotation', 'qtype_combined'));
     }
 
     public function data_to_form($context, $fileoptions) {
-        return parent::data_to_form($context, $fileoptions);
+        $numericoptions = array('answer' => array(), 'error' => array());
+
+        if ($this->questionrec !== null) {
+            foreach ($this->questionrec->options->answers as $answer) {
+                $numericoptions['answer'][] = $answer->answer;
+                $numericoptions['error'][] = $answer->error;
+            }
+        }
+        return parent::data_to_form($context, $fileoptions) + $numericoptions;
     }
 
     public function validate() {

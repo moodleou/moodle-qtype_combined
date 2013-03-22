@@ -436,6 +436,10 @@ abstract class qtype_combined_combinable_type_base {
      * @return bool Has the user left this form fragment for this subq empty?
      */
     public function is_empty($subqformdata) {
+        if (!$this->are_question_option_fields_empty($subqformdata)) {
+            return false;
+        }
+
         return html_is_blank($subqformdata->generalfeedback['text']);
     }
 
@@ -451,6 +455,25 @@ abstract class qtype_combined_combinable_type_base {
         $subqdata = $this->transform_subq_form_data_to_full($subqdata);
         $qtype = $this->get_qtype_obj();
         $qtype->save_question($oldsubq, $subqdata);
+    }
+
+    public function get_question_option_fields() {
+        return array();
+    }
+
+    protected function are_question_option_fields_empty($subqformdata) {
+        foreach ($this->get_question_option_fields() as $fieldname => $default) {
+            if (!$default) { // Default is empty.
+                if (!empty($subqformdata->$fieldname)) {
+                    return false;
+                }
+            } else { // Default is not empty.
+                if (empty($subqformdata->$fieldname)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 }
@@ -542,7 +565,11 @@ abstract class qtype_combined_combinable_base {
         if ($this->questionrec === null) {
             return $generalfb;
         } else {
-            return array('defaultmark' => $this->questionrec->defaultmark) + $generalfb;
+            $subqoptions = array();
+            foreach (array_keys($this->type->get_question_option_fields()) as $fieldname) {
+                $subqoptions[$fieldname] = $this->questionrec->options->$fieldname;
+            }
+            return array('defaultmark' => $this->questionrec->defaultmark) + $generalfb + $subqoptions;
         }
     }
 

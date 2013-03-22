@@ -40,16 +40,16 @@ class qtype_combined_combinable_type_pmatch extends qtype_combined_combinable_ty
         return array('fraction' => '1', 'feedback' => array('text' => '', 'format' => FORMAT_PLAIN));
     }
 
+    public function get_question_option_fields() {
+        return array('allowsubscript' => false,
+                     'allowsuperscript' => false,
+                     'usecase' => false,
+                     'applydictionarycheck' => true);
+    }
+
+
+
     public function is_empty($subqformdata) {
-        foreach (array('allowsubscript', 'allowsuperscript', 'usecase') as $field) {
-            if (!empty($subqformdata->$field)) {
-                return false;
-            }
-        }
-        // Default of this one is on.
-        if (empty($subqformdata->applydictionarycheck)) {
-            return false;
-        }
         if ('' !== trim($subqformdata->answer[0])) {
             return false;
         }
@@ -89,7 +89,11 @@ class qtype_combined_combinable_pmatch extends qtype_combined_combinable_accepts
     }
 
     public function data_to_form($context, $fileoptions) {
-        return parent::data_to_form($context, $fileoptions);
+        if ($this->questionrec !== null) {
+            $answer = array_pop($this->questionrec->options->answers);
+            $answers = array('answer' => array($answer->answer));
+        }
+        return parent::data_to_form($context, $fileoptions) + $answers;
     }
 
 

@@ -38,6 +38,10 @@ class qtype_combined_combinable_type_gapselect extends qtype_combined_combinable
         return array();
     }
 
+    public function get_question_option_fields() {
+        return array('shuffleanswers' => false);
+    }
+
     protected function transform_subq_form_data_to_full($subqdata) {
         $data = parent::transform_subq_form_data_to_full($subqdata);
         $data->choices = array();
@@ -49,9 +53,6 @@ class qtype_combined_combinable_type_gapselect extends qtype_combined_combinable
 
     public function is_empty($subqformdata) {
 
-        if (!empty($subqformdata->shuffleanswers)) {
-            return false;
-        }
         foreach ($subqformdata->answer as $value) {
             if ('' !== trim($value)) {
                 return false;
@@ -106,7 +107,14 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
     }
 
     public function data_to_form($context, $fileoptions) {
-        return parent::data_to_form($context, $fileoptions);
+        $gapselectoptions = array('answer' => array());
+        if ($this->questionrec !== null) {
+            $answers = array();
+            foreach ($this->questionrec->options->answers as $answer) {
+                $gapselectoptions['answer'][] = $answer->answer;
+            }
+        }
+        return parent::data_to_form($context, $fileoptions) + $gapselectoptions;
     }
 
     /**

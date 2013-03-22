@@ -37,6 +37,11 @@ class qtype_combined_combinable_type_oumultiresponse extends qtype_combined_comb
     protected function extra_answer_properties() {
         return array('feedback' => array('text' => '', 'format' => FORMAT_PLAIN));
     }
+
+    public function get_question_option_fields() {
+        return array('shuffleanswers' => false);
+    }
+
     public function is_empty($subqformdata) {
         foreach ($subqformdata->correctanswer as $value) {
             if (!empty($value)) {
@@ -47,9 +52,6 @@ class qtype_combined_combinable_type_oumultiresponse extends qtype_combined_comb
             if ('' !== trim($value)) {
                 return false;
             }
-        }
-        if (!empty($subqformdata->shuffleanswers)) {
-            return false;
         }
         return parent::is_empty($subqformdata);
     }
@@ -118,7 +120,14 @@ class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinabl
     }
 
     public function data_to_form($context, $fileoptions) {
-        return parent::data_to_form($context, $fileoptions);
+        $mroptions = array('answer' => array(), 'correctanswer' => array());
+        if ($this->questionrec !== null) {
+            foreach ($this->questionrec->options->answers as $questionrecanswer) {
+                $mroptions['answer'][]= $questionrecanswer->answer;
+                $mroptions['correctanswer'][] = $questionrecanswer->fraction > 0;
+            }
+        }
+        return parent::data_to_form($context, $fileoptions) + $mroptions;
     }
 
     public function validate() {
