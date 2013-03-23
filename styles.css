@@ -11,3 +11,7 @@
 #page-question-type-combined .mform fieldset div.not_in_question_text ul {
     color : darkred;
 }
+
+#page-question-type-combined .mform div.fstatic span.noembeddedquestionsmessage {
+    color : darkred;
+}

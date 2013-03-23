@@ -64,6 +64,12 @@ class qtype_combined_combiner {
             $questiontext = $this->default_question_text();
         }
         $this->find_included_subqs_in_question_text($questiontext);
+        if (count($this->subqs) === 0) {
+            $message = get_string('noembeddedquestions', 'qtype_combined');
+            $message ='<span class="noembeddedquestionsmessage">'.$message.'</span>';
+            $beforeqt = $mform->createElement('static', 'noembeddedquestionsmessage', '', $message);
+            $mform->insertElementBefore($beforeqt, 'questiontext');
+        }
         if ($questionid !== null) {
             $this->load_subq_data_from_db($questionid, true);
         }
@@ -211,17 +217,18 @@ class qtype_combined_combiner {
 
             $subqid = $subq->get_identifier();
 
-            if ($subq->is_in_question_text() && $subq->is_in_form() && !$subq->form_is_empty()) {
+            if ($subq->is_in_form() && !$subq->form_is_empty()) {
                 $errors += $subq->validate();
             } else if (!isset($fromform->updateform)) {
-                if ($subq->is_in_form()) {
-                    $errors += array($subq->field_name('defaultmark') =>
-                                                            get_string('err_fillinthedetailshere', 'qtype_combined'));
-                    $errors += array('questiontext' => get_string('err_fillinthedetailsforsubq', 'qtype_combined', $subqid));
-                } else {
-                    $errors += array('questiontext' => get_string('err_pressupdateformandfillin', 'qtype_combined', $subqid));
+                if ($subq->is_in_question_text()) {
+                    if ($subq->is_in_form()) {
+                        $errors += array($subq->field_name('defaultmark') =>
+                                         get_string('err_fillinthedetailshere', 'qtype_combined'));
+                        $errors += array('questiontext' => get_string('err_fillinthedetailsforsubq', 'qtype_combined', $subqid));
+                    } else {
+                        $errors += array('questiontext' => get_string('err_pressupdateformandfillin', 'qtype_combined', $subqid));
+                    }
                 }
-
             }
             if ($subq->is_in_form() && $subq->is_in_question_text()) {
                 $defaultmarkfieldname = $subq->field_name('defaultmark');
@@ -259,11 +266,25 @@ class qtype_combined_combiner {
     }
 
     public function save_subqs($fromform, $contextid) {
+        $this->find_included_subqs_in_question_text($fromform->questiontext);
         $this->load_subq_data_from_db($fromform->id);
         $this->get_subq_data_from_form_data($fromform);
         foreach ($this->subqs as $subq) {
             $subq->save($contextid);
         }
+    }
+
+    public function all_subqs_in_question_text() {
+        foreach ($this->subqs as $subq) {
+            if ($subq->is_in_form() && !$subq->form_is_empty() && !$subq->is_in_question_text()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function no_subqs() {
+        return (count($this->subqs) === 0);
     }
 
     protected function load_subq_data_from_db($questionid, $getoptions = false) {
@@ -670,13 +691,18 @@ abstract class qtype_combined_combinable_base {
     }
 
     public function save($contextid) {
+        $questionnotinqt = false;
         if ($this->form_is_empty() && $this->is_in_db()) {
             $this->type->delete_question($this->questionrec->id, $contextid);
         }
         if ($this->is_in_form() && !$this->form_is_empty()) {
             $this->formdata->name = $this->get_identifier();
             $this->type->save($this->questionrec, $this->formdata);
+            if (!$this->is_in_question_text()) {
+                $questionnotinqt = true;
+            }
         }
+        return $questionnotinqt;
     }
 
     abstract protected function code_construction_instructions();

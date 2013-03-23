@@ -56,7 +56,7 @@ $string['err_pressupdateformandfillin'] = 'You have a new embedded question in t
 you need to press the \'Verify the question text and update the form\' button and when the form is redisplayed fill in the part
 of the form for this embedded question\'s settings.';
 $string['err_subq_not_included_in_question_text'] = 'Oops. Seems you have removed this question from the question text. Either :
-<ul><li>Delete all content from the form fragment and then save to remove this question.</li><li>Or embed this question in the
+<ul><li>Delete content from the form section below and then save to remove this question.</li><li>Or embed this question in the
  form with the code {$a}.</li></ul>';
 $string['err_thisqtypecannothavemorethanonecontrol'] = 'You have tried to embed more than one control for question type
 \'{$a->qtype}\' with question
@@ -71,6 +71,7 @@ $string['err_weightingsdonotaddup'] = 'Weightings for sub questions do not add u
 $string['err_you_must_provide_third_param'] = 'You must provide a third param for question type {$a}.';
 $string['err_youneedmorechoices'] = 'You need to enter two or more choices.';
 $string['incorrectfeedback'] = 'Feedback for any incorrect response';
+$string['noembeddedquestions'] = 'You have deleted all embedded sub question elements from the question text!';
 $string['pluginname'] = 'Combined';
 $string['pluginname_help'] = 'Create a cloze question type with embedded response fields in the question text to enter a numeric
 or text value or select a value from a number of options.';

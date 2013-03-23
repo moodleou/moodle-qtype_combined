@@ -51,11 +51,21 @@ class qtype_combined extends question_type {
         $this->delete_files_in_hints($questionid, $contextid);
     }
 
-    public function save_question_options($question) {
+    public function save_question_options($fromform) {
         $combiner = new qtype_combined_combiner();
 
-        $combiner->save_subqs($question, $question->context->id);
-        $this->save_hints($question);
+        $combiner->save_subqs($fromform, $fromform->context->id);
+
+        // A little hacky to stop the form moving on from question editing page.
+        // See also finished_edit_wizard below.
+        if (!$combiner->all_subqs_in_question_text()) {
+            $fromform->unembeddedquestions =1;
+        }
+        if ($combiner->no_subqs()) {
+            $fromform->noembeddedquestions =1;
+        }
+
+        $this->save_hints($fromform);
     }
 
     protected function initialise_question_instance(question_definition $question, $questiondata) {
@@ -76,7 +86,7 @@ class qtype_combined extends question_type {
     public function finished_edit_wizard($fromform) {
         // Keep browser from moving onto next page after saving question and
         // recalculating variable values.
-        if (!empty($fromform->updateform)) {
+        if (!empty($fromform->updateform) || !empty($fromform->unembeddedquestions) || !empty($fromform->noembeddedquestions)) {
             return false;
         } else {
             return true;
