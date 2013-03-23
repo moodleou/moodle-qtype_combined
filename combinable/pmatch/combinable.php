@@ -41,10 +41,10 @@ class qtype_combined_combinable_type_pmatch extends qtype_combined_combinable_ty
     }
 
     public function get_question_option_fields() {
-        return array('allowsubscript' => false,
-                     'allowsuperscript' => false,
-                     'usecase' => false,
-                     'applydictionarycheck' => true);
+        return array('allowsubscript' => null,
+                     'allowsuperscript' => null,
+                     'usecase' => null,
+                     'applydictionarycheck' => null);
     }
 
 

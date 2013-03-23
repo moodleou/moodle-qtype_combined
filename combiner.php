@@ -67,13 +67,30 @@ class qtype_combined_combiner {
         if ($questionid !== null) {
             $this->load_subq_data_from_db($questionid, true);
         }
-        $weightingdefault = round(1/count($this->subqs), 7);
-        $weightingdefault = "$weightingdefault";
+        if (count($this->subqs) > 0) {
+            $weightingdefault = round(1/count($this->subqs), 7);
+            $weightingdefault = "$weightingdefault";
+        }
         foreach ($this->subqs as $subq) {
             $a = new stdClass();
             $a->qtype = $subq->type->get_identifier();
             $a->qid = $subq->get_identifier();
-            $mform->addElement('header', $subq->field_name('subqheader'), get_string('subqheader', 'qtype_combined', $a));
+
+            if ($subq->is_in_question_text()) {
+                $headerlegend = get_string('subqheader', 'qtype_combined', $a);
+            } else {
+                $headerlegend = get_string('subqheader_not_in_question_text', 'qtype_combined', $a);
+                $headerlegend ='<span class="not_in_question_text">'.$headerlegend.'</span>';
+            }
+
+            $mform->addElement('header', $subq->field_name('subqheader'), $headerlegend);
+
+            if (!$subq->is_in_question_text()) {
+                $message = $subq->message_in_form_if_not_included_in_question_text();
+                $message = '<div class="not_in_question_text">'.$message.'</div>';
+                $mform->addElement('static', 'notincludedinquestiontext', '', $message);
+            }
+
             $gradeoptions = question_bank::fraction_options();
             $mform->addElement('select', $subq->field_name('defaultmark'), get_string('weighting', 'qtype_combined'),
                                $gradeoptions);
@@ -194,7 +211,7 @@ class qtype_combined_combiner {
 
             $subqid = $subq->get_identifier();
 
-            if ($subq->is_in_form() && !$subq->form_is_empty()) {
+            if ($subq->is_in_question_text() && $subq->is_in_form() && !$subq->form_is_empty()) {
                 $errors += $subq->validate();
             } else if (!isset($fromform->updateform)) {
                 if ($subq->is_in_form()) {
@@ -241,11 +258,11 @@ class qtype_combined_combiner {
         return $subqs;
     }
 
-    public function save_subqs($fromform) {
+    public function save_subqs($fromform, $contextid) {
         $this->load_subq_data_from_db($fromform->id);
         $this->get_subq_data_from_form_data($fromform);
         foreach ($this->subqs as $subq) {
-            $subq->save();
+            $subq->save($contextid);
         }
     }
 
@@ -437,6 +454,12 @@ abstract class qtype_combined_combinable_type_base {
         $this->get_qtype_obj()->get_question_options($questiondata);
     }
 
+    public function delete_question($questionid, $contextid) {
+        global $DB;
+        $DB->delete_records('question', array('id' => $questionid));
+        $this->get_qtype_obj()->delete_question($questionid, $contextid);
+    }
+
     /**
      * Overridden by child classes, but they also call this parent class.
      * @param $subqformdata data extracted from form fragment for this subq
@@ -451,30 +474,30 @@ abstract class qtype_combined_combinable_type_base {
     }
 
     public function save($oldsubq, $subqdata) {
-        if ($this->is_empty($subqdata)) {
-            return;
-        }
         unset($subqdata->qtypeid);
         if ($oldsubq === null) {
             $oldsubq = new stdClass();
         }
         $oldsubq->qtype = $this->get_qtype_name();
         $subqdata = $this->transform_subq_form_data_to_full($subqdata);
-        $qtype = $this->get_qtype_obj();
-        $qtype->save_question($oldsubq, $subqdata);
+        $this->get_qtype_obj()->save_question($oldsubq, $subqdata);
     }
 
+    /**
+     * @return array keys are field names of extra question fields in subq
+     *               form values are how to test for default null means don't check, true means not empty, false means empty.
+     */
     public function get_question_option_fields() {
         return array();
     }
 
     protected function are_question_option_fields_empty($subqformdata) {
         foreach ($this->get_question_option_fields() as $fieldname => $default) {
-            if (!$default) { // Default is empty.
+            if ($default === false) { // Default is empty.
                 if (!empty($subqformdata->$fieldname)) {
                     return false;
                 }
-            } else { // Default is not empty.
+            } else if ($default === true) { // Default is not empty.
                 if (empty($subqformdata->$fieldname)) {
                     return false;
                 }
@@ -580,11 +603,16 @@ abstract class qtype_combined_combinable_base {
         }
     }
 
+    protected function get_string_hash() {
+        $getstringhash = new stdClass();
+        $getstringhash->qtype = $this->type->get_identifier();
+        $getstringhash->qid = $this->get_identifier();
+        return $getstringhash;
+    }
+
     public function found_in_question_text($thirdparam) {
         if ($this->foundinquestiontext && !$this->can_be_more_than_one_of_same_instance()) {
-            $getstringhash = new stdClass();
-            $getstringhash->qtype = $this->type->get_identifier();
-            $getstringhash->qid = $this->get_identifier();
+            $getstringhash = $this->get_string_hash();
             return get_string('err_thisqtypecannothavemorethanonecontrol', 'qtype_combined', $getstringhash);
         }
         $this->foundinquestiontext = true;
@@ -625,6 +653,9 @@ abstract class qtype_combined_combinable_base {
     public function is_in_question_text() {
         return $this->foundinquestiontext;
     }
+    public function is_in_db() {
+        return $this->questionrec !== null;
+    }
 
     public function form_is_empty() {
         return $this->type->is_empty($this->formdata);
@@ -638,13 +669,22 @@ abstract class qtype_combined_combinable_base {
         $this->questionrec = $questionrec;
     }
 
-    public function save() {
+    public function save($contextid) {
+        if ($this->form_is_empty() && $this->is_in_db()) {
+            $this->type->delete_question($this->questionrec->id, $contextid);
+        }
         if ($this->is_in_form() && !$this->form_is_empty()) {
             $this->formdata->name = $this->get_identifier();
             $this->type->save($this->questionrec, $this->formdata);
         }
     }
 
+    abstract protected function code_construction_instructions();
+
+    public function message_in_form_if_not_included_in_question_text() {
+        $a = $this->code_construction_instructions();
+        return get_string('err_subq_not_included_in_question_text', 'qtype_combined', $a);
+    }
 }
 
 
@@ -693,6 +733,11 @@ abstract class qtype_combined_combinable_accepts_width_specifier
         return get_string('err_invalid_width_specifier_postfix', 'qtype_combined', $qtypeid);
     }
 
+    protected function code_construction_instructions() {
+        $a = $this->get_string_hash();
+        return get_string('widthspecifier_embed_code', 'qtype_combined', $a);
+    }
+
 }
 abstract class qtype_combined_combinable_accepts_vertical_or_horizontal_layout_param
     extends qtype_combined_combinable_accepts_third_param_validated_with_pattern {
@@ -703,6 +748,11 @@ abstract class qtype_combined_combinable_accepts_vertical_or_horizontal_layout_p
     protected function error_string_when_third_param_fails_validation($thirdparam) {
         $qtypeid = $this->type->get_identifier();
         return get_string('err_accepts_vertical_or_horizontal_layout_param', 'qtype_combined', $qtypeid);
+    }
+
+    protected function code_construction_instructions() {
+        $a = $this->get_string_hash();
+        return get_string('vertical_or_horizontal_embed_code', 'qtype_combined', $a);
     }
 
 }

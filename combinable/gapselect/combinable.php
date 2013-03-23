@@ -162,4 +162,11 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
         return $errors;
     }
 
+    protected function code_construction_instructions() {
+        $a = $this->get_string_hash();
+        $count = count($this->questionrec->options->answers);
+        $a->choices = "1-{$count}";
+        return get_string('correct_choice_embed_code', 'qtype_combined', $a);
+    }
+
 }

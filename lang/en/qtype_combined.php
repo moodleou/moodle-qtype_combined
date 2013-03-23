@@ -24,7 +24,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 $string['correct'] = 'Correct';
-$string['err_accepts_vertical_or_horizontal_layout_param'] = '<p>The \'{$a}\' question type allows you to specify the layout of your question
+$string['correct_choice_embed_code'] = '[[{$a->qid}:{$a->qtype}:{correct choice}]]';
+$string['err_accepts_vertical_or_horizontal_layout_param'] = '<p>The \'{$a}\' question type allows you to specify the layout
+of your question
 type as follows :<ul>
  <li>[[{question identifier}:{$a}:v]] vertical OR</li>
   <li>[[{question identifier}:{$a}:h]] horizontal.</li></ul>
@@ -53,6 +55,9 @@ $string['err_invalidquestionidentifier'] = 'Your question identifier code consis
 $string['err_pressupdateformandfillin'] = 'You have a new embedded question in this form \'{$a}\',
 you need to press the \'Verify the question text and update the form\' button and when the form is redisplayed fill in the part
 of the form for this embedded question\'s settings.';
+$string['err_subq_not_included_in_question_text'] = 'Oops. Seems you have removed this question from the question text. Either :
+<ul><li>Delete all content from the form fragment and then save to remove this question.</li><li>Or embed this question in the
+ form with the code {$a}.</li></ul>';
 $string['err_thisqtypecannothavemorethanonecontrol'] = 'You have tried to embed more than one control for question type
 \'{$a->qtype}\' with question
 instance name \'{$a->qid}\'. This question type only allows you to embed one control per question instance.';
@@ -79,6 +84,10 @@ So the student can enter a numeric or short text answer or choose an answer or a
  using a select box, check boxes or radio boxes.';
 $string['scinotation'] = 'Scientific notation';
 $string['subqheader'] = '\'{$a->qtype}\' input \'{$a->qid}\'';
+$string['subqheader_not_in_question_text'] = '\'{$a->qtype}\' input \'{$a->qid}\' (not embedded in question text).';
 $string['updateform'] = 'Verify the question text and update the form';
+$string['vertical_or_horizontal_embed_code'] = '[[{$a->qid}:{$a->qtype}:v]] or [[{$a->qid}:{$a->qtype}:h]] depending on if you want
+the options layed out vertically or horizontally.';
 $string['weighting'] = 'Weighting';
+$string['widthspecifier_embed_code'] = '[[{$a->qid}:{$a->qtype}:{width specifier}]] or just [[{$a->qid}:{$a->qtype}]]';
 

@@ -43,7 +43,7 @@ class qtype_combined_combinable_type_varnumeric extends qtype_combined_combinabl
     }
 
     public function get_question_option_fields() {
-        return array('requirescinotation' => false);
+        return array('requirescinotation' => null);
     }
 
     public function is_empty($subqformdata) {

@@ -2,3 +2,12 @@
     white-space: pre;
     font-family: Andale Mono, Monaco, Courier New, DejaVu Sans Mono, monospace;
 }
+
+#page-question-type-combined .mform fieldset legend span.not_in_question_text {
+    color : darkred;
+}
+
+#page-question-type-combined .mform fieldset div.not_in_question_text,
+#page-question-type-combined .mform fieldset div.not_in_question_text ul {
+    color : darkred;
+}

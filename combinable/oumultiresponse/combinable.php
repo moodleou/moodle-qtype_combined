@@ -146,5 +146,4 @@ class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinabl
         }
         return $errors;
     }
-
 }

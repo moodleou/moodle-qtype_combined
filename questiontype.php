@@ -54,7 +54,7 @@ class qtype_combined extends question_type {
     public function save_question_options($question) {
         $combiner = new qtype_combined_combiner();
 
-        $combiner->save_subqs($question);
+        $combiner->save_subqs($question, $question->context->id);
         $this->save_hints($question);
     }
 
