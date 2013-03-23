@@ -89,9 +89,10 @@ class qtype_combined_combinable_pmatch extends qtype_combined_combinable_accepts
     }
 
     public function data_to_form($context, $fileoptions) {
+        $answers = array('answer' => array());
         if ($this->questionrec !== null) {
             $answer = array_pop($this->questionrec->options->answers);
-            $answers = array('answer' => array($answer->answer));
+            $answers['answer'][] = $answer->answer;
         }
         return parent::data_to_form($context, $fileoptions) + $answers;
     }
