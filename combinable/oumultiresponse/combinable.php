@@ -98,7 +98,6 @@ class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinabl
             $countanswers = 0;
         }
 
-
         if ($repeatenabled) {
             $defaultstartnumbers = QUESTION_NUMANS_START * 2;
             $repeatsatstart = max($defaultstartnumbers, $countanswers + QUESTION_NUMANS_ADD);

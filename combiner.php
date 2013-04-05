@@ -73,11 +73,11 @@ class qtype_combined_combiner {
         if ($questionid !== null) {
             $this->load_subq_data_from_db($questionid, true);
         }
-        if (count($this->subqs) > 0) {
+
+        foreach ($this->subqs as $subq) {
             $weightingdefault = round(1/count($this->subqs), 7);
             $weightingdefault = "$weightingdefault";
-        }
-        foreach ($this->subqs as $subq) {
+
             $a = new stdClass();
             $a->qtype = $subq->type->get_identifier();
             $a->qid = $subq->get_identifier();
@@ -368,6 +368,10 @@ class qtype_combined_type_manager {
         return $type->new_subq_instance($questionidentifier);
     }
 
+    /**
+     * @param $qtypename string the qtype name as used within Moodle
+     * @return null|string null or identifier used as second param in question text embedded code.
+     */
     public static function translate_qtype_to_qtype_identifier($qtypename) {
         self::find_and_load_all_combinable_qtype_hook_classes();
         foreach (self::$combinableplugins as $type) {
@@ -375,6 +379,7 @@ class qtype_combined_type_manager {
                 return $type->get_identifier();
             }
         }
+        return null;
     }
 
 }
@@ -483,7 +488,7 @@ abstract class qtype_combined_combinable_type_base {
 
     /**
      * Overridden by child classes, but they also call this parent class.
-     * @param $subqformdata data extracted from form fragment for this subq
+     * @param $subqformdata object data extracted from form fragment for this subq
      * @return bool Has the user left this form fragment for this subq empty?
      */
     public function is_empty($subqformdata) {
@@ -640,15 +645,19 @@ abstract class qtype_combined_combinable_base {
         return $this->process_third_param($thirdparam);
     }
 
+    /**
+     * @param $thirdparam string third param from code in question text for this embedded question.
+     * @return null|string null if no error or error string to display in form.
+     */
     protected function process_third_param($thirdparam) {
         if ($thirdparam !== null) {
             $qtypename = $this->type->get_identifier();
             return get_string('err_thisqtypedoesnotacceptextrainfo', 'qtype_combined', $qtypename);
         }
+        return null;
     }
 
     /**
-     * @param $subqdata
      * @return array empty or containing errors with field name keys.
      */
     abstract public function validate();

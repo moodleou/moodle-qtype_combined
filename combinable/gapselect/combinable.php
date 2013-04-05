@@ -84,7 +84,6 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
             $countanswers = 0;
         }
 
-
         if ($repeatenabled) {
             $defaultstartnumbers = QUESTION_NUMANS_START * 2;
             $repeatsatstart = max($defaultstartnumbers, $countanswers + QUESTION_NUMANS_ADD);

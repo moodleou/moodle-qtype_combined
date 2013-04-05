@@ -61,13 +61,17 @@ class qtype_combined_combinable_type_pmatch extends qtype_combined_combinable_ty
 class qtype_combined_combinable_pmatch extends qtype_combined_combinable_accepts_width_specifier {
 
     /**
+     * @param moodleform      $combinedform
+     * @param MoodleQuickForm $mform
+     * @param                 $repeatenabled
      * @return mixed
      */
     public function add_form_fragment(moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
         $susubels = array();
-        $susubels[] = $mform->createElement('selectyesno', $this->field_name('allowsubscript'), get_string('allowsubscript',
-            'qtype_pmatch'));
-        $susubels[] = $mform->createElement('selectyesno', $this->field_name('allowsuperscript'), get_string('allowsuperscript', 'qtype_pmatch'));
+        $susubels[] = $mform->createElement('selectyesno', $this->field_name('allowsubscript'),
+                                            get_string('allowsubscript', 'qtype_pmatch'));
+        $susubels[] = $mform->createElement('selectyesno', $this->field_name('allowsuperscript'),
+                                            get_string('allowsuperscript', 'qtype_pmatch'));
         $mform->addGroup($susubels, $this->field_name('susubels'), get_string('allowsubscript', 'qtype_pmatch'),
                                                                     '&nbsp;'.get_string('allowsuperscript', 'qtype_pmatch'),
                                                                     false);
