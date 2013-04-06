@@ -42,15 +42,11 @@ class qtype_combined_renderer extends qtype_renderer {
         $question = $qa->get_question();
 
         $questiontext = $question->format_questiontext($qa);
-        $placeholder = false;
-        if (preg_match('/_____+/', $questiontext, $matches)) {
-            $placeholder = $matches[0];
-        }
-        $input = '**subq controls go in here**';
 
-        if ($placeholder) {
-            $questiontext = substr_replace($questiontext, $input,
-                    strpos($questiontext, $placeholder), strlen($placeholder));
+        foreach ($question->combiner->subqs as $subq) {
+            $embedcode = $subq->question_text_embed_code();
+            $renderedembeddedquestion = $subq->type->embedded_renderer()->subquestion($qa, $options, $subq);
+            $questiontext = str_replace($embedcode, $renderedembeddedquestion, $questiontext);
         }
 
         $result = html_writer::tag('div', $questiontext, array('class' => 'qtext'));
@@ -73,5 +69,52 @@ class qtype_combined_renderer extends qtype_renderer {
     public function correct_response(question_attempt $qa) {
         // TODO needs to pass through to sub-questions.
         return '';
+    }
+}
+
+/**
+ * Subclass for generating the bits of output specific to sub-questions.
+ *
+ * @copyright 2011 The Open University
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+abstract class qtype_combined_embedded_renderer_base extends qtype_renderer {
+
+    abstract public function subquestion(question_attempt $qa,
+                                         question_display_options $options,
+                                         qtype_combined_combinable_base $subq);
+}
+
+class qtype_combined_varnumeric_embedded_renderer extends qtype_combined_embedded_renderer_base {
+
+    public function subquestion(question_attempt $qa,
+                                         question_display_options $options,
+                                         qtype_combined_combinable_base $subq) {
+        return 'varnumeric';
+    }
+}
+
+class qtype_combined_pmatch_embedded_renderer extends qtype_combined_embedded_renderer_base {
+
+    public function subquestion(question_attempt $qa,
+                                question_display_options $options,
+                                qtype_combined_combinable_base $subq) {
+        return 'pmatch';
+    }
+}
+class qtype_combined_gapselect_embedded_renderer extends qtype_combined_embedded_renderer_base {
+
+    public function subquestion(question_attempt $qa,
+                                question_display_options $options,
+                                qtype_combined_combinable_base $subq) {
+        return 'gapselect';
+    }
+}
+class qtype_combined_oumultiresponse_embedded_renderer extends qtype_combined_embedded_renderer_base {
+
+    public function subquestion(question_attempt $qa,
+                                question_display_options $options,
+                                qtype_combined_combinable_base $subq) {
+        return 'oumultiresponse';
     }
 }

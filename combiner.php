@@ -34,7 +34,7 @@ class qtype_combined_combiner {
      * @var qtype_combined_combinable_base[] array of sub questions, in question text, in form and in db. One instance for each
      *                                          question instance.
      */
-    protected $subqs = array();
+    public $subqs = array();
 
 
     const EMBEDDED_CODE_PREFIX = '[[';
@@ -419,6 +419,15 @@ abstract class qtype_combined_combinable_type_base {
         $this->foundwhere = $foundwhere;
     }
 
+    public function embedded_renderer() {
+        global $PAGE;
+        if ($this->foundwhere === qtype_combined_type_manager::FOUND_IN_COMBINABLE_DIR_OF_COMBINED) {
+            return $PAGE->get_renderer('qtype_combined', $this->qtypename.'_embedded');
+        } else {
+            return $PAGE->get_renderer('qtype_'.$this->qtypename, 'embedded');
+        }
+    }
+
     /**
      * @param $questionidentifier string the question identifier found in the question text or otherwise
      * @return qtype_combined_combinable_base
@@ -569,6 +578,11 @@ abstract class qtype_combined_combinable_base {
      * @var string question identifier found in question text for this instance
      */
     protected $questionidentifier;
+
+    /**
+     * @var string|null the string after second colon in embedded code if there is one.
+     */
+    protected $thirdparam = null;
 
     /**
      * @var object form data from form fragment for this sub question
@@ -746,16 +760,20 @@ abstract class qtype_combined_combinable_base {
     public function make() {
         $this->question = question_bank::make_question($this->questionrec);
     }
+
+    public function question_text_embed_code() {
+        $params = array($this->get_identifier(), $this->type->get_identifier());
+        if ($this->thirdparam !== null) {
+            $params[] = $this->thirdparam;
+        }
+        $code = join(qtype_combined_combiner::EMBEDDED_CODE_SEPARATOR, $params);
+        return qtype_combined_combiner::EMBEDDED_CODE_PREFIX.$code.qtype_combined_combiner::EMBEDDED_CODE_POSTFIX;
+    }
 }
 
 
 abstract class qtype_combined_combinable_accepts_third_param_validated_with_pattern
         extends qtype_combined_combinable_base {
-
-    /**
-     * @var string|null the string after second colon in embedded code if there is one.
-     */
-    protected $thirdparam = null;
 
     const THIRD_PARAM_PATTERN = '!undefined!';
 
