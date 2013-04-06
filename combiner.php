@@ -131,7 +131,7 @@ class qtype_combined_combiner {
      * @param $questiontext string the question text
      * @return null|string either null if no error or an error message.
      */
-    protected function find_included_subqs_in_question_text($questiontext) {
+    public function find_included_subqs_in_question_text($questiontext) {
         $this->subqs = array();
         $pattern = '!'.
                     preg_quote(static::EMBEDDED_CODE_PREFIX, '!') .
@@ -287,18 +287,25 @@ class qtype_combined_combiner {
         return (count($this->subqs) === 0);
     }
 
-    protected function load_subq_data_from_db($questionid, $getoptions = false) {
+    public function load_subq_data_from_db($questionid, $getoptions = false) {
+        $subquestionsdata = static::get_subq_data_from_db($questionid, $getoptions);
+        $this->create_subqs_from_subq_data($subquestionsdata);
+    }
+
+    public static function get_subq_data_from_db($questionid, $getoptions = false) {
         global $DB;
-        if ($subqrecs = $DB->get_records('question', array('parent' => $questionid))) {
-            foreach ($subqrecs as $subqrec) {
-                $qtypeid = qtype_combined_type_manager::translate_qtype_to_qtype_identifier($subqrec->qtype);
-                $subq = $this->get_question_instance($qtypeid, $subqrec->name);
-                $subq->found_in_db($subqrec);
-                if ($getoptions) {
-                    $subq->type->get_question_options($subqrec);
-                }
-            }
+        $sql = 'SELECT q.*, qc.contextid FROM {question} q '.
+            'JOIN {question_categories} qc ON q.category = qc.id ' .
+            'WHERE q.parent = $1';
+
+        // Load the questions
+        if (!$subqrecs = $DB->get_records_sql($sql, array($questionid))) {
+            return array();
         }
+        if ($getoptions) {
+            get_question_options($subqrecs);
+        }
+        return $subqrecs;
     }
 
     public function data_to_form($questionid, $toform, $context, $fileoptions) {
@@ -313,7 +320,19 @@ class qtype_combined_combiner {
         return $toform;
     }
 
+    public function create_subqs_from_subq_data($subquestionsdata) {
+        foreach ($subquestionsdata as $subquestiondata) {
+            $qtypeid = qtype_combined_type_manager::translate_qtype_to_qtype_identifier($subquestiondata->qtype);
+            $subq = $this->get_question_instance($qtypeid, $subquestiondata->name);
+            $subq->found_in_db($subquestiondata);
+        }
+    }
 
+    public function make_subqs() {
+        foreach ($this->subqs as $subq) {
+            $subq->make();
+        }
+    }
 }
 
 class qtype_combined_type_manager {
@@ -543,6 +562,8 @@ abstract class qtype_combined_combinable_base {
 
     protected $questionrec = null;
 
+    protected $question = null;
+
 
     /**
      * @var string question identifier found in question text for this instance
@@ -719,6 +740,11 @@ abstract class qtype_combined_combinable_base {
     public function message_in_form_if_not_included_in_question_text() {
         $a = $this->code_construction_instructions();
         return get_string('err_subq_not_included_in_question_text', 'qtype_combined', $a);
+    }
+
+
+    public function make() {
+        $this->question = question_bank::make_question($this->questionrec);
     }
 }
 

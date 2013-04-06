@@ -37,6 +37,11 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_combined_question extends question_graded_automatically_with_countback {
 
+    /**
+     * @var qtype_combined_combiner class through which to access all subqs.
+     */
+    public $combiner;
+
     public function get_expected_data() {
         // TODO needs to pass through to sub-questions.
         return array();

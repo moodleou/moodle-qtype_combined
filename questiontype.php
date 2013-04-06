@@ -68,9 +68,25 @@ class qtype_combined extends question_type {
         $this->save_hints($fromform);
     }
 
-    protected function initialise_question_instance(question_definition $question, $questiondata) {
-        // TODO needs to pass through to sub-questions.
-        parent::initialise_question_instance($question, $questiondata);
+
+    public function make_question($questiondata) {
+        $question = parent::make_question($questiondata);
+        $question->combiner = new qtype_combined_combiner();
+
+        // Need to process question text to get third param if any.
+        $question->combiner->find_included_subqs_in_question_text($questiondata->questiontext);
+
+        $question->combiner->create_subqs_from_subq_data($questiondata->subquestionsdata);
+        $question->combiner->make_subqs();
+        return $question;
+    }
+
+    public function get_question_options($question) {
+        if (false === parent::get_question_options($question)) {
+            return false;
+        }
+        $question->subquestionsdata = qtype_combined_combiner::get_subq_data_from_db($question->id, true);
+        return true;
     }
 
     public function get_random_guess_score($questiondata) {
