@@ -34,7 +34,7 @@ class qtype_combined_combiner {
      * @var qtype_combined_combinable_base[] array of sub questions, in question text, in form and in db. One instance for each
      *                                          question instance.
      */
-    public $subqs = array();
+    protected $subqs = array();
 
 
     const EMBEDDED_CODE_PREFIX = '[[';
@@ -333,6 +333,189 @@ class qtype_combined_combiner {
             $subq->make();
         }
     }
+
+    /**
+     * @param string                   $questiontext question text with embed codes to replace
+     * @param question_attempt         $qa
+     * @param question_display_options $options
+     * @return string                  question text with embed codes replaced
+     */
+    public function render_subqs($questiontext, question_attempt $qa, question_display_options $options) {
+        foreach ($this->subqs as $subq) {
+            $embedcode = $subq->question_text_embed_code();
+            $renderedembeddedquestion = $subq->type->embedded_renderer()->subquestion($qa, $options, $subq);
+            $questiontext = str_replace($embedcode, $renderedembeddedquestion, $questiontext);
+        }
+        return $questiontext;
+    }
+
+    /**
+     * @param $substep question_attempt_step_subquestion_adapter|null
+     * @param $response array
+     * @return array
+     */
+    protected function add_prefixes_to_response_array($substep, $response) {
+        $keysadded= array();
+        foreach ($response as $key => $value) {
+            $keysadded[$substep->add_prefix($key)] = $value;
+        }
+        return $keysadded;
+    }
+
+    /**
+     * Call a method on question_definition object for all sub questions.
+     * @param string $methodname
+     * @param qtype_combined_param_to_pass_through_to_subq_base|mixed  $params,....
+     * @return array of return values returned from method call on all subqs.
+     */
+    public function call_all_subqs($methodname/*, ... */) {
+        $returned = array();
+        $args = func_get_args();
+
+        foreach ($this->subqs as $i => $unused) {
+            if (method_exists($this->subqs[$i]->question, $methodname)) {
+                // Call $this->call_subq($i, then same arguments as used to call this method).
+                $returned[$i] = call_user_func_array(array($this, 'call_subq'), array_merge(array($i), $args));
+            }
+        }
+        return $returned;
+    }
+
+    /**
+     * Call a method on question_definition object for all sub questions.
+     * @param integer $i the index no of the sub question
+     * @param string $methodname
+     * @param qtype_combined_param_to_pass_through_to_subq_base|mixed  $params,....
+     * @return array of return values returned from method call on all subqs.
+     */
+    public function call_subq($i, $methodname/*, ... */) {
+        $subq = $this->subqs[$i];
+        $paramsarray = array_slice(func_get_args(), 2);
+        $paramsarrayfiltered = array();
+        foreach ($paramsarray as $paramno => $param) {
+            if (is_a($param, 'qtype_combined_param_to_pass_through_to_subq_base')) {
+                $paramsarrayfiltered[$paramno] = $param->for_subq($subq);
+            } else {
+                $paramsarrayfiltered[$paramno] = $param;
+            }
+        }
+        return call_user_func_array(array($subq->question, $methodname), $paramsarrayfiltered);
+    }
+
+    public function get_subq_property($i, $propertyname) {
+        return $this->subqs[$i]->question->{$propertyname};
+    }
+
+    /**
+     * @param array $arrays array of response arrays returned from method subq_method_calls.
+     * @param null|question_attempt_step $step
+     * @return array aggregated array with prefixes added to each subqs response array keys.
+     */
+    public function aggregate_response_arrays($arrays, $step = null) {
+        $aggregated = array();
+        foreach ($arrays as $i => $array) {
+            $substep = $this->subqs[$i]->get_substep($step);
+            $aggregated += $this->add_prefixes_to_response_array($substep, $array);
+        }
+        return $aggregated;
+    }
+
+    public function compute_final_grade($responses, $totaltries) {
+        $allresponses = new qtype_combined_array_of_response_arrays_param($responses);
+        $finalgrades = $this->call_all_subqs('compute_final_grade', $allresponses, $totaltries);
+        foreach ($this->subqs as $subqno => $subq) {
+            if (!isset($finalgrades[$subqno])) {
+                // No compute final grade method for this question type.
+                $finalgrades[$subqno] = $this->compute_subq_final_grade($subq, $allresponses);
+            }
+            // Weight grade by subq weighting stored in default mark.
+            $finalgrades[$subqno] = $finalgrades[$subqno] * $subq->question->defaultmark;
+        }
+        return array_sum($finalgrades);
+    }
+
+    /**
+     * @param $subq qtype_combined_combinable_base
+     * @param $totaltries
+     * @param $allresponses
+     * @return number fraction between 0 and 1.
+     */
+    public function compute_subq_final_grade($subq, $allresponses) {
+        $subqresponses = $allresponses->for_subq($subq);
+        $subqlastresponse = array_pop($subqresponses);
+        $penalty = count($subqresponses) * $subq->question->penalty;
+        foreach ($subqresponses as $subqresponseno => $subqresponse) {
+            if ($subq->question->is_same_response($subqresponse, $subqlastresponse)) {
+                $penalty = $subqresponseno * $subq->question->penalty;
+                break;
+            }
+        }
+        list($finalresponsegrade, ) = $subq->question->grade_response($subqlastresponse);
+        return max(0, $finalresponsegrade * (1 - $penalty));
+    }
+}
+
+abstract class qtype_combined_param_to_pass_through_to_subq_base {
+    abstract public function __construct($alldata);
+
+    abstract public function for_subq($subq);
+}
+
+class qtype_combined_response_array_param extends qtype_combined_param_to_pass_through_to_subq_base {
+    /**
+     * @var array
+     */
+    protected $responsearray;
+
+    public function __construct($responsearray) {
+        $this->responsearray = $responsearray;
+    }
+
+    public function for_subq($subq) {
+        return $subq->get_substep(null)->filter_array($this->responsearray);
+    }
+
+}
+class qtype_combined_array_of_response_arrays_param extends qtype_combined_param_to_pass_through_to_subq_base {
+    /**
+     * @var array
+     */
+    protected $responsearrays;
+
+    public function __construct($responsearrays) {
+        $this->responsearrays = $responsearrays;
+    }
+
+    /**
+     * @param $subq qtype_combined_combinable_base
+     * @return array of filtered response for subq
+     */
+    public function for_subq($subq) {
+        $filtered = array();
+        foreach ($this->responsearrays as $responseno => $responsearray) {
+            $filtered[$responseno] = $subq->get_substep(null)->filter_array($responsearray);
+        }
+        return $filtered;
+    }
+}
+
+class qtype_combined_step_param extends qtype_combined_param_to_pass_through_to_subq_base {
+    /**
+     * @var array
+     */
+    protected $step;
+
+    public function __construct($step) {
+        $this->step = $step;
+    }
+
+    /**
+     * @param $subq qtype_combined_combinable_base
+     * @return question_attempt_step_subquestion_adapter
+     */
+    public function for_subq($subq) {
+        return $subq->get_substep($this->step);
+    }
 }
 
 class qtype_combined_type_manager {
@@ -419,6 +602,9 @@ abstract class qtype_combined_combinable_type_base {
         $this->foundwhere = $foundwhere;
     }
 
+    /**
+     * @return qtype_combined_embedded_renderer_base
+     */
     public function embedded_renderer() {
         global $PAGE;
         if ($this->foundwhere === qtype_combined_type_manager::FOUND_IN_COMBINABLE_DIR_OF_COMBINED) {
@@ -571,7 +757,10 @@ abstract class qtype_combined_combinable_base {
 
     protected $questionrec = null;
 
-    protected $question = null;
+    /**
+     * @var question_graded_automatically the subq question itself.
+     */
+    public $question = null;
 
 
     /**
@@ -615,6 +804,14 @@ abstract class qtype_combined_combinable_base {
         return $this->field_name_prefix().$elementname;
     }
 
+    /**
+     * Get the question_attempt_step_subquestion_adapter for this subq. Allows access to the step data for sub-question.
+     * @param question_attempt_step $step the step to adapt.
+     * @return question_attempt_step_subquestion_adapter.
+     */
+    public function get_substep($step) {
+        return new question_attempt_step_subquestion_adapter($step, $this->field_name_prefix());
+    }
 
     /**
      * @param moodleform      $combinedform
@@ -706,7 +903,7 @@ abstract class qtype_combined_combinable_base {
             }
         }
         // Stuff to copy from parent question.
-        foreach (array('parent' => 'id', 'category' => 'category') as $thisprop => $parentprop) {
+        foreach (array('parent' => 'id', 'category' => 'category', 'penalty' => 'penalty') as $thisprop => $parentprop) {
             $this->formdata->$thisprop = $allformdata->$parentprop;
         }
 
@@ -801,7 +998,7 @@ abstract class qtype_combined_combinable_accepts_third_param_validated_with_patt
     }
 }
 
-abstract class qtype_combined_combinable_accepts_width_specifier
+abstract class qtype_combined_combinable_text_entry
     extends qtype_combined_combinable_accepts_third_param_validated_with_pattern {
 
 
@@ -817,6 +1014,22 @@ abstract class qtype_combined_combinable_accepts_width_specifier
         return get_string('widthspecifier_embed_code', 'qtype_combined', $a);
     }
 
+    public function get_width() {
+        $matches = array();
+        if (null === $this->thirdparam) {
+            return 20;
+        } else if (1 === preg_match('![0-9]*!', $this->thirdparam, $matches)) {
+            $length = $matches[0];
+        } else {
+            $length = strlen($this->thirdparam);
+        }
+        return round($length * 1.1);
+    }
+
+    /**
+     * @return string|null return either sup, sub, both, or null for no editor.
+     */
+    abstract public function get_sup_sub_editor_option();
 }
 abstract class qtype_combined_combinable_accepts_vertical_or_horizontal_layout_param
     extends qtype_combined_combinable_accepts_third_param_validated_with_pattern {

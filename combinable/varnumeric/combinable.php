@@ -56,7 +56,7 @@ class qtype_combined_combinable_type_varnumeric extends qtype_combined_combinabl
     }
 }
 
-class qtype_combined_combinable_varnumeric extends qtype_combined_combinable_accepts_width_specifier {
+class qtype_combined_combinable_varnumeric extends qtype_combined_combinable_text_entry {
 
     public function add_form_fragment(moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
 
@@ -106,5 +106,13 @@ class qtype_combined_combinable_varnumeric extends qtype_combined_combinable_acc
         }
 
         return $errors;
+    }
+
+    public function get_sup_sub_editor_option() {
+        if ($this->question->usesupeditor) {
+            return 'sup';
+        } else {
+            return null;
+        }
     }
 }

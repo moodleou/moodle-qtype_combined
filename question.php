@@ -42,36 +42,51 @@ class qtype_combined_question extends question_graded_automatically_with_countba
      */
     public $combiner;
 
+
+    public function start_attempt(question_attempt_step $step, $variant) {
+        $this->combiner->call_all_subqs('start_attempt', new qtype_combined_step_param($step), $variant);
+    }
+
+    public function apply_attempt_state(question_attempt_step $step) {
+        $this->combiner->call_all_subqs('apply_attempt_state', new qtype_combined_step_param($step));
+    }
+
     public function get_expected_data() {
-        // TODO needs to pass through to sub-questions.
-        return array();
+        return $this->combiner->aggregate_response_arrays(
+            $this->combiner->call_all_subqs('get_expected_data')
+        );
+    }
+
+    public function get_correct_response() {
+        return $this->combiner->aggregate_response_arrays(
+            $this->combiner->call_all_subqs('get_correct_response')
+        );
     }
 
     public function summarise_response(array $response) {
-        // TODO needs to pass through to sub-questions.
-        return null;
+        $summaries = $this->combiner->call_all_subqs('summarise_response', new qtype_combined_response_array_param($response));
+        return implode('; ', $summaries);
     }
 
     public function is_complete_response(array $response) {
-        // TODO needs to pass through to sub-questions.
-        return true;
+        $subqiscompletes = $this->combiner->call_all_subqs('is_complete_response',
+                                                           new qtype_combined_response_array_param($response));
+        // All sub-questions are complete if none of the method calls returned false.
+        return (false === array_search(false, $subqiscompletes));
     }
 
     public function get_validation_error(array $response) {
-        // TODO needs to pass through to sub-questions.
-        return '';
+        $subqerrors = $this->combiner->call_all_subqs('get_validation_error', new qtype_combined_response_array_param($response));
+        // All sub-questions are complete if none of the method calls returned false.
+        return join("<br />\n", $subqerrors);
     }
 
     public function is_same_response(array $prevresponse, array $newresponse) {
-        // TODO needs to pass through to sub-questions.
-        return question_utils::arrays_same_at_key_missing_is_blank(
-                $prevresponse, $newresponse, 'answer');
-    }
-
-
-    public function get_correct_response() {
-        // TODO needs to pass through to sub-questions.
-        return array();
+        $subqssame = $this->combiner->call_all_subqs('is_same_response',
+                                                     new qtype_combined_response_array_param($prevresponse),
+                                                     new qtype_combined_response_array_param($newresponse));
+        // All sub-question responses are same if none of the method calls returned false.
+        return (false === array_search(false, $subqssame));
     }
 
 
@@ -88,13 +103,48 @@ class qtype_combined_question extends question_graded_automatically_with_countba
     }
 
     public function grade_response(array $response) {
-        // TODO needs to pass through to sub-questions.
-        $fraction = 0;
-        return array($fraction, question_state::graded_state_for_fraction($fraction));
+        $subqsgradable =
+            $this->combiner->call_all_subqs('is_gradable_response', new qtype_combined_response_array_param($response));
+        $subqstates = array();
+        $fractionsum = 0;
+        foreach ($subqsgradable as $subqno => $gradable) {
+            if ($gradable) {
+                list($subqfraction, $subqstate) =
+                    $this->combiner->call_subq($subqno, 'grade_response', new qtype_combined_response_array_param($response));
+                $subqstates[] = $subqstate;
+            } else {
+                $subqstates[] = question_state::$gaveup;
+                $subqfraction = 0;
+            }
+            $fractionsum += $subqfraction * $this->combiner->get_subq_property($subqno, 'defaultmark');
+        }
+        return array($fractionsum, $this->overall_state($subqstates));
+    }
+
+    /**
+     * @param $subqstates string[] of all states of subqs
+     * @return string state of combined question
+     */
+    protected function overall_state($subqstates) {
+        $subqstates = array_unique($subqstates);
+        // Make it a zero based index for easy indexing.
+        $subqstates = array_values($subqstates);
+        if (count($subqstates) === 1) {
+            // All subqs in same state.
+            return $subqstates[0];
+        } else {
+            if (count($subqstates) === 2 &&
+                (false !== array_search(question_state::$gaveup, $subqstates)) &&
+                (false !== array_search(question_state::$gradedwrong, $subqstates))
+            ) {
+                return question_state::$gradedwrong;
+            } else {
+                return question_state::$gradedpartial;
+            }
+        }
     }
 
     public function compute_final_grade($responses, $totaltries) {
-        // TODO needs to pass through to sub-questions.
-        return 0;
+        return $this->combiner->compute_final_grade($responses, $totaltries);
     }
 }

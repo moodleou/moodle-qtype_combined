@@ -58,7 +58,7 @@ class qtype_combined_combinable_type_pmatch extends qtype_combined_combinable_ty
 }
 
 
-class qtype_combined_combinable_pmatch extends qtype_combined_combinable_accepts_width_specifier {
+class qtype_combined_combinable_pmatch extends qtype_combined_combinable_text_entry {
 
     /**
      * @param moodleform      $combinedform
@@ -112,5 +112,17 @@ class qtype_combined_combinable_pmatch extends qtype_combined_combinable_accepts
             }
         }
         return $errors;
+    }
+
+    public function get_sup_sub_editor_option() {
+        if ($this->question->allowsubscript && $this->question->allowsuperscript) {
+            return 'both';
+        } else if ($this->question->allowsuperscript) {
+            return 'sup';
+        } else if ($this->question->allowsubscript) {
+            return 'sub';
+        } else {
+            return null;
+        }
     }
 }

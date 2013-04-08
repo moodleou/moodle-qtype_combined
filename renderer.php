@@ -43,21 +43,16 @@ class qtype_combined_renderer extends qtype_renderer {
 
         $questiontext = $question->format_questiontext($qa);
 
-        foreach ($question->combiner->subqs as $subq) {
-            $embedcode = $subq->question_text_embed_code();
-            $renderedembeddedquestion = $subq->type->embedded_renderer()->subquestion($qa, $options, $subq);
-            $questiontext = str_replace($embedcode, $renderedembeddedquestion, $questiontext);
-        }
+        $questiontext = $question->combiner->render_subqs($questiontext, $qa, $options);
+
 
         $result = html_writer::tag('div', $questiontext, array('class' => 'qtext'));
 
-        // TODO might need a new hook for "$currentanswer = $qa->get_last_qt_var('answer');" in sub q.
-        // TODO and to return the validation error.
-        /* if ($qa->get_state() == question_state::$invalid) {
+        if ($qa->get_state() == question_state::$invalid) {
             $result .= html_writer::nonempty_tag('div',
-                    $question->get_validation_error(array('answer' => $currentanswer)),
+                    $question->get_validation_error($qa->get_last_step()->get_all_data()),
                     array('class' => 'validationerror'));
-        }*/
+        }
         return $result;
     }
 
@@ -85,23 +80,75 @@ abstract class qtype_combined_embedded_renderer_base extends qtype_renderer {
                                          qtype_combined_combinable_base $subq);
 }
 
-class qtype_combined_varnumeric_embedded_renderer extends qtype_combined_embedded_renderer_base {
+class qtype_combined_text_entry_renderer_base extends qtype_combined_embedded_renderer_base {
 
     public function subquestion(question_attempt $qa,
                                          question_display_options $options,
                                          qtype_combined_combinable_base $subq) {
-        return 'varnumeric';
+        $question = $subq->question;
+        $currentanswer = $qa->get_last_qt_var($subq->field_name('answer'));
+
+        $inputname = $qa->get_qt_field_name($subq->field_name('answer'));
+        $generalattributes = array(
+            'id' => $inputname,
+            'class' => 'answer'
+        );
+
+        $size = $subq->get_width();
+
+        $feedbackimg = '';
+        if ($options->correctness) {
+            list($fraction, ) = $question->grade_response(array('answer' => $currentanswer));
+            $generalattributes['class'] .= ' '.$this->feedback_class($fraction);
+            $feedbackimg = $this->feedback_image($fraction);
+        }
+
+        $usehtml = false;
+        $supsuboption = $subq->get_sup_sub_editor_option();
+        if (null !== $supsuboption) {
+            $editor = get_texteditor('supsub');
+            if ($editor !== false) {
+                $usehtml = true;
+            }
+        }
+
+        if ($usehtml && $options->readonly) {
+            $input = html_writer::tag('span', $currentanswer, $generalattributes);
+        } else if ($usehtml) {
+            $textareaattributes = array('name' => $inputname, 'rows' => 2, 'cols' => $size);
+            $input = html_writer::tag('span', html_writer::tag('textarea', $currentanswer,
+                                                               $textareaattributes + $generalattributes),
+                                                               array('class'=>'answerwrap'));
+            $supsuboptions = array(
+                'supsub' => $supsuboption
+            );
+            $editor->use_editor($generalattributes['id'], $supsuboptions);
+        } else {
+            $inputattributes = array(
+                'type' => 'text',
+                'size' => $size,
+                'name' => $inputname,
+                'value' => $currentanswer
+            );
+            if ($options->readonly) {
+                $inputattributes['readonly'] = 'readonly';
+            }
+            $input = html_writer::empty_tag('input', $inputattributes + $generalattributes);
+        }
+        $input .= $feedbackimg;
+
+        return $input;
     }
 }
 
-class qtype_combined_pmatch_embedded_renderer extends qtype_combined_embedded_renderer_base {
+class qtype_combined_pmatch_embedded_renderer extends qtype_combined_text_entry_renderer_base {
 
-    public function subquestion(question_attempt $qa,
-                                question_display_options $options,
-                                qtype_combined_combinable_base $subq) {
-        return 'pmatch';
-    }
 }
+
+class qtype_combined_varnumeric_embedded_renderer extends qtype_combined_text_entry_renderer_base {
+
+}
+
 class qtype_combined_gapselect_embedded_renderer extends qtype_combined_embedded_renderer_base {
 
     public function subquestion(question_attempt $qa,
