@@ -162,6 +162,74 @@ class qtype_combined_oumultiresponse_embedded_renderer extends qtype_combined_em
     public function subquestion(question_attempt $qa,
                                 question_display_options $options,
                                 qtype_combined_combinable_base $subq) {
-        return 'oumultiresponse';
+        $question = $subq->question;
+        $fullresponse = new qtype_combined_response_array_param($qa->get_last_qt_data());
+        $response = $fullresponse->for_subq($subq);
+
+        $commonattributes = array(
+            'type' => 'checkbox'
+        );
+
+        if ($options->readonly) {
+            $commonattributes['disabled'] = 'disabled';
+        }
+
+        $checkboxes = array();
+        $feedbackimg = array();
+        $classes = array();
+        foreach ($question->get_order($qa) as $value => $ansid) {
+            $inputname = $qa->get_qt_field_name($subq->field_name('choice'.$value));
+            $ans = $question->answers[$ansid];
+            $inputattributes = array();
+            $inputattributes['name'] = $inputname;
+            $inputattributes['value'] = 1;
+            $inputattributes['id'] = $inputname;
+            $isselected = $question->is_choice_selected($response, $value);
+            if ($isselected) {
+                $inputattributes['checked'] = 'checked';
+            }
+            $hidden = '';
+            if (!$options->readonly) {
+                $hidden = html_writer::empty_tag('input', array(
+                    'type' => 'hidden',
+                    'name' => $inputattributes['name'],
+                    'value' => 0,
+                ));
+            }
+            $cblabel = $question->make_html_inline($question->format_text(
+                                                $ans->answer, $ans->answerformat,
+                                                $qa, 'question', 'answer', $ansid));
+
+            $cblabeltag = html_writer::tag('label', $cblabel, array('for' => $inputattributes['id']));
+
+            $checkboxes[] = $hidden . html_writer::empty_tag('input', $inputattributes + $commonattributes) . $cblabeltag;
+
+            $class = 'r' . ($value % 2);
+            if ($options->correctness && $isselected) {
+                $iscbcorrect = ($ans->fraction > 0) ? 1 : 0;
+                $feedbackimg[] = $this->feedback_image($iscbcorrect);
+                $class .= ' ' . $this->feedback_class($iscbcorrect);
+            } else {
+                $feedbackimg[] = '';
+            }
+            $classes[] = $class;
+        }
+
+        $cbhtml = '';
+
+        if ('h' === $subq->get_layout()) {
+            $inputwraptag = 'span';
+        } else {
+            $inputwraptag = 'div';
+        }
+
+        foreach ($checkboxes as $key => $checkbox) {
+            $cbhtml .= html_writer::tag($inputwraptag, $checkbox . ' ' . $feedbackimg[$key],
+                                        array('class' => $classes[$key])) . "\n";
+        }
+
+        $result = html_writer::tag($inputwraptag, $cbhtml, array('class' => 'answer'));
+
+        return $result;
     }
 }

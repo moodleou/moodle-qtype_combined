@@ -1047,6 +1047,10 @@ abstract class qtype_combined_combinable_accepts_vertical_or_horizontal_layout_p
         return get_string('vertical_or_horizontal_embed_code', 'qtype_combined', $a);
     }
 
+    public function get_layout() {
+        return $this->thirdparam;
+    }
+
 }
 
 
