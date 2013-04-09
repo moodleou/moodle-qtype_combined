@@ -375,10 +375,8 @@ class qtype_combined_combiner {
         $args = func_get_args();
 
         foreach ($this->subqs as $i => $unused) {
-            if (method_exists($this->subqs[$i]->question, $methodname)) {
-                // Call $this->call_subq($i, then same arguments as used to call this method).
-                $returned[$i] = call_user_func_array(array($this, 'call_subq'), array_merge(array($i), $args));
-            }
+            // Call $this->call_subq($i, then same arguments as used to call this method).
+            $returned[$i] = call_user_func_array(array($this, 'call_subq'), array_merge(array($i), $args));
         }
         return $returned;
     }
@@ -424,26 +422,41 @@ class qtype_combined_combiner {
 
     public function compute_final_grade($responses, $totaltries) {
         $allresponses = new qtype_combined_array_of_response_arrays_param($responses);
-        $finalgrades = $this->call_all_subqs('compute_final_grade', $allresponses, $totaltries);
         foreach ($this->subqs as $subqno => $subq) {
-            if (!isset($finalgrades[$subqno])) {
+            $subqresponses = $allresponses->for_subq($subq);
+            if (is_a($subq, 'question_graded_automatically_with_countback')) {
+                // Question may still need some help to get grading right.
+                // Look at final response and see if that response has been given before.
+                // If it has, grade that response given before and ignore all responses after.
+                $responsestograde =
+                                $this->responses_upto_first_response_identical_to_final_response($subq->question, $subqresponses);
+                $subqfinalgrade = $subq->question->compute_final_grade($responsestograde, $totaltries);
+            } else {
                 // No compute final grade method for this question type.
-                $finalgrades[$subqno] = $this->compute_subq_final_grade($subq, $allresponses);
+                $subqfinalgrade = $this->compute_subq_final_grade($subq, $subqresponses);
             }
             // Weight grade by subq weighting stored in default mark.
-            $finalgrades[$subqno] = $finalgrades[$subqno] * $subq->question->defaultmark;
+            $finalgrades[$subqno] = $subqfinalgrade * $subq->question->defaultmark;
         }
         return array_sum($finalgrades);
     }
 
+    protected function responses_upto_first_response_identical_to_final_response($question, $subqresponses) {
+        $finalresponse = end($subqresponses);
+        foreach (array_values($subqresponses) as $responseno => $subqresponse) {
+            if ($question->is_same_response($subqresponse, $finalresponse)) {
+                return array_slice($subqresponses, 0, $responseno+1);
+            }
+        }
+        return $subqresponses;
+    }
+
     /**
      * @param $subq qtype_combined_combinable_base
-     * @param $totaltries
-     * @param $allresponses
+     * @param $subqresponses array
      * @return number fraction between 0 and 1.
      */
-    public function compute_subq_final_grade($subq, $allresponses) {
-        $subqresponses = $allresponses->for_subq($subq);
+    public function compute_subq_final_grade($subq, $subqresponses) {
         $subqlastresponse = array_pop($subqresponses);
         $penalty = count($subqresponses) * $subq->question->penalty;
         foreach ($subqresponses as $subqresponseno => $subqresponse) {
