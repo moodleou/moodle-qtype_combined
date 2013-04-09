@@ -77,14 +77,16 @@ abstract class qtype_combined_embedded_renderer_base extends qtype_renderer {
 
     abstract public function subquestion(question_attempt $qa,
                                          question_display_options $options,
-                                         qtype_combined_combinable_base $subq);
+                                         qtype_combined_combinable_base $subq,
+                                         $placeno);
 }
 
 class qtype_combined_text_entry_renderer_base extends qtype_combined_embedded_renderer_base {
 
     public function subquestion(question_attempt $qa,
                                          question_display_options $options,
-                                         qtype_combined_combinable_base $subq) {
+                                         qtype_combined_combinable_base $subq,
+                                         $placeno) {
         $question = $subq->question;
         $currentanswer = $qa->get_last_qt_var($subq->field_name('answer'));
 
@@ -151,17 +153,57 @@ class qtype_combined_varnumeric_embedded_renderer extends qtype_combined_text_en
 
 class qtype_combined_gapselect_embedded_renderer extends qtype_combined_embedded_renderer_base {
 
+    protected function box_id(question_attempt $qa, $place) {
+        return str_replace(':', '_', $qa->get_qt_field_name($place));
+    }
+
     public function subquestion(question_attempt $qa,
                                 question_display_options $options,
-                                qtype_combined_combinable_base $subq) {
-        return 'gapselect';
+                                qtype_combined_combinable_base $subq,
+                                $placeno) {
+        $question = $subq->question;
+        $place = $placeno + 1;
+        $group = $question->places[$place];
+
+        $fieldname = $subq->field_name($question->field($place));
+
+        $value = $qa->get_last_qt_var($fieldname);
+
+        $attributes = array(
+            'id' => str_replace(':', '_', $qa->get_qt_field_name($fieldname)),
+        );
+
+        if ($options->readonly) {
+            $attributes['disabled'] = 'disabled';
+        }
+
+        $orderedchoices = $question->get_ordered_choices($group);
+        $selectoptions = array();
+        foreach ($orderedchoices as $orderedchoicevalue => $orderedchoice) {
+            $selectoptions[$orderedchoicevalue] = $orderedchoice->text;
+        }
+
+        $feedbackimage = '';
+        if ($options->correctness) {
+            $response = $qa->get_last_qt_data();
+            if (array_key_exists($fieldname, $response)) {
+                $fraction = (int) ($response[$fieldname] == $question->get_right_choice_for($place));
+                $attributes['class'] = $this->feedback_class($fraction);
+                $feedbackimage = $this->feedback_image($fraction);
+            }
+        }
+
+        $selecthtml = html_writer::select($selectoptions, $qa->get_qt_field_name($fieldname),
+                                          $value, get_string('choosedots'), $attributes) . ' ' . $feedbackimage;
+        return html_writer::tag('span', $selecthtml, array('class' => 'control'));
     }
 }
 class qtype_combined_oumultiresponse_embedded_renderer extends qtype_combined_embedded_renderer_base {
 
     public function subquestion(question_attempt $qa,
                                 question_display_options $options,
-                                qtype_combined_combinable_base $subq) {
+                                qtype_combined_combinable_base $subq,
+                                $placeno) {
         $question = $subq->question;
         $fullresponse = new qtype_combined_response_array_param($qa->get_last_qt_data());
         $response = $fullresponse->for_subq($subq);

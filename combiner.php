@@ -342,9 +342,11 @@ class qtype_combined_combiner {
      */
     public function render_subqs($questiontext, question_attempt $qa, question_display_options $options) {
         foreach ($this->subqs as $subq) {
-            $embedcode = $subq->question_text_embed_code();
-            $renderedembeddedquestion = $subq->type->embedded_renderer()->subquestion($qa, $options, $subq);
-            $questiontext = str_replace($embedcode, $renderedembeddedquestion, $questiontext);
+            $embedcodes = $subq->question_text_embed_codes();
+            foreach ($embedcodes as $placeno => $embedcode) {
+                $renderedembeddedquestion = $subq->type->embedded_renderer()->subquestion($qa, $options, $subq, $placeno);
+                $questiontext = str_replace($embedcode, $renderedembeddedquestion, $questiontext);
+            }
         }
         return $questiontext;
     }
@@ -769,11 +771,6 @@ abstract class qtype_combined_combinable_base {
     protected $questionidentifier;
 
     /**
-     * @var string|null the string after second colon in embedded code if there is one.
-     */
-    protected $thirdparam = null;
-
-    /**
      * @var object form data from form fragment for this sub question
      */
     protected $formdata = null;
@@ -958,14 +955,20 @@ abstract class qtype_combined_combinable_base {
         $this->question = question_bank::make_question($this->questionrec);
     }
 
-    public function question_text_embed_code() {
-        $params = array($this->get_identifier(), $this->type->get_identifier());
-        if ($this->thirdparam !== null) {
-            $params[] = $this->thirdparam;
+    public function question_text_embed_codes() {
+        $codes = array();
+        foreach ($this->get_third_params() as $place => $thirdparam) {
+            $params = array($this->get_identifier(), $this->type->get_identifier());
+            if ($thirdparam !== null) {
+                $params[] = $thirdparam;
+            }
+            $code = join(qtype_combined_combiner::EMBEDDED_CODE_SEPARATOR, $params);
+            $codes[$place] = qtype_combined_combiner::EMBEDDED_CODE_PREFIX.$code.qtype_combined_combiner::EMBEDDED_CODE_POSTFIX;
         }
-        $code = join(qtype_combined_combiner::EMBEDDED_CODE_SEPARATOR, $params);
-        return qtype_combined_combiner::EMBEDDED_CODE_PREFIX.$code.qtype_combined_combiner::EMBEDDED_CODE_POSTFIX;
+        return $codes;
     }
+
+    abstract protected function get_third_params();
 }
 
 
@@ -974,10 +977,17 @@ abstract class qtype_combined_combinable_accepts_third_param_validated_with_patt
 
     const THIRD_PARAM_PATTERN = '!undefined!';
 
-    public function process_third_param($thirdparam) {
-        $this->thirdparam = $thirdparam;
-        return $this->validate_third_param($thirdparam);
+    protected function process_third_param($thirdparam) {
+        $error = $this->validate_third_param($thirdparam);
+        if (null !== $error) {
+            return $error;
+        } else {
+            $this->store_third_param($thirdparam);
+            return null;
+        }
     }
+
+    abstract protected function store_third_param($thirdparam);
 
     abstract protected function error_string_when_third_param_fails_validation($thirdparam);
 
@@ -1001,6 +1011,10 @@ abstract class qtype_combined_combinable_accepts_third_param_validated_with_patt
 abstract class qtype_combined_combinable_text_entry
     extends qtype_combined_combinable_accepts_third_param_validated_with_pattern {
 
+    /**
+     * @var string|null the string after second colon in embedded code if there is one.
+     */
+    protected $widthparam = null;
 
     const THIRD_PARAM_PATTERN = '!_+[0-9]*_+$!A';
 
@@ -1014,14 +1028,22 @@ abstract class qtype_combined_combinable_text_entry
         return get_string('widthspecifier_embed_code', 'qtype_combined', $a);
     }
 
+    protected function store_third_param($thirdparam) {
+        $this->widthparam = $thirdparam;
+    }
+
+    protected function get_third_params() {
+        return array($this->widthparam);
+    }
+
     public function get_width() {
         $matches = array();
-        if (null === $this->thirdparam) {
+        if (null === $this->widthparam) {
             return 20;
-        } else if (1 === preg_match('![0-9]*!', $this->thirdparam, $matches)) {
+        } else if (1 === preg_match('![0-9]*!', $this->widthparam, $matches)) {
             $length = $matches[0];
         } else {
-            $length = strlen($this->thirdparam);
+            $length = strlen($this->widthparam);
         }
         return round($length * 1.1);
     }
@@ -1034,6 +1056,10 @@ abstract class qtype_combined_combinable_text_entry
 abstract class qtype_combined_combinable_accepts_vertical_or_horizontal_layout_param
     extends qtype_combined_combinable_accepts_third_param_validated_with_pattern {
 
+    /**
+     * @var string|null the string after second colon in embedded code if there is one.
+     */
+    protected $layoutparam = null;
 
     const THIRD_PARAM_PATTERN = '![vh]$!A';
 
@@ -1047,10 +1073,17 @@ abstract class qtype_combined_combinable_accepts_vertical_or_horizontal_layout_p
         return get_string('vertical_or_horizontal_embed_code', 'qtype_combined', $a);
     }
 
-    public function get_layout() {
-        return $this->thirdparam;
+    protected function store_third_param($thirdparam) {
+        $this->layoutparam = $thirdparam;
     }
 
+    public function get_layout() {
+        return $this->layoutparam;
+    }
+
+    protected function get_third_params() {
+        return array($this->layoutparam);
+    }
 }
 
 

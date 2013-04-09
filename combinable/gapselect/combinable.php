@@ -64,6 +64,10 @@ class qtype_combined_combinable_type_gapselect extends qtype_combined_combinable
 
 class qtype_combined_combinable_gapselect extends qtype_combined_combinable_accepts_numerical_param {
 
+    /**
+     * @var array of the correct choices taken from the third param of embedded code
+     */
+    protected $correctchoices = array();
 
     /**
      * @param moodleform      $combinedform
@@ -114,11 +118,6 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
         return parent::data_to_form($context, $fileoptions) + $gapselectoptions;
     }
 
-    /**
-     * @var array of correct choices found in question text.
-     */
-    protected $correctchoices = array();
-
     public function can_be_more_than_one_of_same_instance() {
         return true;
     }
@@ -128,7 +127,6 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
             $qtype = $this->type->get_identifier();
             return get_string('err_you_must_provide_third_param', 'qtype_combined', $qtype);
         } else {
-            $this->correctchoices[] = $thirdparam;
             return parent::validate_third_param($thirdparam);
         }
     }
@@ -168,4 +166,20 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
         return get_string('correct_choice_embed_code', 'qtype_combined', $a);
     }
 
+    public function save($contextid) {
+        $this->formdata->questiontext = array();
+        $this->formdata->questiontext['text'] = '';
+        foreach ($this->correctchoices as $correctchoice) {
+            $this->formdata->questiontext['text'] .= " [[$correctchoice]] ";
+        }
+        return parent::save($contextid);
+    }
+
+    public function store_third_param($thirdparam) {
+        $this->correctchoices[] = $thirdparam;
+    }
+
+    protected function get_third_params() {
+        return $this->correctchoices;
+    }
 }
