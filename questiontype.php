@@ -43,16 +43,30 @@ class qtype_combined extends question_type {
 
     public function move_files($questionid, $oldcontextid, $newcontextid) {
         parent::move_files($questionid, $oldcontextid, $newcontextid);
+        $this->move_files_in_combined_feedback($questionid, $oldcontextid, $newcontextid);
         $this->move_files_in_hints($questionid, $oldcontextid, $newcontextid);
     }
 
     protected function delete_files($questionid, $contextid) {
         parent::delete_files($questionid, $contextid);
+        $this->delete_files_in_combined_feedback($questionid, $contextid);
         $this->delete_files_in_hints($questionid, $contextid);
     }
 
     public function save_question_options($fromform) {
+        global $DB;
         $combiner = new qtype_combined_combiner();
+
+        if (!$options = $DB->get_record('qtype_combined', array('questionid' => $fromform->id))) {
+            $options = new stdClass();
+            $options->questionid = $fromform->id;
+            $options->correctfeedback = '';
+            $options->partiallycorrectfeedback = '';
+            $options->incorrectfeedback = '';
+            $options->id = $DB->insert_record('qtype_combined', $options);
+        }
+        $options = $this->save_combined_feedback_helper($options, $fromform, $fromform->context, true);
+        $DB->update_record('qtype_combined', $options);
 
         $combiner->save_subqs($fromform, $fromform->context->id);
 
@@ -81,10 +95,17 @@ class qtype_combined extends question_type {
         return $question;
     }
 
+    protected function initialise_question_instance(question_definition $question, $questiondata) {
+        parent::initialise_question_instance($question, $questiondata);
+        $this->initialise_combined_feedback($question, $questiondata, true);
+    }
+
     public function get_question_options($question) {
+        global $DB;
         if (false === parent::get_question_options($question)) {
             return false;
         }
+        $question->options = $DB->get_record('qtype_combined', array('questionid' => $question->id), '*', MUST_EXIST);
         $question->subquestionsdata = qtype_combined_combiner::get_subq_data_from_db($question->id, true);
         return true;
     }
@@ -109,4 +130,23 @@ class qtype_combined extends question_type {
         }
     }
 
+    public function export_to_xml($question, qformat_xml $format, $extra = null) {
+        $output = '';
+        $output .= $format->write_combined_feedback($question->options, $question->id, $question->contextid);
+        return $output;
+    }
+
+    public function import_from_xml($data, $question, qformat_xml $format, $extra=null) {
+        if (!isset($data['@']['type']) || $data['@']['type'] != 'combined') {
+            return false;
+        }
+
+        $question = $format->import_headers($data);
+        $question->qtype = 'combined';
+
+        $format->import_combined_feedback($question, $data, true);
+        $format->import_hints($question, $data, true, false, $format->get_format($question->questiontextformat));
+
+        return $question;
+    }
 }

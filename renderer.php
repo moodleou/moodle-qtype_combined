@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_combined_renderer extends qtype_renderer {
+class qtype_combined_renderer extends qtype_with_combined_feedback_renderer {
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
 
@@ -57,8 +57,7 @@ class qtype_combined_renderer extends qtype_renderer {
     }
 
     public function specific_feedback(question_attempt $qa) {
-        // TODO needs to pass through to sub-questions.
-        return '';
+        return $this->combined_feedback($qa);
     }
 
     public function correct_response(question_attempt $qa) {

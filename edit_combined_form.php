@@ -67,11 +67,14 @@ class qtype_combined_edit_form extends question_edit_form {
         }
         $this->combiner->form_for_subqs($qid, $qt, $this, $mform, $this->question->formoptions->repeatelements);
 
+        $this->add_combined_feedback_fields(true);
+
         $this->add_interactive_settings();
     }
 
     protected function data_preprocessing($toform) {
         $toform = parent::data_preprocessing($toform);
+        $toform = $this->data_preprocessing_combined_feedback($toform, true);
         $toform = $this->data_preprocessing_hints($toform);
         if (empty($toform->id)) {
             $defaulttext = $this->combiner->default_question_text();
