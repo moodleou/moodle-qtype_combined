@@ -60,9 +60,38 @@ class qtype_combined_renderer extends qtype_with_combined_feedback_renderer {
         return $this->combined_feedback($qa);
     }
 
-    public function correct_response(question_attempt $qa) {
-        // TODO needs to pass through to sub-questions.
-        return '';
+    public function feedback(question_attempt $qa, question_display_options $options) {
+        return parent::feedback($qa, $options) . $this->feedback_for_suqs_not_graded_correct($qa, $options);
+    }
+
+    protected function feedback_for_suqs_not_graded_correct(question_attempt $qa, question_display_options $options) {
+        $feedback = '';
+        if ($options->feedback) {
+            $question = $qa->get_question();
+            $mainquestionresponse = $qa->get_last_step()->get_all_data();
+            $subqresponses = new qtype_combined_response_array_param($mainquestionresponse);
+            if ($question->is_gradable_response($mainquestionresponse)) {
+                $gradeandstates = $question->combiner->call_all_subqs('grade_response', $subqresponses);
+                foreach ($gradeandstates as $subqno => $gradeandstate) {
+                    list(, $state) = $gradeandstate;
+                    if ($state !== question_state::$gradedright) {
+                        $feedback .= $question->combiner->call_subq($subqno, 'format_generalfeedback', $qa);
+                    }
+                }
+            }
+        }
+        return $feedback;
+
+    }
+
+    protected function num_parts_correct(question_attempt $qa) {
+        $a = new stdClass();
+        list($a->num, $a->outof) = $qa->get_question()->get_num_parts_right($qa->get_last_qt_data());
+        if (is_null($a->outof)) {
+            return '';
+        } else {
+            return get_string('yougotnright', 'qtype_combined', $a);
+        }
     }
 }
 

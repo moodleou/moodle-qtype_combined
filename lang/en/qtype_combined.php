@@ -91,4 +91,4 @@ $string['vertical_or_horizontal_embed_code'] = '[[{$a->qid}:{$a->qtype}:v]] or [
 the options layed out vertically or horizontally.';
 $string['weighting'] = 'Weighting';
 $string['widthspecifier_embed_code'] = '[[{$a->qid}:{$a->qtype}:{width specifier}]] or just [[{$a->qid}:{$a->qtype}]]';
-
+$string['yougotnright'] = 'You have correctly answered {$a->num} parts of this question.';

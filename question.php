@@ -147,4 +147,21 @@ class qtype_combined_question extends question_graded_automatically_with_countba
     public function compute_final_grade($responses, $totaltries) {
         return $this->combiner->compute_final_grade($responses, $totaltries);
     }
+
+    public function get_num_parts_right(array $response) {
+        $subqresponses = new qtype_combined_response_array_param($response);
+        $subqsnumpartscorrect = $this->combiner->call_all_subqs('get_num_parts_right', $subqresponses);
+        $totalparts = $totalpartscorrect = 0;
+        foreach ($subqsnumpartscorrect as $subqno => $numpartscorrect) {
+            list($subqpartscorrect, $subqnumparts) = $numpartscorrect;
+            if (is_null($subqpartscorrect) && is_null($subqnumparts)) {
+                list (, $state) = $this->combiner->call_subq($subqno, 'grade_response', $subqresponses);
+                $subqpartscorrect = ($state === question_state::$gradedright)?1:0;
+                $subqnumparts = 1;
+            }
+            $totalpartscorrect += $subqpartscorrect;
+            $totalparts += $subqnumparts;
+        }
+        return array($totalpartscorrect, $totalparts);
+    }
 }
