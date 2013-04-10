@@ -943,7 +943,7 @@ abstract class qtype_combined_combinable_base {
 
     public function save($contextid) {
         $questionnotinqt = false;
-        if ($this->form_is_empty() && $this->is_in_db()) {
+        if ($this->is_in_form() && $this->form_is_empty() && $this->is_in_db()) {
             $this->type->delete_question($this->questionrec->id, $contextid);
         }
         if ($this->is_in_form() && !$this->form_is_empty()) {

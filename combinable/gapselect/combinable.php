@@ -167,10 +167,12 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
     }
 
     public function save($contextid) {
-        $this->formdata->questiontext = array();
-        $this->formdata->questiontext['text'] = '';
-        foreach ($this->correctchoices as $correctchoice) {
-            $this->formdata->questiontext['text'] .= " [[$correctchoice]] ";
+        if ($this->is_in_form() && !$this->form_is_empty()) {
+            $this->formdata->questiontext = array();
+            $this->formdata->questiontext['text'] = '';
+            foreach ($this->correctchoices as $correctchoice) {
+                $this->formdata->questiontext['text'] .= " [[$correctchoice]] ";
+            }
         }
         return parent::save($contextid);
     }
