@@ -54,6 +54,7 @@ class qtype_combined_edit_form extends question_edit_form {
         // We are using a hook in question type to redisplay the form and it expects a parameter
         // wizard, which we won't actually use but we need to pass it to avoid an error notice.
         $mform->addElement('hidden', 'wizard', '');
+        $mform->setType('wizard', PARAM_ALPHA);
 
         if (isset($this->question->questiontext)) {
             $qt = $this->question->questiontext;

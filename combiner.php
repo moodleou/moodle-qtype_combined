@@ -106,6 +106,7 @@ class qtype_combined_combiner {
                                                                                 array('rows' => 5), $combinedform->editoroptions);
             $mform->setType($subq->field_name('generalfeedback'), PARAM_RAW);
             $mform->addElement('hidden', $subq->field_name('qtypeid'), $subq->type->get_identifier());
+            $mform->setType($subq->field_name('qtypeid'), PARAM_ALPHANUMEXT);
 
         }
     }
