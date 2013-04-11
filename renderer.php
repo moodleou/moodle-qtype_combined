@@ -61,22 +61,53 @@ class qtype_combined_renderer extends qtype_with_combined_feedback_renderer {
     }
 
     public function feedback(question_attempt $qa, question_display_options $options) {
-        return parent::feedback($qa, $options) . $this->feedback_for_suqs_not_graded_correct($qa, $options);
+        $output = '';
+        $hint = null;
+
+        if ($options->feedback) {
+            $output .= html_writer::nonempty_tag('div', $this->specific_feedback($qa),
+                                                 array('class' => 'specificfeedback'));
+            $hint = $qa->get_applicable_hint();
+        }
+
+        if ($options->numpartscorrect) {
+            $output .= html_writer::nonempty_tag('div', $this->num_parts_correct($qa),
+                                                 array('class' => 'numpartscorrect'));
+        }
+
+        if ($hint) {
+            $output .= $this->hint($qa, $hint);
+        }
+
+        if ($options->feedback) {
+            $this->feedback_for_suqs_not_graded_correct($qa, $options);
+        }
+
+        if ($options->generalfeedback) {
+            $output .= html_writer::nonempty_tag('div', $this->general_feedback($qa),
+                                                 array('class' => 'generalfeedback'));
+        }
+
+        if ($options->rightanswer) {
+            $output .= html_writer::nonempty_tag('div', $this->correct_response($qa),
+                                                 array('class' => 'rightanswer'));
+        }
+
+        return $output;
     }
+
 
     protected function feedback_for_suqs_not_graded_correct(question_attempt $qa, question_display_options $options) {
         $feedback = '';
-        if ($options->feedback) {
-            $question = $qa->get_question();
-            $mainquestionresponse = $qa->get_last_step()->get_all_data();
-            $subqresponses = new qtype_combined_response_array_param($mainquestionresponse);
-            if ($question->is_gradable_response($mainquestionresponse)) {
-                $gradeandstates = $question->combiner->call_all_subqs('grade_response', $subqresponses);
-                foreach ($gradeandstates as $subqno => $gradeandstate) {
-                    list(, $state) = $gradeandstate;
-                    if ($state !== question_state::$gradedright) {
-                        $feedback .= $question->combiner->call_subq($subqno, 'format_generalfeedback', $qa);
-                    }
+        $question = $qa->get_question();
+        $mainquestionresponse = $qa->get_last_step()->get_all_data();
+        $subqresponses = new qtype_combined_response_array_param($mainquestionresponse);
+        if ($question->is_gradable_response($mainquestionresponse)) {
+            $gradeandstates = $question->combiner->call_all_subqs('grade_response', $subqresponses);
+            foreach ($gradeandstates as $subqno => $gradeandstate) {
+                list(, $state) = $gradeandstate;
+                if ($state !== question_state::$gradedright) {
+                    $feedback .= $question->combiner->call_subq($subqno, 'format_generalfeedback', $qa);
                 }
             }
         }
