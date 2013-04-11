@@ -39,12 +39,12 @@ require_once($CFG->dirroot .'/question/type/combined/combiner.php');
 class qtype_combined_edit_form extends question_edit_form {
 
     /**
-     * @var qtype_combined_combiner used throughout the form
+     * @var qtype_combined_combiner_for_form used throughout the form
      */
     protected $combiner;
 
     public function __construct($submiturl, $question, $category, $contexts, $formeditable = true) {
-        $this->combiner = new qtype_combined_combiner();
+        $this->combiner = new qtype_combined_combiner_for_form();
         parent::__construct($submiturl, $question, $category, $contexts, $formeditable);
     }
 

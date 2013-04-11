@@ -229,7 +229,7 @@ abstract class qtype_combined_combinable_base {
     }
 
     protected function field_name_prefix() {
-        $prefix = str_replace('{qid}', $this->questionidentifier, qtype_combined_combiner::FIELD_NAME_PREFIX);
+        $prefix = str_replace('{qid}', $this->questionidentifier, qtype_combined_combiner_base::FIELD_NAME_PREFIX);
         return str_replace('{qtype}', $this->type->get_identifier(), $prefix);
     }
 
@@ -398,8 +398,8 @@ abstract class qtype_combined_combinable_base {
             if ($thirdparam !== null) {
                 $params[] = $thirdparam;
             }
-            $code = join(qtype_combined_combiner::EMBEDDED_CODE_SEPARATOR, $params);
-            $codes[$place] = qtype_combined_combiner::EMBEDDED_CODE_PREFIX.$code.qtype_combined_combiner::EMBEDDED_CODE_POSTFIX;
+            $code = join(qtype_combined_combiner_base::EMBEDDED_CODE_SEPARATOR, $params);
+            $codes[$place] = qtype_combined_combiner_base::EMBEDDED_CODE_PREFIX.$code.qtype_combined_combiner_base::EMBEDDED_CODE_POSTFIX;
         }
         return $codes;
     }

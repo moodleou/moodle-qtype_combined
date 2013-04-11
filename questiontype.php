@@ -55,7 +55,7 @@ class qtype_combined extends question_type {
 
     public function save_question_options($fromform) {
         global $DB;
-        $combiner = new qtype_combined_combiner();
+        $combiner = new qtype_combined_combiner_for_saving_subqs();
 
         if (!$options = $DB->get_record('qtype_combined', array('questionid' => $fromform->id))) {
             $options = new stdClass();
@@ -85,7 +85,7 @@ class qtype_combined extends question_type {
 
     public function make_question($questiondata) {
         $question = parent::make_question($questiondata);
-        $question->combiner = new qtype_combined_combiner();
+        $question->combiner = new qtype_combined_combiner_for_run_time_question_instance();
 
         // Need to process question text to get third param if any.
         $question->combiner->find_included_subqs_in_question_text($questiondata->questiontext);
@@ -106,7 +106,7 @@ class qtype_combined extends question_type {
             return false;
         }
         $question->options = $DB->get_record('qtype_combined', array('questionid' => $question->id), '*', MUST_EXIST);
-        $question->subquestionsdata = qtype_combined_combiner::get_subq_data_from_db($question->id, true);
+        $question->subquestionsdata = qtype_combined_combiner_base::get_subq_data_from_db($question->id, true);
         return true;
     }
 

@@ -27,10 +27,13 @@
 require_once($CFG->dirroot.'/question/type/combined/combinable/combinablebase.php');
 
 /**
- * Class qtype_combined_combiner
+ * Class qtype_combined_combiner_base
+ * This is a base class which holds common code used by combiner classes that are used to produce forms,
+ * save and produce run time questions.
  * An instance of this class stores everything to do with the sub questions for one combined question.
+ *
  */
-class qtype_combined_combiner {
+abstract class qtype_combined_combiner_base {
 
     /**
      * @var qtype_combined_combinable_base[] array of sub questions, in question text, in form and in db. One instance for each
@@ -53,82 +56,6 @@ class qtype_combined_combiner {
      * Question identifier must be one or more alphanumeric characters
      */
     const VALID_QUESTION_TYPE_IDENTIFIER_PATTTERN = '[a-zA-Z0-9_-]+';
-
-    public function default_question_text() {
-        return "[[1:numeric:__10__]]\n\n".
-            "[[2:pmatch]]\n\n".
-            "[[3:multiresponse:v]]\n\n".
-            "[[4:selectmenu:1]]\n";
-    }
-
-    public function form_for_subqs($questionid, $questiontext, moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
-        if ($questiontext === null) {
-            $questiontext = $this->default_question_text();
-        }
-        $this->find_included_subqs_in_question_text($questiontext);
-        if (count($this->subqs) === 0) {
-            $message = get_string('noembeddedquestions', 'qtype_combined');
-            $message ='<span class="noembeddedquestionsmessage">'.$message.'</span>';
-            $beforeqt = $mform->createElement('static', 'noembeddedquestionsmessage', '', $message);
-            $mform->insertElementBefore($beforeqt, 'questiontext');
-        }
-        if ($questionid !== null) {
-            $this->load_subq_data_from_db($questionid, true);
-        }
-
-        foreach ($this->subqs as $subq) {
-            $weightingdefault = round(1/count($this->subqs), 7);
-            $weightingdefault = "$weightingdefault";
-
-            $a = new stdClass();
-            $a->qtype = $subq->type->get_identifier();
-            $a->qid = $subq->get_identifier();
-
-            if ($subq->is_in_question_text()) {
-                $headerlegend = get_string('subqheader', 'qtype_combined', $a);
-            } else {
-                $headerlegend = get_string('subqheader_not_in_question_text', 'qtype_combined', $a);
-                $headerlegend ='<span class="not_in_question_text">'.$headerlegend.'</span>';
-            }
-
-            $mform->addElement('header', $subq->field_name('subqheader'), $headerlegend);
-
-            if (!$subq->is_in_question_text()) {
-                $message = $subq->message_in_form_if_not_included_in_question_text();
-                $message = '<div class="not_in_question_text">'.$message.'</div>';
-                $mform->addElement('static', 'notincludedinquestiontext', '', $message);
-            }
-
-            $gradeoptions = question_bank::fraction_options();
-            $mform->addElement('select', $subq->field_name('defaultmark'), get_string('weighting', 'qtype_combined'),
-                               $gradeoptions);
-            $mform->setDefault($subq->field_name('defaultmark'), $weightingdefault);
-            $subq->add_form_fragment($combinedform, $mform, $repeatenabled);
-            $mform->addElement('editor', $subq->field_name('generalfeedback'), get_string('incorrectfeedback', 'qtype_combined'),
-                                                                                array('rows' => 5), $combinedform->editoroptions);
-            $mform->setType($subq->field_name('generalfeedback'), PARAM_RAW);
-            $mform->addElement('hidden', $subq->field_name('qtypeid'), $subq->type->get_identifier());
-            $mform->setType($subq->field_name('qtypeid'), PARAM_ALPHANUMEXT);
-
-        }
-    }
-
-    public function validate_subqs_data_in_form($fromform, $files) {
-        $errors = $this->validate_question_text($fromform['questiontext']['text']);
-        $errors += $this->validate_subqs((object)$fromform);
-        return $errors;
-    }
-
-
-    protected function validate_question_text($questiontext) {
-        $questiontexterror = $this->find_included_subqs_in_question_text($questiontext);
-        if ($questiontexterror !== null) {
-            $errors = array('questiontext' => $questiontexterror);
-        } else {
-            $errors = array();
-        }
-        return $errors;
-    }
 
     /**
      * @param $questiontext string the question text
@@ -268,6 +195,128 @@ class qtype_combined_combiner {
         return $subqs;
     }
 
+    public function load_subq_data_from_db($questionid, $getoptions = false) {
+        $subquestionsdata = static::get_subq_data_from_db($questionid, $getoptions);
+        $this->create_subqs_from_subq_data($subquestionsdata);
+    }
+
+    public static function get_subq_data_from_db($questionid, $getoptions = false) {
+        global $DB;
+        $sql = 'SELECT q.*, qc.contextid FROM {question} q '.
+            'JOIN {question_categories} qc ON q.category = qc.id ' .
+            'WHERE q.parent = $1';
+
+        // Load the questions
+        if (!$subqrecs = $DB->get_records_sql($sql, array($questionid))) {
+            return array();
+        }
+        if ($getoptions) {
+            get_question_options($subqrecs);
+        }
+        return $subqrecs;
+    }
+
+    public function create_subqs_from_subq_data($subquestionsdata) {
+        foreach ($subquestionsdata as $subquestiondata) {
+            $qtypeid = qtype_combined_type_manager::translate_qtype_to_qtype_identifier($subquestiondata->qtype);
+            $subq = $this->get_question_instance($qtypeid, $subquestiondata->name);
+            $subq->found_in_db($subquestiondata);
+        }
+    }
+}
+
+class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
+
+    public function default_question_text() {
+        return "[[1:numeric:__10__]]\n\n".
+            "[[2:pmatch]]\n\n".
+            "[[3:multiresponse:v]]\n\n".
+            "[[4:selectmenu:1]]\n";
+    }
+
+    public function form_for_subqs($questionid, $questiontext, moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
+        if ($questiontext === null) {
+            $questiontext = $this->default_question_text();
+        }
+        $this->find_included_subqs_in_question_text($questiontext);
+        if (count($this->subqs) === 0) {
+            $message = get_string('noembeddedquestions', 'qtype_combined');
+            $message ='<span class="noembeddedquestionsmessage">'.$message.'</span>';
+            $beforeqt = $mform->createElement('static', 'noembeddedquestionsmessage', '', $message);
+            $mform->insertElementBefore($beforeqt, 'questiontext');
+        }
+        if ($questionid !== null) {
+            $this->load_subq_data_from_db($questionid, true);
+        }
+
+        foreach ($this->subqs as $subq) {
+            $weightingdefault = round(1/count($this->subqs), 7);
+            $weightingdefault = "$weightingdefault";
+
+            $a = new stdClass();
+            $a->qtype = $subq->type->get_identifier();
+            $a->qid = $subq->get_identifier();
+
+            if ($subq->is_in_question_text()) {
+                $headerlegend = get_string('subqheader', 'qtype_combined', $a);
+            } else {
+                $headerlegend = get_string('subqheader_not_in_question_text', 'qtype_combined', $a);
+                $headerlegend ='<span class="not_in_question_text">'.$headerlegend.'</span>';
+            }
+
+            $mform->addElement('header', $subq->field_name('subqheader'), $headerlegend);
+
+            if (!$subq->is_in_question_text()) {
+                $message = $subq->message_in_form_if_not_included_in_question_text();
+                $message = '<div class="not_in_question_text">'.$message.'</div>';
+                $mform->addElement('static', 'notincludedinquestiontext', '', $message);
+            }
+
+            $gradeoptions = question_bank::fraction_options();
+            $mform->addElement('select', $subq->field_name('defaultmark'), get_string('weighting', 'qtype_combined'),
+                               $gradeoptions);
+            $mform->setDefault($subq->field_name('defaultmark'), $weightingdefault);
+            $subq->add_form_fragment($combinedform, $mform, $repeatenabled);
+            $mform->addElement('editor', $subq->field_name('generalfeedback'), get_string('incorrectfeedback', 'qtype_combined'),
+                               array('rows' => 5), $combinedform->editoroptions);
+            $mform->setType($subq->field_name('generalfeedback'), PARAM_RAW);
+            $mform->addElement('hidden', $subq->field_name('qtypeid'), $subq->type->get_identifier());
+            $mform->setType($subq->field_name('qtypeid'), PARAM_ALPHANUMEXT);
+
+        }
+    }
+
+    public function validate_subqs_data_in_form($fromform, $files) {
+        $errors = $this->validate_question_text($fromform['questiontext']['text']);
+        $errors += $this->validate_subqs((object)$fromform);
+        return $errors;
+    }
+
+
+    protected function validate_question_text($questiontext) {
+        $questiontexterror = $this->find_included_subqs_in_question_text($questiontext);
+        if ($questiontexterror !== null) {
+            $errors = array('questiontext' => $questiontexterror);
+        } else {
+            $errors = array();
+        }
+        return $errors;
+    }
+
+    public function data_to_form($questionid, $toform, $context, $fileoptions) {
+        $this->load_subq_data_from_db($questionid, true);
+        foreach ($this->subqs as $subq) {
+            $fromsubqtoform = $subq->data_to_form($context, $fileoptions);
+            foreach ($fromsubqtoform as $property => $value) {
+                $fieldname = $subq->field_name($property);
+                $toform->{$fieldname} = $value;
+            }
+        }
+        return $toform;
+    }
+}
+class qtype_combined_combiner_for_saving_subqs extends qtype_combined_combiner_base {
+
     public function save_subqs($fromform, $contextid) {
         $this->find_included_subqs_in_question_text($fromform->questiontext);
         $this->load_subq_data_from_db($fromform->id);
@@ -290,46 +339,9 @@ class qtype_combined_combiner {
         return (count($this->subqs) === 0);
     }
 
-    public function load_subq_data_from_db($questionid, $getoptions = false) {
-        $subquestionsdata = static::get_subq_data_from_db($questionid, $getoptions);
-        $this->create_subqs_from_subq_data($subquestionsdata);
-    }
+}
 
-    public static function get_subq_data_from_db($questionid, $getoptions = false) {
-        global $DB;
-        $sql = 'SELECT q.*, qc.contextid FROM {question} q '.
-            'JOIN {question_categories} qc ON q.category = qc.id ' .
-            'WHERE q.parent = $1';
-
-        // Load the questions
-        if (!$subqrecs = $DB->get_records_sql($sql, array($questionid))) {
-            return array();
-        }
-        if ($getoptions) {
-            get_question_options($subqrecs);
-        }
-        return $subqrecs;
-    }
-
-    public function data_to_form($questionid, $toform, $context, $fileoptions) {
-        $this->load_subq_data_from_db($questionid, true);
-        foreach ($this->subqs as $subq) {
-            $fromsubqtoform = $subq->data_to_form($context, $fileoptions);
-            foreach ($fromsubqtoform as $property => $value) {
-                $fieldname = $subq->field_name($property);
-                $toform->{$fieldname} = $value;
-            }
-        }
-        return $toform;
-    }
-
-    public function create_subqs_from_subq_data($subquestionsdata) {
-        foreach ($subquestionsdata as $subquestiondata) {
-            $qtypeid = qtype_combined_type_manager::translate_qtype_to_qtype_identifier($subquestiondata->qtype);
-            $subq = $this->get_question_instance($qtypeid, $subquestiondata->name);
-            $subq->found_in_db($subquestiondata);
-        }
-    }
+class qtype_combined_combiner_for_run_time_question_instance extends qtype_combined_combiner_base {
 
     public function make_subqs() {
         foreach ($this->subqs as $subq) {
@@ -432,7 +444,7 @@ class qtype_combined_combiner {
                 // Look at final response and see if that response has been given before.
                 // If it has, grade that response given before and ignore all responses after.
                 $responsestograde =
-                                $this->responses_upto_first_response_identical_to_final_response($subq->question, $subqresponses);
+                    $this->responses_upto_first_response_identical_to_final_response($subq->question, $subqresponses);
                 $subqfinalgrade = $subq->question->compute_final_grade($responsestograde, $totaltries);
             } else {
                 // No compute final grade method for this question type.
@@ -471,6 +483,7 @@ class qtype_combined_combiner {
         list($finalresponsegrade, ) = $subq->question->grade_response($subqlastresponse);
         return max(0, $finalresponsegrade * (1 - $penalty));
     }
+
 }
 
 abstract class qtype_combined_param_to_pass_through_to_subq_base {
