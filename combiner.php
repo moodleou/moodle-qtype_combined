@@ -58,6 +58,7 @@ abstract class qtype_combined_combiner_base {
     const VALID_QUESTION_TYPE_IDENTIFIER_PATTTERN = '[a-zA-Z0-9_-]+';
 
     /**
+     * Creates array of subq objects from the embedded codes in the question text.
      * @param $questiontext string the question text
      * @return null|string either null if no error or an error message.
      */
@@ -68,8 +69,12 @@ abstract class qtype_combined_combiner_base {
                     '(.*?)'.
                     preg_quote(static::EMBEDDED_CODE_POSTFIX, '!')
                     .'!';
+
         $matches = array();
-        preg_match_all($pattern, $questiontext, $matches);
+        if (0 === preg_match_all($pattern, $questiontext, $matches)) {
+            return  get_string('noembeddedquestions', 'qtype_combined');
+        }
+
         foreach ($matches[1] as $codeinsideprepostfix) {
             $error = $this->make_combinable_instance_from_code_in_question_text($codeinsideprepostfix);
             if ($error !== null) {
@@ -80,6 +85,7 @@ abstract class qtype_combined_combiner_base {
     }
 
     /**
+     * Create or just pass through the third embedded code param to each subq from question text.
      * @param $codeinsideprepostfix string The embedded code minus the enclosing brackets.
      * @return string|null first error encountered or null if no error.
      */
@@ -110,6 +116,12 @@ abstract class qtype_combined_combiner_base {
         return null; // Done, no error.
     }
 
+    /**
+     * Access the array of subqs using the qtype and question identifier (identifiers as in question text).
+     * @param $qtypeidentifier the identifier as used in the question text ie. not the internal Moodle question type name.
+     * @param $questionidentifier the question identifier that is the first param of the embedded code.
+     * @return null|qtype_combined_combinable_base null if not found or the existing subq if there is one that matches.
+     */
     protected function find_question_instance($qtypeidentifier, $questionidentifier) {
         foreach ($this->subqs as $subq) {
             if ($subq->get_identifier() == $questionidentifier && $subq->type->get_identifier() == $qtypeidentifier) {
@@ -119,6 +131,12 @@ abstract class qtype_combined_combiner_base {
         return null;
     }
 
+    /**
+     * Same as @see find_question_instance but creates subq instance if it does not exist.
+     * @param $qtypeidentifier
+     * @param $questionidentifier
+     * @return qtype_combined_combinable_base
+     */
     protected function get_question_instance($qtypeidentifier, $questionidentifier) {
         $existing = $this->find_question_instance($qtypeidentifier, $questionidentifier);
         if ($existing !== null) {
@@ -130,6 +148,11 @@ abstract class qtype_combined_combiner_base {
         }
     }
 
+    /**
+     * Break down code in question text into three params, with null meaning no param.
+     * @param $codeinsideprepostfix code taken from inside square brackets.
+     * @return array three params.
+     */
     protected function decode_code_in_question_text($codeinsideprepostfix) {
         $codeparts = explode(static::EMBEDDED_CODE_SEPARATOR, $codeinsideprepostfix, 3);
         // Replace any missing parts with null before return.
@@ -137,47 +160,12 @@ abstract class qtype_combined_combiner_base {
         return $codeparts;
     }
 
-    protected function validate_subqs($fromform) {
-        $this->get_subq_data_from_form_data($fromform);
-        $errors = array();
-        $fractionsum = 0;
-        foreach ($this->subqs as $subq) {
-            // If verifying the question text and updating the form then formdata for subq can be not set or empty but
-            // if not empty then need to validate.
-
-            $subqid = $subq->get_identifier();
-
-            if ($subq->is_in_form() && !$subq->form_is_empty()) {
-                $errors += $subq->validate();
-            } else if (!isset($fromform->updateform)) {
-                if ($subq->is_in_question_text()) {
-                    if ($subq->is_in_form()) {
-                        $errors += array($subq->field_name('defaultmark') =>
-                                         get_string('err_fillinthedetailshere', 'qtype_combined'));
-                        $errors += array('questiontext' => get_string('err_fillinthedetailsforsubq', 'qtype_combined', $subqid));
-                    } else {
-                        $errors += array('questiontext' => get_string('err_pressupdateformandfillin', 'qtype_combined', $subqid));
-                    }
-                }
-            }
-            if ($subq->is_in_form() && $subq->is_in_question_text()) {
-                $defaultmarkfieldname = $subq->field_name('defaultmark');
-                $fractionsum += $fromform->$defaultmarkfieldname;
-            }
-        }
-        if ((!isset($fromform->updateform)) && $fractionsum != 1) {
-            foreach ($this->subqs as $subq) {
-                if ($subq->is_in_question_text()) {
-                    $errors += array($subq->field_name('defaultmark') => get_string('err_weightingsdonotaddup', 'qtype_combined'));
-                }
-            }
-        }
-
-        return $errors;
-    }
-
+    /**
+     * Used for question subq validation and saving. Run through question data and find or create the subq object
+     * and pass through the form data to be stored in the subq object.
+     * @param $questiondata stdClass submitted question data
+     */
     protected function get_subq_data_from_form_data($questiondata) {
-        $subqs = array();
         foreach ($questiondata as $key => $unused) {
             $qidpart = preg_quote('{qid}', '!');
             $qtypepart = preg_quote('{qtype}', '!');
@@ -192,14 +180,25 @@ abstract class qtype_combined_combiner_base {
                 $subq->get_this_form_data_from($questiondata);
             }
         }
-        return $subqs;
     }
 
+    /**
+     * @param      $questionid The question id
+     * @param bool $getoptions
+     */
     public function load_subq_data_from_db($questionid, $getoptions = false) {
         $subquestionsdata = static::get_subq_data_from_db($questionid, $getoptions);
         $this->create_subqs_from_subq_data($subquestionsdata);
     }
 
+    /**
+     * The db operation to fetch all sub-question data from the db. For run time question instances this is run before
+     * question instance data caching as it seems more straight forward to have Moodle MUC cache stdClass rather than other
+     * classes.
+     * @param      $questionid The question id
+     * @param bool $getoptions Whether to also fetch the question options for each subq.
+     * @return stdClass[]
+     */
     public static function get_subq_data_from_db($questionid, $getoptions = false) {
         global $DB;
         $sql = 'SELECT q.*, qc.contextid FROM {question} q '.
@@ -227,6 +226,10 @@ abstract class qtype_combined_combiner_base {
 
 class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
 
+    /**
+     * @return string the default question text when you first open the form. Also used to determine what subq form fragments
+     * should be shown when you first start to create a question.
+     */
     public function default_question_text() {
         return "[[1:numeric:__10__]]\n\n".
             "[[2:pmatch]]\n\n".
@@ -234,20 +237,18 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
             "[[4:selectmenu:1]]\n";
     }
 
-    public function form_for_subqs($questionid, $questiontext, moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
-        if ($questiontext === null) {
-            $questiontext = $this->default_question_text();
-        }
+    /**
+     * Construct the part of the form for the user to fill in the details for each subq.
+     * This method must determine which subqs should appear in the form based on the user submitted question text and also what
+     * items have previously been in the form. We don't want to lose any data submitted without a warning
+     * when the user removes a subq from the question text.
+     * @param                 $questiontext
+     * @param moodleform      $combinedform
+     * @param MoodleQuickForm $mform
+     * @param                 $repeatenabled
+     */
+    public function form_for_subqs($questiontext, moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
         $this->find_included_subqs_in_question_text($questiontext);
-        if (count($this->subqs) === 0) {
-            $message = get_string('noembeddedquestions', 'qtype_combined');
-            $message ='<span class="noembeddedquestionsmessage">'.$message.'</span>';
-            $beforeqt = $mform->createElement('static', 'noembeddedquestionsmessage', '', $message);
-            $mform->insertElementBefore($beforeqt, 'questiontext');
-        }
-        if ($questionid !== null) {
-            $this->load_subq_data_from_db($questionid, true);
-        }
 
         foreach ($this->subqs as $subq) {
             $weightingdefault = round(1/count($this->subqs), 7);
@@ -286,9 +287,14 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
         }
     }
 
+    /**
+     * @param $fromform array data from form
+     * @param $files array not used for now no subq type requires this.
+     * @return array of errors to display in form or empty array if no errors.
+     */
     public function validate_subqs_data_in_form($fromform, $files) {
         $errors = $this->validate_question_text($fromform['questiontext']['text']);
-        $errors += $this->validate_subqs((object)$fromform);
+        $errors += $this->validate_subqs($fromform);
         return $errors;
     }
 
@@ -303,6 +309,38 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
         return $errors;
     }
 
+    /**
+     * @param $fromform array all data from form
+     * @return array of errors from subq form elements or empty array if no errors.
+     */
+    protected function validate_subqs($fromform) {
+        $this->get_subq_data_from_form_data((object)$fromform);
+        $errors = array();
+        $fractionsum = 0;
+
+        foreach ($this->subqs as $subq) {
+            $errors += $subq->validate();
+
+            $defaultmarkfieldname = $subq->field_name('defaultmark');
+            $fractionsum += $fromform[$defaultmarkfieldname];
+        }
+        if (abs($fractionsum - 1) > 0.00001) {
+            foreach ($this->subqs as $subq) {
+                $errors += array($subq->field_name('defaultmark') => get_string('err_weightingsdonotaddup', 'qtype_combined'));
+            }
+        }
+
+        return $errors;
+    }
+
+    /**
+     * Get data from db for subqs and transform it into data to populate form fields for subqs.
+     * @param $questionid
+     * @param $toform stdClass data for other parts of form to add the subq data to.
+     * @param $context context question context
+     * @param $fileoptions stdClass file options for form
+     * @return stdClass data for form with subq data added
+     */
     public function data_to_form($questionid, $toform, $context, $fileoptions) {
         $this->load_subq_data_from_db($questionid, true);
         foreach ($this->subqs as $subq) {
@@ -317,6 +355,10 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
 }
 class qtype_combined_combiner_for_saving_subqs extends qtype_combined_combiner_base {
 
+    /**
+     * @param $fromform stdClass Data from form
+     * @param $contextid integer question context id
+     */
     public function save_subqs($fromform, $contextid) {
         $this->find_included_subqs_in_question_text($fromform->questiontext);
         $this->load_subq_data_from_db($fromform->id);
@@ -326,18 +368,6 @@ class qtype_combined_combiner_for_saving_subqs extends qtype_combined_combiner_b
         }
     }
 
-    public function all_subqs_in_question_text() {
-        foreach ($this->subqs as $subq) {
-            if ($subq->is_in_form() && !$subq->form_is_empty() && !$subq->is_in_question_text()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public function no_subqs() {
-        return (count($this->subqs) === 0);
-    }
 
 }
 
@@ -456,6 +486,13 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
         return array_sum($finalgrades);
     }
 
+    /**
+     * Used for computing final grade for sub question. Find first identical response to final response for a question and remove
+     * all responses  after that response.
+     * @param $question question_automatically_gradable
+     * @param $subqresponses
+     * @return array all responses up to the first response that matches the final one.
+     */
     protected function responses_upto_first_response_identical_to_final_response($question, $subqresponses) {
         $finalresponse = end($subqresponses);
         foreach (array_values($subqresponses) as $responseno => $subqresponse) {
@@ -467,6 +504,8 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
     }
 
     /**
+     * If the subq is not a question_automatically_gradable_with_countback then we need to implement the count back grading
+     * for the subq.
      * @param $subq qtype_combined_combinable_base
      * @param $subqresponses array
      * @return number fraction between 0 and 1.

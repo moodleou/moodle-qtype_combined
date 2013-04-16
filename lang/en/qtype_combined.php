@@ -52,9 +52,7 @@ follows
   the number.</li></ul>
   <p>You should not enter anything else after the second colon.</p>';
 $string['err_invalidquestionidentifier'] = 'Your question identifier code consist of one or more alphanumeric characters.';
-$string['err_pressupdateformandfillin'] = 'You have a new embedded question in this form \'{$a}\',
-you need to press the \'Verify the question text and update the form\' button and when the form is redisplayed fill in the part
-of the form for this embedded question\'s settings.';
+$string['err_providepmatchexpression'] = 'You must provide a pmatch expression here.';
 $string['err_subq_not_included_in_question_text'] = 'Oops. Seems you have removed this question from the question text. Either :
 <ul><li>Delete content from the form section below and then save to remove this question.</li><li>Or embed this question in the
  form with the code {$a}.</li></ul>';

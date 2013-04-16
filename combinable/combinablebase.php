@@ -25,6 +25,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Class qtype_combined_combinable_type_base
+ * Collects methods common to a sub question type.
+ */
 abstract class qtype_combined_combinable_type_base {
 
     /**
@@ -126,7 +130,7 @@ abstract class qtype_combined_combinable_type_base {
     }
 
     /**
-     * @param $questiondata question record object to add extra options to.
+     * @param $questiondata stdClass question record object to add extra options to.
      */
     public function get_question_options($questiondata) {
         $this->get_qtype_obj()->get_question_options($questiondata);
@@ -186,6 +190,10 @@ abstract class qtype_combined_combinable_type_base {
 
 }
 
+/**
+ * Class qtype_combined_combinable_base
+ * Defines a sub question instance.
+ */
 abstract class qtype_combined_combinable_base {
 
     /**
@@ -337,14 +345,11 @@ abstract class qtype_combined_combinable_base {
         }
         // Stuff to copy from parent question.
         foreach (array('parent' => 'id', 'category' => 'category', 'penalty' => 'penalty') as $thisprop => $parentprop) {
-            $this->formdata->$thisprop = $allformdata->$parentprop;
+            $this->formdata->$thisprop = $allformdata->{$parentprop};
         }
 
     }
 
-    public function is_in_form() {
-        return $this->formdata !== null;
-    }
     public function is_in_question_text() {
         return $this->foundinquestiontext;
     }
@@ -365,18 +370,12 @@ abstract class qtype_combined_combinable_base {
     }
 
     public function save($contextid) {
-        $questionnotinqt = false;
-        if ($this->is_in_form() && $this->form_is_empty() && $this->is_in_db()) {
+        /*
+        TODO Delete sub questions when needed.
             $this->type->delete_question($this->questionrec->id, $contextid);
-        }
-        if ($this->is_in_form() && !$this->form_is_empty()) {
-            $this->formdata->name = $this->get_identifier();
-            $this->type->save($this->questionrec, $this->formdata);
-            if (!$this->is_in_question_text()) {
-                $questionnotinqt = true;
-            }
-        }
-        return $questionnotinqt;
+        */
+        $this->formdata->name = $this->get_identifier();
+        $this->type->save($this->questionrec, $this->formdata);
     }
 
     abstract protected function code_construction_instructions();
@@ -399,7 +398,8 @@ abstract class qtype_combined_combinable_base {
                 $params[] = $thirdparam;
             }
             $code = join(qtype_combined_combiner_base::EMBEDDED_CODE_SEPARATOR, $params);
-            $codes[$place] = qtype_combined_combiner_base::EMBEDDED_CODE_PREFIX.$code.qtype_combined_combiner_base::EMBEDDED_CODE_POSTFIX;
+            $codes[$place] = qtype_combined_combiner_base::EMBEDDED_CODE_PREFIX.$code.
+                            qtype_combined_combiner_base::EMBEDDED_CODE_POSTFIX;
         }
         return $codes;
     }

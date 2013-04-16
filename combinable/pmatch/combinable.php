@@ -110,6 +110,8 @@ class qtype_combined_combinable_pmatch extends qtype_combined_combinable_text_en
             if (!$expression->is_valid()) {
                 $errors[$this->field_name('answer[0]')] = $expression->get_parse_error();
             }
+        } else {
+            $errors[$this->field_name('answer[0]')] = get_string('err_providepmatchexpression', 'qtype_combined');
         }
         return $errors;
     }

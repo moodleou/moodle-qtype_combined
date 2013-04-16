@@ -48,6 +48,16 @@ class qtype_combined_edit_form extends question_edit_form {
         parent::__construct($submiturl, $question, $category, $contexts, $formeditable);
     }
 
+    protected function get_current_question_text() {
+        if ($submitteddata = optional_param_array('questiontext', null, PARAM_RAW)) {
+            return $submitteddata['text'];
+        } else if (isset($this->question->id)) {
+            return $this->question->questiontext;
+        } else {
+            return $this->combiner->default_question_text();
+        }
+    }
+
     protected function definition_inner($mform) {
         $mform->addElement('submit', 'updateform', get_string('updateform', 'qtype_combined'));
         $mform->closeHeaderBefore('updateform');
@@ -56,17 +66,15 @@ class qtype_combined_edit_form extends question_edit_form {
         $mform->addElement('hidden', 'wizard', '');
         $mform->setType('wizard', PARAM_ALPHA);
 
-        if (isset($this->question->questiontext)) {
-            $qt = $this->question->questiontext;
-        } else {
-            $qt = null;
-        }
         if (isset($this->question->id)) {
             $qid = $this->question->id;
         } else {
             $qid = null;
         }
-        $this->combiner->form_for_subqs($qid, $qt, $this, $mform, $this->question->formoptions->repeatelements);
+        $this->combiner->form_for_subqs($this->get_current_question_text(),
+                                        $this,
+                                        $mform,
+                                        $this->question->formoptions->repeatelements);
 
         $this->add_combined_feedback_fields(true);
 

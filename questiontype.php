@@ -70,15 +70,6 @@ class qtype_combined extends question_type {
 
         $combiner->save_subqs($fromform, $fromform->context->id);
 
-        // A little hacky to stop the form moving on from question editing page.
-        // See also finished_edit_wizard below.
-        if (!$combiner->all_subqs_in_question_text()) {
-            $fromform->unembeddedquestions =1;
-        }
-        if ($combiner->no_subqs()) {
-            $fromform->noembeddedquestions =1;
-        }
-
         $this->save_hints($fromform);
     }
 
@@ -121,9 +112,8 @@ class qtype_combined extends question_type {
     }
 
     public function finished_edit_wizard($fromform) {
-        // Keep browser from moving onto next page after saving question and
-        // recalculating variable values.
-        if (!empty($fromform->updateform) || !empty($fromform->unembeddedquestions) || !empty($fromform->noembeddedquestions)) {
+        // Keep browser from leaving question instance editing page if 'Update' button was pressed.
+        if (!empty($fromform->updateform)) {
             return false;
         } else {
             return true;
