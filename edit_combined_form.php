@@ -79,13 +79,13 @@ class qtype_combined_edit_form extends question_edit_form {
 
         $this->add_combined_feedback_fields(true);
 
-        $this->add_interactive_settings();
+        $this->add_interactive_settings(false, true);
     }
 
     protected function data_preprocessing($toform) {
         $toform = parent::data_preprocessing($toform);
         $toform = $this->data_preprocessing_combined_feedback($toform, true);
-        $toform = $this->data_preprocessing_hints($toform);
+        $toform = $this->data_preprocessing_hints($toform, false, true);
         if (empty($toform->id)) {
             $defaulttext = $this->combiner->default_question_text();
             if ($toform->questiontext['format'] === FORMAT_HTML) {

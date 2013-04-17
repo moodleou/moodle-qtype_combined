@@ -70,7 +70,7 @@ class qtype_combined extends question_type {
 
         $combiner->save_subqs($fromform, $fromform->context->id);
 
-        $this->save_hints($fromform);
+        $this->save_hints($fromform, true);
     }
 
 
@@ -84,6 +84,10 @@ class qtype_combined extends question_type {
         $question->combiner->create_subqs_from_subq_data($questiondata->subquestionsdata);
         $question->combiner->make_subqs();
         return $question;
+    }
+
+    protected function make_hint($hint) {
+        return question_hint_with_parts::load_from_record($hint);
     }
 
     protected function initialise_question_instance(question_definition $question, $questiondata) {
