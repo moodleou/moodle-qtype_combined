@@ -46,15 +46,6 @@ class qtype_combined_combinable_type_pmatch extends qtype_combined_combinable_ty
                      'usecase' => null,
                      'applydictionarycheck' => null);
     }
-
-
-
-    public function is_empty($subqformdata) {
-        if ('' !== trim($subqformdata->answer[0])) {
-            return false;
-        }
-        return parent::is_empty($subqformdata);
-    }
 }
 
 
@@ -126,5 +117,9 @@ class qtype_combined_combinable_pmatch extends qtype_combined_combinable_text_en
         } else {
             return null;
         }
+    }
+
+    public function has_submitted_data() {
+        return $this->text_array_has_submitted_data('answer') || parent::has_submitted_data();
     }
 }

@@ -53,9 +53,8 @@ follows
   <p>You should not enter anything else after the second colon.</p>';
 $string['err_invalidquestionidentifier'] = 'Your question identifier code consist of one or more alphanumeric characters.';
 $string['err_providepmatchexpression'] = 'You must provide a pmatch expression here.';
-$string['err_subq_not_included_in_question_text'] = 'Oops. Seems you have removed this question from the question text. Either :
-<ul><li>Delete content from the form section below and then save to remove this question.</li><li>Or embed this question in the
- form with the code {$a}.</li></ul>';
+$string['err_subq_not_included_in_question_text'] = 'It seems you have removed this question from the question text.
+Embed this question in the form with the code {$a} or it will be removed when you submit this form again.';
 $string['err_thisqtypecannothavemorethanonecontrol'] = 'You have tried to embed more than one control for question type
 \'{$a->qtype}\' with question
 instance name \'{$a->qid}\'. This question type only allows you to embed one control per question instance.';

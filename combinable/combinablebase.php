@@ -142,21 +142,7 @@ abstract class qtype_combined_combinable_type_base {
         $this->get_qtype_obj()->delete_question($questionid, $contextid);
     }
 
-    /**
-     * Overridden by child classes, but they also call this parent class.
-     * @param $subqformdata object data extracted from form fragment for this subq
-     * @return bool Has the user left this form fragment for this subq empty?
-     */
-    public function is_empty($subqformdata) {
-        if (!$this->are_question_option_fields_empty($subqformdata)) {
-            return false;
-        }
-
-        return html_is_blank($subqformdata->generalfeedback['text']);
-    }
-
     public function save($oldsubq, $subqdata) {
-        unset($subqdata->qtypeid);
         if ($oldsubq === null) {
             $oldsubq = new stdClass();
         }
@@ -171,21 +157,6 @@ abstract class qtype_combined_combinable_type_base {
      */
     public function get_question_option_fields() {
         return array();
-    }
-
-    protected function are_question_option_fields_empty($subqformdata) {
-        foreach ($this->get_question_option_fields() as $fieldname => $default) {
-            if ($default === false) { // Default is empty.
-                if (!empty($subqformdata->$fieldname)) {
-                    return false;
-                }
-            } else if ($default === true) { // Default is not empty.
-                if (empty($subqformdata->$fieldname)) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
 }
@@ -356,11 +327,9 @@ abstract class qtype_combined_combinable_base {
     public function is_in_db() {
         return $this->questionrec !== null;
     }
-
-    public function form_is_empty() {
-        return $this->type->is_empty($this->formdata);
+    public function is_in_form() {
+        return $this->formdata !== null;
     }
-
     public function get_identifier() {
         return $this->questionidentifier;
     }
@@ -369,13 +338,64 @@ abstract class qtype_combined_combinable_base {
         $this->questionrec = $questionrec;
     }
 
+    public function preserve_submitted_data() {
+        return ($this->has_submitted_data()
+            && !optional_param($this->field_name('notincludedinquestiontextwilldelete'), false, PARAM_BOOL));
+    }
+
+    /**
+     * Overridden by child classes, but they should also call this parent class.
+     * @return bool Has the user entered data in this sub question form fragment?
+     */
+    public function has_submitted_data() {
+        if ($this->question_option_fields_have_submitted_data()) {
+            return true;
+        } else if ($this->html_field_has_submitted_data('generalfeedback')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    protected function html_field_has_submitted_data($fieldname) {
+        $htmlfielddata = optional_param_array($this->field_name($fieldname), array(), PARAM_RAW_TRIMMED);
+        return isset($htmlfielddata['text']) && !html_is_blank($htmlfielddata['text']);
+    }
+
+
+    protected function question_option_fields_have_submitted_data() {
+        foreach ($this->type->get_question_option_fields() as $fieldname => $default) {
+            if ($default === false) { // Default is empty.
+                if (optional_param($this->field_name($fieldname), false, PARAM_BOOL)) {
+                    // Has data if true.
+                    return true;
+                }
+            } else if ($default === true) { // Default is not empty.
+                if (!optional_param($this->field_name($fieldname), true, PARAM_BOOL)) {
+                    // Has data if false.
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    protected function text_array_has_submitted_data($fieldname) {
+        foreach (optional_param_array($this->field_name($fieldname), array(), PARAM_RAW_TRIMMED) as $value) {
+            if ('' !== $value) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function save($contextid) {
-        /*
-        TODO Delete sub questions when needed.
-            $this->type->delete_question($this->questionrec->id, $contextid);
-        */
         $this->formdata->name = $this->get_identifier();
         $this->type->save($this->questionrec, $this->formdata);
+    }
+
+    public function delete() {
+        $this->type->delete_question($this->questionrec->id, $this->questionrec->contextid);
     }
 
     abstract protected function code_construction_instructions();

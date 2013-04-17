@@ -46,14 +46,6 @@ class qtype_combined_combinable_type_varnumeric extends qtype_combined_combinabl
         return array('requirescinotation' => null);
     }
 
-    public function is_empty($subqformdata) {
-        foreach (array('answer', 'error') as $field) {
-            if ('' !== trim($subqformdata->{$field}[0])) {
-                return false;
-            }
-        }
-        return parent::is_empty($subqformdata);
-    }
 }
 
 class qtype_combined_combinable_varnumeric extends qtype_combined_combinable_text_entry {
@@ -114,5 +106,11 @@ class qtype_combined_combinable_varnumeric extends qtype_combined_combinable_tex
         } else {
             return null;
         }
+    }
+
+    public function has_submitted_data() {
+        return $this->text_array_has_submitted_data('answer') ||
+                $this->text_array_has_submitted_data('error') ||
+                parent::has_submitted_data();
     }
 }

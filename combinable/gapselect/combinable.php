@@ -51,15 +51,6 @@ class qtype_combined_combinable_type_gapselect extends qtype_combined_combinable
         return $this->add_per_answer_properties($data);
     }
 
-    public function is_empty($subqformdata) {
-
-        foreach ($subqformdata->answer as $value) {
-            if ('' !== trim($value)) {
-                return false;
-            }
-        }
-        return parent::is_empty($subqformdata);
-    }
 }
 
 class qtype_combined_combinable_gapselect extends qtype_combined_combinable_accepts_numerical_param {
@@ -181,5 +172,9 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
 
     protected function get_third_params() {
         return $this->correctchoices;
+    }
+
+    public function has_submitted_data() {
+        return $this->text_array_has_submitted_data('answer') || parent::has_submitted_data();
     }
 }

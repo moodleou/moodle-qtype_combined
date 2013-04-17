@@ -71,7 +71,8 @@ class qtype_combined_edit_form extends question_edit_form {
         } else {
             $qid = null;
         }
-        $this->combiner->form_for_subqs($this->get_current_question_text(),
+        $this->combiner->form_for_subqs($qid,
+                                        $this->get_current_question_text(),
                                         $this,
                                         $mform,
                                         $this->question->formoptions->repeatelements);

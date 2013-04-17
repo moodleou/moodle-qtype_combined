@@ -107,7 +107,7 @@ abstract class qtype_combined_combiner_base {
             return get_string('err_unrecognisedqtype', 'qtype_combined', $getstringhash);
         }
 
-        $subq = $this->get_question_instance($qtypeidentifier, $questionidentifier);
+        $subq = $this->find_or_create_question_instance($qtypeidentifier, $questionidentifier);
 
         $error = $subq->found_in_question_text($thirdparam);
         if (null !== $error) {
@@ -137,7 +137,7 @@ abstract class qtype_combined_combiner_base {
      * @param $questionidentifier
      * @return qtype_combined_combinable_base
      */
-    protected function get_question_instance($qtypeidentifier, $questionidentifier) {
+    protected function find_or_create_question_instance($qtypeidentifier, $questionidentifier) {
         $existing = $this->find_question_instance($qtypeidentifier, $questionidentifier);
         if ($existing !== null) {
             return $existing;
@@ -166,25 +166,15 @@ abstract class qtype_combined_combiner_base {
      * @param $questiondata stdClass submitted question data
      */
     protected function get_subq_data_from_form_data($questiondata) {
-        foreach ($questiondata as $key => $unused) {
-            $qidpart = preg_quote('{qid}', '!');
-            $qtypepart = preg_quote('{qtype}', '!');
-            $pregquotedprefixpattern = preg_quote(self::FIELD_NAME_PREFIX, '!');
-            $patternforprefix = str_replace($qidpart, '(?P<qid>'.self::VALID_QUESTION_IDENTIFIER_PATTTERN.')',
-                                            $pregquotedprefixpattern);
-            $patternforprefix = str_replace($qtypepart, '(?P<qtype>'.self::VALID_QUESTION_TYPE_IDENTIFIER_PATTTERN.')',
-                                            $patternforprefix);
-            $matches = array();
-            if (preg_match("!{$patternforprefix}qtypeid$!A", $key, $matches)) {
-                $subq = $this->get_question_instance($matches['qtype'], $matches['qid']);
-                $subq->get_this_form_data_from($questiondata);
-            }
+        foreach ($questiondata->subqfragment_id as $subqkey => $qid) {
+            $subq = $this->find_or_create_question_instance($questiondata->subqfragment_type[$subqkey], $qid);
+            $subq->get_this_form_data_from($questiondata);
         }
     }
 
     /**
-     * @param      $questionid The question id
-     * @param bool $getoptions
+     * @param integer  $questionid The question id
+     * @param bool     $getoptions Whether to also fetch the question options for each subq.
      */
     public function load_subq_data_from_db($questionid, $getoptions = false) {
         $subquestionsdata = static::get_subq_data_from_db($questionid, $getoptions);
@@ -195,8 +185,8 @@ abstract class qtype_combined_combiner_base {
      * The db operation to fetch all sub-question data from the db. For run time question instances this is run before
      * question instance data caching as it seems more straight forward to have Moodle MUC cache stdClass rather than other
      * classes.
-     * @param      $questionid The question id
-     * @param bool $getoptions Whether to also fetch the question options for each subq.
+     * @param integer  $questionid The question id
+     * @param bool     $getoptions Whether to also fetch the question options for each subq.
      * @return stdClass[]
      */
     public static function get_subq_data_from_db($questionid, $getoptions = false) {
@@ -205,7 +195,7 @@ abstract class qtype_combined_combiner_base {
             'JOIN {question_categories} qc ON q.category = qc.id ' .
             'WHERE q.parent = $1';
 
-        // Load the questions
+        // Load the questions.
         if (!$subqrecs = $DB->get_records_sql($sql, array($questionid))) {
             return array();
         }
@@ -218,7 +208,7 @@ abstract class qtype_combined_combiner_base {
     public function create_subqs_from_subq_data($subquestionsdata) {
         foreach ($subquestionsdata as $subquestiondata) {
             $qtypeid = qtype_combined_type_manager::translate_qtype_to_qtype_identifier($subquestiondata->qtype);
-            $subq = $this->get_question_instance($qtypeid, $subquestiondata->name);
+            $subq = $this->find_or_create_question_instance($qtypeid, $subquestiondata->name);
             $subq->found_in_db($subquestiondata);
         }
     }
@@ -242,21 +232,36 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
      * This method must determine which subqs should appear in the form based on the user submitted question text and also what
      * items have previously been in the form. We don't want to lose any data submitted without a warning
      * when the user removes a subq from the question text.
-     * @param                 $questiontext
+     * @param integer         $questionid
+     * @param string          $questiontext
      * @param moodleform      $combinedform
      * @param MoodleQuickForm $mform
-     * @param                 $repeatenabled
+     * @param boolean         $repeatenabled
      */
-    public function form_for_subqs($questiontext, moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
+    public function form_for_subqs($questionid, $questiontext, moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
         $this->find_included_subqs_in_question_text($questiontext);
 
-        foreach ($this->subqs as $subq) {
+        $this->find_subqs_in_submitted_data();
+
+        $this->load_subq_data_from_db($questionid, true);
+
+
+        foreach ($this->subqs as $i => $subq) {
             $weightingdefault = round(1/count($this->subqs), 7);
             $weightingdefault = "$weightingdefault";
 
             $a = new stdClass();
-            $a->qtype = $subq->type->get_identifier();
-            $a->qid = $subq->get_identifier();
+            $qtypeid = $a->qtype = $subq->type->get_identifier();
+            $qid = $a->qid = $subq->get_identifier();
+
+            if (!$subq->is_in_question_text() && !$subq->preserve_submitted_data()) {
+                // Question removed from question text and no submitted data.
+                if ($subq->is_in_db()) {
+                    $subq->delete();
+                }
+                // Skip to next subq.
+                continue;
+            }
 
             if ($subq->is_in_question_text()) {
                 $headerlegend = get_string('subqheader', 'qtype_combined', $a);
@@ -268,9 +273,8 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
             $mform->addElement('header', $subq->field_name('subqheader'), $headerlegend);
 
             if (!$subq->is_in_question_text()) {
-                $message = $subq->message_in_form_if_not_included_in_question_text();
-                $message = '<div class="not_in_question_text">'.$message.'</div>';
-                $mform->addElement('static', 'notincludedinquestiontext', '', $message);
+                $mform->addElement('hidden', $subq->field_name('notincludedinquestiontextwilldelete'), true);
+                $mform->setType($subq->field_name('notincludedinquestiontextwilldelete'), PARAM_BOOL);
             }
 
             $gradeoptions = question_bank::fraction_options();
@@ -281,10 +285,13 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
             $mform->addElement('editor', $subq->field_name('generalfeedback'), get_string('incorrectfeedback', 'qtype_combined'),
                                array('rows' => 5), $combinedform->editoroptions);
             $mform->setType($subq->field_name('generalfeedback'), PARAM_RAW);
-            $mform->addElement('hidden', $subq->field_name('qtypeid'), $subq->type->get_identifier());
-            $mform->setType($subq->field_name('qtypeid'), PARAM_ALPHANUMEXT);
-
+            // Array key is ignored but we need to make sure that submitted values do not override new element values, so we want
+            // the key to be unique for every subq in a question.
+            $mform->addElement('hidden', "subqfragment_id[{$qtypeid}_{$qid}]", $qid);
+            $mform->addElement('hidden', "subqfragment_type[{$qtypeid}_{$qid}]", $qtypeid);
         }
+        $mform->setType("subqfragment_id", PARAM_ALPHANUM);
+        $mform->setType("subqfragment_type", PARAM_ALPHANUMEXT);
     }
 
     /**
@@ -319,14 +326,23 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
         $fractionsum = 0;
 
         foreach ($this->subqs as $subq) {
-            $errors += $subq->validate();
-
-            $defaultmarkfieldname = $subq->field_name('defaultmark');
-            $fractionsum += $fromform[$defaultmarkfieldname];
+            if ($subq->is_in_form() && $subq->has_submitted_data()) {
+                $errors += $subq->validate();
+            } else {
+                $errors += array($subq->field_name('defaultmark') => get_string('err_fillinthedetailshere', 'qtype_combined'));
+            }
+            if ($subq->is_in_question_text()) {
+                $defaultmarkfieldname = $subq->field_name('defaultmark');
+                $fractionsum += $fromform[$defaultmarkfieldname];
+            } else {
+                $errors += array($subq->field_name('defaultmark') => $subq->message_in_form_if_not_included_in_question_text());
+            }
         }
         if (abs($fractionsum - 1) > 0.00001) {
             foreach ($this->subqs as $subq) {
-                $errors += array($subq->field_name('defaultmark') => get_string('err_weightingsdonotaddup', 'qtype_combined'));
+                if ($subq->is_in_form()) {
+                    $errors += array($subq->field_name('defaultmark') => get_string('err_weightingsdonotaddup', 'qtype_combined'));
+                }
             }
         }
 
@@ -351,6 +367,17 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
             }
         }
         return $toform;
+    }
+
+    /**
+     * Adds subq objects for anything in submitted form data that is not in question text.
+     */
+    public function find_subqs_in_submitted_data() {
+        $ids = optional_param_array('subqfragment_id', array(), PARAM_ALPHANUM);
+        $qtypeids = optional_param_array('subqfragment_type', array(), PARAM_ALPHANUM);
+        foreach ($ids as $subqkey => $id) {
+            $this->find_or_create_question_instance($qtypeids[$subqkey], $id);
+        }
     }
 }
 class qtype_combined_combiner_for_saving_subqs extends qtype_combined_combiner_base {
