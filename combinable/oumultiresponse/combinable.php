@@ -62,10 +62,7 @@ class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinabl
         $mform->addElement('advcheckbox', $this->field_name('shuffleanswers'), get_string('shuffle', 'qtype_gapselect'));
 
         $answerels = array();
-        $answerels[] = $mform->createElement('text',
-                            $this->field_name('answer'),
-                            get_string('choicex', 'qtype_gapselect'),
-                            array('size'=>30, 'class'=>'tweakcss'));
+        $answerels[] = $mform->createElement('text', $this->field_name('answer'), '', array('size'=>30));
         $mform->setType($this->field_name('answer'), PARAM_TEXT);
         $answerels[] = $mform->createElement('advcheckbox',
                                              $this->field_name('correctanswer'),

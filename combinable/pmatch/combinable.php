@@ -59,24 +59,21 @@ class qtype_combined_combinable_pmatch extends qtype_combined_combinable_text_en
      */
     public function add_form_fragment(moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
         $susubels = array();
-        $susubels[] = $mform->createElement('selectyesno', $this->field_name('allowsubscript'),
-                                            get_string('allowsubscript', 'qtype_pmatch'));
+        $susubels[] = $mform->createElement('selectyesno', $this->field_name('allowsubscript'));
         $susubels[] = $mform->createElement('selectyesno', $this->field_name('allowsuperscript'),
                                             get_string('allowsuperscript', 'qtype_pmatch'));
         $mform->addGroup($susubels, $this->field_name('susubels'), get_string('allowsubscript', 'qtype_pmatch'),
-                                                                    '&nbsp;'.get_string('allowsuperscript', 'qtype_pmatch'),
+                                                                    '',
                                                                     false);
         $menu = array(
             get_string('caseno', 'qtype_pmatch'),
             get_string('caseyes', 'qtype_pmatch')
         );
         $casedictels = array();
-        $casedictels[] = $mform->createElement('select', $this->field_name('usecase'), get_string('casesensitive',
-            'qtype_pmatch'), $menu);
+        $casedictels[] = $mform->createElement('select', $this->field_name('usecase'), null, $menu);
         $casedictels[] = $mform->createElement('selectyesno', $this->field_name('applydictionarycheck'),
                                                                             get_string('applydictionarycheck', 'qtype_pmatch'));
-        $mform->addGroup($casedictels, $this->field_name('casedictels'), get_string('casesensitive', 'qtype_pmatch'),
-                                                            '&nbsp;'.get_string('applydictionarycheck', 'qtype_pmatch'), false);
+        $mform->addGroup($casedictels, $this->field_name('casedictels'), get_string('casesensitive', 'qtype_pmatch'), '', false);
         $mform->setDefault($this->field_name('applydictionarycheck'), 1);
         $mform->addElement('textarea', $this->field_name('answer[0]'), get_string('answer', 'question'),
                                                              array('rows' => '6', 'cols' => '80', 'class' => 'textareamonospace'));
