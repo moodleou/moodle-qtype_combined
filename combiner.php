@@ -550,6 +550,19 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
         return max(0, $finalresponsegrade * (1 - $penalty));
     }
 
+    /**
+     * @param $id integer
+     * @return null|qtype_combined_combinable_base
+     */
+    public function find_subq_with_id($id) {
+        foreach ($this->subqs as $subq) {
+            if ($subq->question->id === $id) {
+                return $subq;
+            }
+        }
+        return null;
+    }
+
 }
 
 abstract class qtype_combined_param_to_pass_through_to_subq_base {
