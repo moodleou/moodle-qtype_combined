@@ -80,7 +80,7 @@ class qtype_combined_renderer extends qtype_with_combined_feedback_renderer {
         }
 
         if ($options->feedback) {
-            $this->feedback_for_suqs_not_graded_correct($qa, $options);
+            $output .= $this->feedback_for_suqs_not_graded_correct($qa, $options);
         }
 
         if ($options->generalfeedback) {
@@ -100,7 +100,7 @@ class qtype_combined_renderer extends qtype_with_combined_feedback_renderer {
     protected function feedback_for_suqs_not_graded_correct(question_attempt $qa, question_display_options $options) {
         $feedback = '';
         $question = $qa->get_question();
-        $mainquestionresponse = $qa->get_last_step()->get_all_data();
+        $mainquestionresponse = $qa->get_last_qt_data();
         $subqresponses = new qtype_combined_response_array_param($mainquestionresponse);
         if ($question->is_gradable_response($mainquestionresponse)) {
             $gradeandstates = $question->combiner->call_all_subqs('grade_response', $subqresponses);
