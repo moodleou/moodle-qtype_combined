@@ -647,12 +647,12 @@ class qtype_combined_type_manager {
         if (null === self::$combinableplugins) {
             self::$combinableplugins = array();
             $pluginselsewhere = get_plugin_list_with_file('qtype', 'combinable.php', true);
-            foreach ($pluginselsewhere as $qtypename) {
+            foreach ($pluginselsewhere as $qtypename => $unused) {
                 self::instantiate_type_class($qtypename, self::FOUND_IN_OTHER_QTYPE_DIR);
             }
             $pluginshere = get_list_of_plugins('question/type/combined/combinable');
             foreach ($pluginshere as $qtypename) {
-                include_once($CFG->dirroot.'/question/type/combined/combinable/'.$qtypename.'/combinable.php');
+                require_once($CFG->dirroot.'/question/type/combined/combinable/'.$qtypename.'/combinable.php');
                 self::instantiate_type_class($qtypename, self::FOUND_IN_COMBINABLE_DIR_OF_COMBINED);
             }
         }
