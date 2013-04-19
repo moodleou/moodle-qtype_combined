@@ -68,7 +68,18 @@ class qtype_combined extends question_type {
         $options = $this->save_combined_feedback_helper($options, $fromform, $fromform->context, true);
         $DB->update_record('qtype_combined', $options);
 
-        $combiner->save_subqs($fromform, $fromform->context->id);
+        if (isset($fromform->subquestions)) {
+            // Question import.
+            foreach ($fromform->subquestions as $subquestion) {
+                $subquestion->parent = $fromform->id;
+                $subquestion->context = $fromform->context;
+                $subquestion->category = $fromform->category;
+                question_bank::get_qtype($subquestion->qtype)->save_imported_question($subquestion);
+            }
+
+        } else {
+            $combiner->save_subqs($fromform, $fromform->context->id);
+        }
 
         $this->save_hints($fromform, true);
     }
@@ -127,6 +138,11 @@ class qtype_combined extends question_type {
     public function export_to_xml($question, qformat_xml $format, $extra = null) {
         $output = '';
         $output .= $format->write_combined_feedback($question->options, $question->id, $question->contextid);
+        $output .= "<subquestions>\n";
+        foreach ($question->subquestions as $subquestion) {
+            $output .= $format->writequestion($subquestion);
+        }
+        $output .= "</subquestions>\n";
         return $output;
     }
 
@@ -140,6 +156,8 @@ class qtype_combined extends question_type {
 
         $format->import_combined_feedback($question, $data, true);
         $format->import_hints($question, $data, true, false, $format->get_format($question->questiontextformat));
+
+        $question->subquestions = $format->import_questions($data['#']['subquestions'][0]['#']['question']);
 
         return $question;
     }
