@@ -81,7 +81,7 @@ class qtype_combined extends question_type {
         // Need to process question text to get third param if any.
         $question->combiner->find_included_subqs_in_question_text($questiondata->questiontext);
 
-        $question->combiner->create_subqs_from_subq_data($questiondata->subquestionsdata);
+        $question->combiner->create_subqs_from_subq_data($questiondata->subquestions);
         $question->combiner->make_subqs();
         return $question;
     }
@@ -101,7 +101,7 @@ class qtype_combined extends question_type {
             return false;
         }
         $question->options = $DB->get_record('qtype_combined', array('questionid' => $question->id), '*', MUST_EXIST);
-        $question->subquestionsdata = qtype_combined_combiner_base::get_subq_data_from_db($question->id, true);
+        $question->subquestions = qtype_combined_combiner_base::get_subq_data_from_db($question->id, true);
         return true;
     }
 

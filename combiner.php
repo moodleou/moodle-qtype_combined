@@ -177,8 +177,8 @@ abstract class qtype_combined_combiner_base {
      * @param bool     $getoptions Whether to also fetch the question options for each subq.
      */
     public function load_subq_data_from_db($questionid, $getoptions = false) {
-        $subquestionsdata = static::get_subq_data_from_db($questionid, $getoptions);
-        $this->create_subqs_from_subq_data($subquestionsdata);
+        $subquestions = static::get_subq_data_from_db($questionid, $getoptions);
+        $this->create_subqs_from_subq_data($subquestions);
     }
 
     /**
@@ -205,11 +205,11 @@ abstract class qtype_combined_combiner_base {
         return $subqrecs;
     }
 
-    public function create_subqs_from_subq_data($subquestionsdata) {
-        foreach ($subquestionsdata as $subquestiondata) {
-            $qtypeid = qtype_combined_type_manager::translate_qtype_to_qtype_identifier($subquestiondata->qtype);
-            $subq = $this->find_or_create_question_instance($qtypeid, $subquestiondata->name);
-            $subq->found_in_db($subquestiondata);
+    public function create_subqs_from_subq_data($subquestions) {
+        foreach ($subquestions as $subquestion) {
+            $qtypeid = qtype_combined_type_manager::translate_qtype_to_qtype_identifier($subquestion->qtype);
+            $subq = $this->find_or_create_question_instance($qtypeid, $subquestion->name);
+            $subq->found_in_db($subquestion);
         }
     }
 }
