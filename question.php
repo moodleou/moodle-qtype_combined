@@ -76,7 +76,9 @@ class qtype_combined_question extends question_graded_automatically_with_countba
     }
 
     public function get_validation_error(array $response) {
-        return get_string('validationerror', 'qtype_combined');
+        $subqerrors = $this->combiner->call_all_subqs('get_validation_error', new qtype_combined_response_array_param($response));
+        // All sub-questions are complete if none of the method calls returned false.
+        return join("<br />\n", $subqerrors);
     }
 
     public function is_same_response(array $prevresponse, array $newresponse) {
