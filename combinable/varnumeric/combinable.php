@@ -42,7 +42,7 @@ class qtype_combined_combinable_type_varnumeric extends qtype_combined_combinabl
                         'syserrorpenalty' => '0.0');
     }
 
-    public function get_question_option_fields() {
+    public function subq_form_fragment_question_option_fields() {
         return array('requirescinotation' => null);
     }
 

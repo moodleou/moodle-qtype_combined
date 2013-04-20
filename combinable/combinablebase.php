@@ -37,8 +37,17 @@ abstract class qtype_combined_combinable_type_base {
      */
     protected $identifier = null;
 
+    /**
+     * @var this is the internal Moodle question type name.
+     */
     protected $qtypename;
 
+    /**
+     * @param string $qtypename this is the internal Moodle question type name
+     * @param integer $foundwhere
+     * @see qtype_combined_type_manager::FOUND_IN_COMBINABLE_DIR_OF_COMBINED
+     * @see qtype_combined_type_manager::FOUND_IN_OTHER_QTYPE_DIR
+     */
     public function __construct($qtypename, $foundwhere) {
         $this->qtypename = $qtypename;
         $this->foundwhere = $foundwhere;
@@ -67,12 +76,16 @@ abstract class qtype_combined_combinable_type_base {
     }
 
     /**
-     * @return string question type identifier used in question text that can be different to question type name.
+     * @return string question type identifier used in question text that can be different to internal Moodle question type name.
      */
     public function get_identifier() {
         return $this->identifier;
     }
 
+    /**
+     * @param bool $withparts
+     * @return array
+     */
     protected function combined_feedback_properties($withparts = true) {
         $properties = array();
         foreach (array('correct', 'partiallycorrect', 'incorrect') as $feedbacktype) {
@@ -84,10 +97,25 @@ abstract class qtype_combined_combinable_type_base {
         return $properties;
     }
 
+    /**
+     * Extra properties to add to data from subq form fragment before passing the data through to the save_question method for this
+     * question type. Needed as question_type save_question method is expecting full data from full question form.
+     * @return array with keys being form field names and values being value to pass.
+     */
     abstract protected function extra_question_properties();
 
+    /**
+     * Extra per answer properties to add to add to each answer's data from subq form fragment before passing the data through to
+     * the  save_question method for this question type.
+     * @return array with keys being form field names and values being value to pass.
+     */
     abstract protected function extra_answer_properties();
 
+    /**
+     * Add properties to each answer.
+     * @param stdClass $questiondata
+     * @return stdClass
+     */
     protected function add_per_answer_properties($questiondata) {
         foreach (array_keys($questiondata->answer) as $answerkey) {
             foreach ($this->extra_answer_properties() as $prop => $value) {
@@ -98,8 +126,8 @@ abstract class qtype_combined_combinable_type_base {
     }
 
     /**
-     * Default just adds defaults from default_question_properties but this might be extended in
-     * child class.
+     * Default just adds defaults from extra_question_properties but this might be extended in
+     * child class if we also need to do something more complex.
      *
      * @param $questiondata
      * @return object transformed question data to be passed to qtype save_question method.
@@ -111,6 +139,12 @@ abstract class qtype_combined_combinable_type_base {
         return $questiondata;
     }
 
+    /**
+     * Do the full transform to convert data from sub q form fragment to something that will be accepted by
+     * question type save_question method.
+     * @param stdClass $subqdata
+     * @return stdClass fleshed out subq data as if from the full question form. Field name prefixes not added yet.
+     */
     protected function transform_subq_form_data_to_full($subqdata) {
         $data = $this->add_question_properties($subqdata);
         return $this->add_per_answer_properties($data);
@@ -124,25 +158,33 @@ abstract class qtype_combined_combinable_type_base {
     }
 
     /**
-     * @return question_type for this subq type
+     * @return question_type object for this subq type
      */
     protected function get_qtype_obj() {
         return question_bank::get_qtype($this->get_qtype_name(), true);
     }
 
     /**
-     * @param $questiondata stdClass question record object to add extra options to.
+     * @param $questiondata stdClass question record object. Options are added to $questiondata->options
      */
     public function get_question_options($questiondata) {
         $this->get_qtype_obj()->get_question_options($questiondata);
     }
 
-    public function delete_question($questionid, $contextid) {
+    /**
+     * @param integer $subquestionid
+     * @param integer $contextid
+     */
+    public function delete_question($subquestionid, $contextid) {
         global $DB;
-        $DB->delete_records('question', array('id' => $questionid));
-        $this->get_qtype_obj()->delete_question($questionid, $contextid);
+        $DB->delete_records('question', array('id' => $subquestionid));
+        $this->get_qtype_obj()->delete_question($subquestionid, $contextid);
     }
 
+    /**
+     * @param stdClass $oldsubq
+     * @param stdClass $subqdata
+     */
     public function save($oldsubq, $subqdata) {
         if ($oldsubq === null) {
             $oldsubq = new stdClass();
@@ -153,10 +195,14 @@ abstract class qtype_combined_combinable_type_base {
     }
 
     /**
-     * @return array keys are field names of extra question fields in subq
-     *               form values are how to test for default null means don't check, true means not empty, false means empty.
+     * Information about what values to expect from subq form fragment and how to tell if form fragment is empty.
+     * @return array keys are field names of extra question fields in subq form,
+     * values are how to test if the field is empty,
+     * null value means don't check,
+     * true value means default not empty,
+     * false value means default empty.
      */
-    public function get_question_option_fields() {
+    public function subq_form_fragment_question_option_fields() {
         return array();
     }
 
@@ -173,6 +219,9 @@ abstract class qtype_combined_combinable_base {
      */
     protected $foundinquestiontext = false;
 
+    /**
+     * @var null|stdClass loaded from the db, might have property options with question options loaded into it.
+     */
     protected $questionrec = null;
 
     /**
@@ -196,6 +245,10 @@ abstract class qtype_combined_combinable_base {
      */
     public $type;
 
+    /**
+     * @param qtype_combined_combinable_type_base $type
+     * @param string $questionidentifier from question text
+     */
     public function __construct($type, $questionidentifier) {
         $this->type = $type;
         $this->questionidentifier = $questionidentifier;
@@ -208,11 +261,18 @@ abstract class qtype_combined_combinable_base {
         return false;
     }
 
+    /**
+     * @return string used in forms and response data
+     */
     protected function field_name_prefix() {
         $prefix = str_replace('{qid}', $this->questionidentifier, qtype_combined_combiner_base::FIELD_NAME_PREFIX);
         return str_replace('{qtype}', $this->type->get_identifier(), $prefix);
     }
 
+    /**
+     * @param $elementname field name
+     * @return string field name with prefix unique to this subq
+     */
     public function field_name($elementname) {
         return $this->field_name_prefix().$elementname;
     }
@@ -229,12 +289,19 @@ abstract class qtype_combined_combinable_base {
     /**
      * @param moodleform      $combinedform
      * @param MoodleQuickForm $mform
-     * @param                 $repeatenabled
+     * @param bool            $repeatenabled
      */
-    abstract public function add_form_fragment(moodleform $combinedform, MoodleQuickForm $mform,
-                                               $repeatenabled);
+    abstract public function add_form_fragment(moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled);
 
-
+    /**
+     * Prepare editor data for form.
+     * @param string $component
+     * @param string $fieldname
+     * @param stdClass $object
+     * @param context $context
+     * @param array $fileoptions text and file options ('subdirs'=>false, 'forcehttps'=>false)
+     * @return array data for form
+     */
     protected function editor_data_to_form($component, $fieldname, $object, $context, $fileoptions) {
         if ($object !== null) {
             $subquestionid = $this->questionrec->id;
@@ -256,6 +323,7 @@ abstract class qtype_combined_combinable_base {
     }
 
     /**
+     * Prepare data to populate form.
      * @param $context
      * @param $fileoptions
      * @return array data to go in form from db with field name as array key not yet with additional question instance prefix.
@@ -267,13 +335,17 @@ abstract class qtype_combined_combinable_base {
             return $generalfb;
         } else {
             $subqoptions = array();
-            foreach (array_keys($this->type->get_question_option_fields()) as $fieldname) {
+            foreach (array_keys($this->type->subq_form_fragment_question_option_fields()) as $fieldname) {
                 $subqoptions[$fieldname] = $this->questionrec->options->$fieldname;
             }
             return array('defaultmark' => $this->questionrec->defaultmark) + $generalfb + $subqoptions;
         }
     }
 
+    /**
+     * Hash to pass to get_string
+     * @return stdClass
+     */
     protected function get_string_hash() {
         $getstringhash = new stdClass();
         $getstringhash->qtype = $this->type->get_identifier();
@@ -281,6 +353,11 @@ abstract class qtype_combined_combinable_base {
         return $getstringhash;
     }
 
+    /**
+     * This sub question has been found in question text. Store third param, third param is null if no third param.
+     * @param $thirdparam null|mixed the third param in the embedded code, null if only two params in embedded code.
+     * @return null|string null if OK, string returned if there is an error.
+     */
     public function found_in_question_text($thirdparam) {
         if ($this->foundinquestiontext && !$this->can_be_more_than_one_of_same_instance()) {
             $getstringhash = $this->get_string_hash();
@@ -307,6 +384,10 @@ abstract class qtype_combined_combinable_base {
      */
     abstract public function validate();
 
+    /**
+     * Extracts the data for this sub question from the full form data.
+     * @param stdClass $allformdata
+     */
     public function get_this_form_data_from($allformdata) {
         $this->formdata = new stdClass();
         foreach ($allformdata as $key => $value) {
@@ -322,23 +403,44 @@ abstract class qtype_combined_combinable_base {
 
     }
 
+    /**
+     * @return bool has this sub question been found in question text.
+     */
     public function is_in_question_text() {
         return $this->foundinquestiontext;
     }
+
+    /**
+     * @return bool has it been loaded from db.
+     */
     public function is_in_db() {
         return $this->questionrec !== null;
     }
+
+    /**
+     * @return bool has form data been found in form.
+     */
     public function is_in_form() {
         return $this->formdata !== null;
     }
+
+    /**
+     * @return string
+     */
     public function get_identifier() {
         return $this->questionidentifier;
     }
 
+    /**
+     * @param $questionrec
+     */
     public function found_in_db($questionrec) {
         $this->questionrec = $questionrec;
     }
 
+    /**
+     * @return bool
+     */
     public function preserve_submitted_data() {
         return ($this->has_submitted_data()
             && !optional_param($this->field_name('notincludedinquestiontextwilldelete'), false, PARAM_BOOL));
@@ -349,7 +451,7 @@ abstract class qtype_combined_combinable_base {
      * @return bool Has the user entered data in this sub question form fragment?
      */
     public function has_submitted_data() {
-        if ($this->question_option_fields_have_submitted_data()) {
+        if ($this->has_submitted_question_option_data()) {
             return true;
         } else if ($this->html_field_has_submitted_data('generalfeedback')) {
             return true;
@@ -358,14 +460,20 @@ abstract class qtype_combined_combinable_base {
         }
     }
 
+    /**
+     * @param $fieldname
+     * @return bool
+     */
     protected function html_field_has_submitted_data($fieldname) {
         $htmlfielddata = optional_param_array($this->field_name($fieldname), array(), PARAM_RAW_TRIMMED);
         return isset($htmlfielddata['text']) && !html_is_blank($htmlfielddata['text']);
     }
 
-
-    protected function question_option_fields_have_submitted_data() {
-        foreach ($this->type->get_question_option_fields() as $fieldname => $default) {
+    /**
+     * @return bool
+     */
+    protected function has_submitted_question_option_data() {
+        foreach ($this->type->subq_form_fragment_question_option_fields() as $fieldname => $default) {
             if ($default === false) { // Default is empty.
                 if (optional_param($this->field_name($fieldname), false, PARAM_BOOL)) {
                     // Has data if true.
@@ -381,6 +489,10 @@ abstract class qtype_combined_combinable_base {
         return false;
     }
 
+    /**
+     * @param $fieldname
+     * @return bool
+     */
     protected function text_array_has_submitted_data($fieldname) {
         foreach (optional_param_array($this->field_name($fieldname), array(), PARAM_RAW_TRIMMED) as $value) {
             if ('' !== $value) {
@@ -390,6 +502,10 @@ abstract class qtype_combined_combinable_base {
         return false;
     }
 
+    /**
+     * Save question data.
+     * @param $contextid
+     */
     public function save($contextid) {
         $this->formdata->name = $this->get_identifier();
         $this->type->save($this->questionrec, $this->formdata);
@@ -399,18 +515,31 @@ abstract class qtype_combined_combinable_base {
         $this->type->delete_question($this->questionrec->id, $this->questionrec->contextid);
     }
 
+    /**
+     * @return string human readable instructions to be used in validation error strings in from to tell user how to construct
+     * embed code.
+     */
     abstract protected function code_construction_instructions();
 
+    /**
+     * @return string
+     */
     public function message_in_form_if_not_included_in_question_text() {
         $a = $this->code_construction_instructions();
         return get_string('err_subq_not_included_in_question_text', 'qtype_combined', $a);
     }
 
-
+    /**
+     * Instantiate the question_definition class for run time question.
+     */
     public function make() {
         $this->question = question_bank::make_question($this->questionrec);
     }
 
+    /**
+     * @return array one or more embed codes to replace in question text. Key $place is passed through to renderer to know which
+     *                  embedded control to render.
+     */
     public function question_text_embed_codes() {
         $codes = array();
         foreach ($this->get_third_params() as $place => $thirdparam) {
@@ -425,15 +554,26 @@ abstract class qtype_combined_combinable_base {
         return $codes;
     }
 
+    /**
+     * @return array The third params found in question text. One control is rendered for each value in this array. Key $place is
+     * passed through  to renderer to know which embedded control to render.
+     */
     abstract protected function get_third_params();
 }
 
-
+/**
+ * Class qtype_combined_combinable_accepts_third_param_validated_with_pattern
+ */
 abstract class qtype_combined_combinable_accepts_third_param_validated_with_pattern
     extends qtype_combined_combinable_base {
 
+    /** Needs to be overridden in child class. */
     const THIRD_PARAM_PATTERN = '!undefined!';
 
+    /**
+     * @param string $thirdparam
+     * @return string|null string if there is an error or null.
+     */
     protected function process_third_param($thirdparam) {
         $error = $this->validate_third_param($thirdparam);
         if (null !== $error) {
@@ -444,14 +584,21 @@ abstract class qtype_combined_combinable_accepts_third_param_validated_with_patt
         }
     }
 
+    /**
+     * @param $thirdparam
+     */
     abstract protected function store_third_param($thirdparam);
 
+    /**
+     * @param $thirdparam
+     * @return string
+     */
     abstract protected function error_string_when_third_param_fails_validation($thirdparam);
 
     /**
      * Validation for the extra info after second colon, if any.
      * @param $thirdparam string|null the extra info found in square brackets -  anything after second colon
-     * @return array empty if no error or any array of errors to display in the form if there are errors.
+     * @return string|null null if no error or any array of errors to display in the form if there are errors.
      */
     public function validate_third_param($thirdparam) {
         if ($thirdparam === null) {
@@ -465,6 +612,9 @@ abstract class qtype_combined_combinable_accepts_third_param_validated_with_patt
     }
 }
 
+/**
+ * Class qtype_combined_combinable_text_entry
+ */
 abstract class qtype_combined_combinable_text_entry
     extends qtype_combined_combinable_accepts_third_param_validated_with_pattern {
 
@@ -475,24 +625,40 @@ abstract class qtype_combined_combinable_text_entry
 
     const THIRD_PARAM_PATTERN = '!_+[0-9]*_+$!A';
 
+    /**
+     * @param $thirdparam
+     * @return string
+     */
     protected function error_string_when_third_param_fails_validation($thirdparam) {
         $qtypeid = $this->type->get_identifier();
         return get_string('err_invalid_width_specifier_postfix', 'qtype_combined', $qtypeid);
     }
 
+    /**
+     * @return string
+     */
     protected function code_construction_instructions() {
         $a = $this->get_string_hash();
         return get_string('widthspecifier_embed_code', 'qtype_combined', $a);
     }
 
+    /**
+     * @param string $thirdparam
+     */
     protected function store_third_param($thirdparam) {
         $this->widthparam = $thirdparam;
     }
 
+    /**
+     * @return array
+     */
     protected function get_third_params() {
         return array($this->widthparam);
     }
 
+    /**
+     * @return float
+     */
     public function get_width() {
         $matches = array();
         if (null === $this->widthparam) {
@@ -510,6 +676,10 @@ abstract class qtype_combined_combinable_text_entry
      */
     abstract public function get_sup_sub_editor_option();
 }
+
+/**
+ * Class qtype_combined_combinable_accepts_vertical_or_horizontal_layout_param
+ */
 abstract class qtype_combined_combinable_accepts_vertical_or_horizontal_layout_param
     extends qtype_combined_combinable_accepts_third_param_validated_with_pattern {
 
@@ -520,34 +690,57 @@ abstract class qtype_combined_combinable_accepts_vertical_or_horizontal_layout_p
 
     const THIRD_PARAM_PATTERN = '![vh]$!A';
 
+    /**
+     * @param $thirdparam
+     * @return string
+     */
     protected function error_string_when_third_param_fails_validation($thirdparam) {
         $qtypeid = $this->type->get_identifier();
         return get_string('err_accepts_vertical_or_horizontal_layout_param', 'qtype_combined', $qtypeid);
     }
 
+    /**
+     * @return string
+     */
     protected function code_construction_instructions() {
         $a = $this->get_string_hash();
         return get_string('vertical_or_horizontal_embed_code', 'qtype_combined', $a);
     }
 
+    /**
+     * @param $thirdparam
+     */
     protected function store_third_param($thirdparam) {
         $this->layoutparam = $thirdparam;
     }
 
+    /**
+     * @return null|string
+     */
     public function get_layout() {
         return $this->layoutparam;
     }
 
+    /**
+     * @return array
+     */
     protected function get_third_params() {
         return array($this->layoutparam);
     }
 }
 
-
+/**
+ * Class qtype_combined_combinable_accepts_numerical_param
+ */
 abstract class qtype_combined_combinable_accepts_numerical_param
     extends qtype_combined_combinable_accepts_third_param_validated_with_pattern {
+
     const THIRD_PARAM_PATTERN = '![0-9]+$!A';
 
+    /**
+     * @param $thirdparam
+     * @return string
+     */
     protected function error_string_when_third_param_fails_validation($thirdparam) {
         $qtypeid = $this->type->get_identifier();
         return get_string('err_invalid_number', 'qtype_combined', $qtypeid);

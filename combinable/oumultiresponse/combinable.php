@@ -38,7 +38,7 @@ class qtype_combined_combinable_type_oumultiresponse extends qtype_combined_comb
         return array('feedback' => array('text' => '', 'format' => FORMAT_PLAIN));
     }
 
-    public function get_question_option_fields() {
+    public function subq_form_fragment_question_option_fields() {
         return array('shuffleanswers' => false);
     }
 

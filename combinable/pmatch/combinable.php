@@ -40,7 +40,7 @@ class qtype_combined_combinable_type_pmatch extends qtype_combined_combinable_ty
         return array('fraction' => '1', 'feedback' => array('text' => '', 'format' => FORMAT_PLAIN));
     }
 
-    public function get_question_option_fields() {
+    public function subq_form_fragment_question_option_fields() {
         return array('allowsubscript' => null,
                      'allowsuperscript' => null,
                      'usecase' => null,

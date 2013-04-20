@@ -41,21 +41,26 @@ abstract class qtype_combined_combiner_base {
      */
     protected $subqs = array();
 
-
+    /**
+     * EMBEDDED_CODE_* and VALID_QUESTION_* defines the syntax for embedded subqs in question text.
+     */
     const EMBEDDED_CODE_PREFIX = '[[';
+
     const EMBEDDED_CODE_POSTFIX = ']]';
+
     const EMBEDDED_CODE_SEPARATOR = ':';
 
-    const FIELD_NAME_PREFIX = 'subq:{qtype}:{qid}:';
+    /** Question identifier must be one or more alphanumeric characters. */
+    const VALID_QUESTION_IDENTIFIER_PATTTERN = '[a-zA-Z0-9]+';
+
+    /** Question type identifier must be one or more alphanumeric characters and / or underscores and / or hyphens. */
+    const VALID_QUESTION_TYPE_IDENTIFIER_PATTTERN = '[a-zA-Z0-9_-]+';
 
     /**
-     * Question identifier must be one or more alphanumeric characters
+     * Prefix both for field names in sub question form fragments and also for collecting student responses in run-time question.
      */
-    const VALID_QUESTION_IDENTIFIER_PATTTERN = '[a-zA-Z0-9]+';
-    /**
-     * Question identifier must be one or more alphanumeric characters
-     */
-    const VALID_QUESTION_TYPE_IDENTIFIER_PATTTERN = '[a-zA-Z0-9_-]+';
+    const FIELD_NAME_PREFIX = 'subq:{qtype}:{qid}:';
+
 
     /**
      * Creates array of subq objects from the embedded codes in the question text.
@@ -205,6 +210,9 @@ abstract class qtype_combined_combiner_base {
         return $subqrecs;
     }
 
+    /**
+     * @param $subquestions
+     */
     public function create_subqs_from_subq_data($subquestions) {
         foreach ($subquestions as $subquestion) {
             $qtypeid = qtype_combined_type_manager::translate_qtype_to_qtype_identifier($subquestion->qtype);
@@ -214,6 +222,9 @@ abstract class qtype_combined_combiner_base {
     }
 }
 
+/**
+ * Class qtype_combined_combiner_for_form
+ */
 class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
 
     /**
@@ -295,6 +306,7 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
     }
 
     /**
+     * Validate both the embedded codes in question text and the data from subq form fragments.
      * @param $fromform array data from form
      * @param $files array not used for now no subq type requires this.
      * @return array of errors to display in form or empty array if no errors.
@@ -305,7 +317,11 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
         return $errors;
     }
 
-
+    /**
+     * Validate embedded codes in question text.
+     * @param string $questiontext
+     * @return array of errors or empty array if there are no errors.
+     */
     protected function validate_question_text($questiontext) {
         $questiontexterror = $this->find_included_subqs_in_question_text($questiontext);
         if ($questiontexterror !== null) {
@@ -317,6 +333,7 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
     }
 
     /**
+     * Validate the subq form fragments data.
      * @param $fromform array all data from form
      * @return array of errors from subq form elements or empty array if no errors.
      */
@@ -380,9 +397,15 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
         }
     }
 }
+
+/**
+ * Class qtype_combined_combiner_for_saving_subqs
+ */
 class qtype_combined_combiner_for_saving_subqs extends qtype_combined_combiner_base {
 
     /**
+     * Save subq data. Default values are added to the values from the form and then the data is passed through to the
+     * save_question method for that question_type.
      * @param $fromform stdClass Data from form
      * @param $contextid integer question context id
      */
@@ -398,8 +421,14 @@ class qtype_combined_combiner_for_saving_subqs extends qtype_combined_combiner_b
 
 }
 
+/**
+ * Class qtype_combined_combiner_for_run_time_question_instance
+ */
 class qtype_combined_combiner_for_run_time_question_instance extends qtype_combined_combiner_base {
 
+    /**
+     * Instantiate question_definition classes for all subqs.
+     */
     public function make_subqs() {
         foreach ($this->subqs as $subq) {
             $subq->make();
@@ -424,8 +453,9 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
     }
 
     /**
-     * @param $substep question_attempt_step_subquestion_adapter|null
-     * @param $response array
+     * Take a response array from a subq and add prefixes.
+     * @param question_attempt_step_subquestion_adapter|null $substep
+     * @param array $response
      * @return array
      */
     protected function add_prefixes_to_response_array($substep, $response) {
@@ -439,7 +469,7 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
     /**
      * Call a method on question_definition object for all sub questions.
      * @param string $methodname
-     * @param qtype_combined_param_to_pass_through_to_subq_base|mixed  $params,....
+     * @param qtype_combined_param_to_pass_through_to_subq_base|mixed  $params,.... a variable number of arguments (or none)
      * @return array of return values returned from method call on all subqs.
      */
     public function call_all_subqs($methodname/*, ... */) {
@@ -474,6 +504,11 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
         return call_user_func_array(array($subq->question, $methodname), $paramsarrayfiltered);
     }
 
+    /**
+     * @param $i
+     * @param $propertyname
+     * @return mixed
+     */
     public function get_subq_property($i, $propertyname) {
         return $this->subqs[$i]->question->{$propertyname};
     }
@@ -492,6 +527,11 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
         return $aggregated;
     }
 
+    /**
+     * @param $responses
+     * @param $totaltries
+     * @return number
+     */
     public function compute_final_grade($responses, $totaltries) {
         $allresponses = new qtype_combined_array_of_response_arrays_param($responses);
         foreach ($this->subqs as $subqno => $subq) {
@@ -565,40 +605,72 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
 
 }
 
+/**
+ * Class qtype_combined_param_to_pass_through_to_subq_base
+ * Children of this class is used in run time combiner class calls to subqs to transform params from main question to pass to subq.
+ * @see qtype_combined_combiner_for_run_time_question_instance::call_subq
+ * @see qtype_combined_combiner_for_run_time_question_instance::call_all_subqs
+ */
 abstract class qtype_combined_param_to_pass_through_to_subq_base {
+    /**
+     * @param $alldata
+     */
     abstract public function __construct($alldata);
 
+    /**
+     * @param $subq
+     * @return mixed
+     */
     abstract public function for_subq($subq);
 }
 
+/**
+ * Class qtype_combined_response_array_param
+ * Take main question response array and find part for each subq.
+ */
 class qtype_combined_response_array_param extends qtype_combined_param_to_pass_through_to_subq_base {
     /**
      * @var array
      */
     protected $responsearray;
 
+    /**
+     * @param array $responsearray
+     */
     public function __construct($responsearray) {
         $this->responsearray = $responsearray;
     }
 
+    /**
+     * @param $subq
+     * @return array response filtered for subq
+     */
     public function for_subq($subq) {
         return $subq->get_substep(null)->filter_array($this->responsearray);
     }
 
 }
+
+/**
+ * Class qtype_combined_array_of_response_arrays_param
+ * Take an array of response arrays and return an array of response arrays for each subq.
+ */
 class qtype_combined_array_of_response_arrays_param extends qtype_combined_param_to_pass_through_to_subq_base {
     /**
      * @var array
      */
     protected $responsearrays;
 
+    /**
+     * @param $responsearrays
+     */
     public function __construct($responsearrays) {
         $this->responsearrays = $responsearrays;
     }
 
     /**
      * @param $subq qtype_combined_combinable_base
-     * @return array of filtered response for subq
+     * @return array of arrays of filtered response for subq
      */
     public function for_subq($subq) {
         $filtered = array();
@@ -609,12 +681,18 @@ class qtype_combined_array_of_response_arrays_param extends qtype_combined_param
     }
 }
 
+/**
+ * Class qtype_combined_step_param
+ */
 class qtype_combined_step_param extends qtype_combined_param_to_pass_through_to_subq_base {
     /**
-     * @var array
+     * @var question_attempt_step
      */
     protected $step;
 
+    /**
+     * @param $step question_attempt_step for the main question.
+     */
     public function __construct($step) {
         $this->step = $step;
     }
@@ -628,15 +706,26 @@ class qtype_combined_step_param extends qtype_combined_param_to_pass_through_to_
     }
 }
 
+/**
+ * Class qtype_combined_type_manager
+ */
 class qtype_combined_type_manager {
 
     /**
-     * @var array containing qtype indentifier string => qtype_combined_combinable_type_base child classes.
+     * @var qtype_combined_combinable_type_base[] key is qtype indentifier string.
      */
     protected static $combinableplugins = null;
 
+    /**
+     * The combinable class is in question/type/combined/combinable/{qtypename}/combinable.php.
+     * We expect to find renderer.php for subq in the same directory.
+     */
     const FOUND_IN_COMBINABLE_DIR_OF_COMBINED = 1;
 
+    /**
+     * The combinable class is in question/type/{qtypename}/combinable.php
+     * Subq renderer class should be in question/type/{qtypename}/renderer.php.
+     */
     const FOUND_IN_OTHER_QTYPE_DIR = 2;
 
     /**
@@ -658,12 +747,20 @@ class qtype_combined_type_manager {
         }
     }
 
+    /**
+     * @param string $qtypename
+     * @param integer $where FOUND_IN_COMBINABLE_DIR_OF_COMBINED or FOUND_IN_OTHER_QTYPE_DIR
+     */
     protected static function instantiate_type_class($qtypename, $where) {
         $classname = 'qtype_combined_combinable_type_'.$qtypename;
         $typeobj = new $classname($qtypename, $where);
         self::$combinableplugins[$typeobj->get_identifier()] = $typeobj;
     }
 
+    /**
+     * @param $typeidentifier the identifier as found in the question text.
+     * @return bool
+     */
     public static function is_identifier_known($typeidentifier) {
         self::find_and_load_all_combinable_qtype_hook_classes();
         return isset(self::$combinableplugins[$typeidentifier]);

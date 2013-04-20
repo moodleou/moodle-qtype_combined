@@ -38,7 +38,7 @@ class qtype_combined_combinable_type_gapselect extends qtype_combined_combinable
         return array();
     }
 
-    public function get_question_option_fields() {
+    public function subq_form_fragment_question_option_fields() {
         return array('shuffleanswers' => false);
     }
 
