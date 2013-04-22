@@ -439,7 +439,7 @@ abstract class qtype_combined_combinable_base {
     }
 
     /**
-     * @return bool
+     * @return bool Should form fragment for this subq be redisplayed to prevent data loss.
      */
     public function preserve_submitted_data() {
         return ($this->has_submitted_data()
@@ -491,11 +491,11 @@ abstract class qtype_combined_combinable_base {
 
     /**
      * @param $fieldname
-     * @return bool
+     * @return bool is the submitted data in array with index $fieldname for this subq empty?
      */
-    protected function text_array_has_submitted_data($fieldname) {
+    protected function submitted_data_array_not_empty($fieldname) {
         foreach (optional_param_array($this->field_name($fieldname), array(), PARAM_RAW_TRIMMED) as $value) {
-            if ('' !== $value) {
+            if (!empty($value)) {
                 return true;
             }
         }

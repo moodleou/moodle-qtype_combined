@@ -130,8 +130,8 @@ class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinabl
     }
 
     public function has_submitted_data() {
-        return $this->text_array_has_submitted_data('correctanswer') ||
-                $this->text_array_has_submitted_data('answer') ||
+        return $this->submitted_data_array_not_empty('correctanswer') ||
+                $this->submitted_data_array_not_empty('answer') ||
                 parent::has_submitted_data();
     }
 

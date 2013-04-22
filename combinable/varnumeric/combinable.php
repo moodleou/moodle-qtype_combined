@@ -106,8 +106,8 @@ class qtype_combined_combinable_varnumeric extends qtype_combined_combinable_tex
     }
 
     public function has_submitted_data() {
-        return $this->text_array_has_submitted_data('answer') ||
-                $this->text_array_has_submitted_data('error') ||
+        return $this->submitted_data_array_not_empty('answer') ||
+                $this->submitted_data_array_not_empty('error') ||
                 parent::has_submitted_data();
     }
 }
