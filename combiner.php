@@ -258,21 +258,21 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
 
 
         foreach ($this->subqs as $i => $subq) {
+            if (!$subq->is_in_question_text() && !$subq->preserve_submitted_data()) {
+                if ($subq->is_in_db()) {
+                    $subq->delete();
+                }
+                unset($this->subqs[$i]);
+            }
+        }
+        foreach ($this->subqs as $subq) {
+
             $weightingdefault = round(1/count($this->subqs), 7);
             $weightingdefault = "$weightingdefault";
 
             $a = new stdClass();
             $qtypeid = $a->qtype = $subq->type->get_identifier();
             $qid = $a->qid = $subq->get_identifier();
-
-            if (!$subq->is_in_question_text() && !$subq->preserve_submitted_data()) {
-                // Question removed from question text and no submitted data.
-                if ($subq->is_in_db()) {
-                    $subq->delete();
-                }
-                // Skip to next subq.
-                continue;
-            }
 
             if ($subq->is_in_question_text()) {
                 $headerlegend = get_string('subqheader', 'qtype_combined', $a);
