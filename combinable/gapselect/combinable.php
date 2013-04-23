@@ -94,7 +94,7 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
                                         QUESTION_NUMANS_ADD,
                                         get_string('addmorechoiceblanks', 'qtype_gapselect'),
                                         true);
-        $mform->setType($this->field_name('answer'), PARAM_TEXT);
+        $mform->setType($this->field_name('answer'), PARAM_RAW_TRIMMED);
 
     }
 
@@ -151,10 +151,7 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
     }
 
     protected function code_construction_instructions() {
-        $a = $this->get_string_hash();
-        $count = count($this->questionrec->options->answers);
-        $a->choices = "1-{$count}";
-        return get_string('correct_choice_embed_code', 'qtype_combined', $a);
+        return get_string('correct_choice_embed_code', 'qtype_combined', $this->get_string_hash());
     }
 
     public function save($contextid) {
