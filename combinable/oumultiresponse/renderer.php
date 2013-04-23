@@ -50,7 +50,7 @@ class qtype_combined_oumultiresponse_embedded_renderer extends qtype_combined_em
         $feedbackimg = array();
         $classes = array();
         foreach ($question->get_order($qa) as $value => $ansid) {
-            $inputname = $qa->get_qt_field_name($subq->field_name('choice'.$value));
+            $inputname = $qa->get_qt_field_name($subq->step_data_name('choice'.$value));
             $ans = $question->answers[$ansid];
             $inputattributes = array();
             $inputattributes['name'] = $inputname;

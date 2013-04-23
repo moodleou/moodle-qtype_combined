@@ -59,18 +59,18 @@ class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinabl
      * @param                 $repeatenabled
      */
     public function add_form_fragment(moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
-        $mform->addElement('advcheckbox', $this->field_name('shuffleanswers'), get_string('shuffle', 'qtype_gapselect'));
+        $mform->addElement('advcheckbox', $this->form_field_name('shuffleanswers'), get_string('shuffle', 'qtype_gapselect'));
 
         $answerels = array();
-        $answerels[] = $mform->createElement('text', $this->field_name('answer'), '', array('size'=>30));
-        $mform->setType($this->field_name('answer'), PARAM_TEXT);
+        $answerels[] = $mform->createElement('text', $this->form_field_name('answer'), '', array('size'=>30));
+        $mform->setType($this->form_field_name('answer'), PARAM_TEXT);
         $answerels[] = $mform->createElement('advcheckbox',
-                                             $this->field_name('correctanswer'),
+                                             $this->form_field_name('correctanswer'),
                                              get_string('correct', 'qtype_combined'),
                                              get_string('correct', 'qtype_combined'));
 
         $answergroupel = $mform->createElement('group',
-                                               $this->field_name('answergroup'),
+                                               $this->form_field_name('answergroup'),
                                                get_string('choiceno', 'qtype_multichoice', '{no}'),
                                                $answerels,
                                                null,
@@ -91,8 +91,8 @@ class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinabl
         $combinedform->repeat_elements(array($answergroupel),
             $repeatsatstart,
             array(),
-            $this->field_name('noofchoices'),
-            $this->field_name('morechoices'),
+            $this->form_field_name('noofchoices'),
+            $this->form_field_name('morechoices'),
             QUESTION_NUMANS_ADD,
             get_string('addmorechoiceblanks', 'qtype_gapselect'),
             true);
@@ -117,14 +117,14 @@ class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinabl
             if ('' !== trim($answer)) {
                 $nonemptyanswerblanks[] = $anskey;
             } else if ($this->formdata->correctanswer[$anskey]) {
-                $errors[$this->field_name("answergroup[{$anskey}]")] = get_string('err_correctanswerblank', 'qtype_combined');
+                $errors[$this->form_field_name("answergroup[{$anskey}]")] = get_string('err_correctanswerblank', 'qtype_combined');
             }
         }
         if (count($nonemptyanswerblanks) < 2) {
-            $errors[$this->field_name("answergroup[0]")] = get_string('err_youneedmorechoices', 'qtype_combined');
+            $errors[$this->form_field_name("answergroup[0]")] = get_string('err_youneedmorechoices', 'qtype_combined');
         }
         if (count(array_filter($this->formdata->correctanswer)) === 0) {
-            $errors[$this->field_name("answergroup[0]")] = get_string('err_nonecorrect', 'qtype_combined');
+            $errors[$this->form_field_name("answergroup[0]")] = get_string('err_nonecorrect', 'qtype_combined');
         }
         return $errors;
     }

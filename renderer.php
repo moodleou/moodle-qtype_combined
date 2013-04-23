@@ -147,9 +147,9 @@ class qtype_combined_text_entry_renderer_base extends qtype_combined_embedded_re
                                          qtype_combined_combinable_base $subq,
                                          $placeno) {
         $question = $subq->question;
-        $currentanswer = $qa->get_last_qt_var($subq->field_name('answer'));
+        $currentanswer = $qa->get_last_qt_var($subq->step_data_name('answer'));
 
-        $inputname = $qa->get_qt_field_name($subq->field_name('answer'));
+        $inputname = $qa->get_qt_field_name($subq->step_data_name('answer'));
         $generalattributes = array(
             'id' => $inputname,
             'class' => 'answer'

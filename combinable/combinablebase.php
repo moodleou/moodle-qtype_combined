@@ -262,19 +262,35 @@ abstract class qtype_combined_combinable_base {
     }
 
     /**
-     * @return string used in forms and response data
+     * @return string field name prefix used in forms
      */
-    protected function field_name_prefix() {
+    protected function form_field_name_prefix() {
         $prefix = str_replace('{qid}', $this->questionidentifier, qtype_combined_combiner_base::FIELD_NAME_PREFIX);
         return str_replace('{qtype}', $this->type->get_identifier(), $prefix);
     }
 
     /**
-     * @param $elementname field name
-     * @return string field name with prefix unique to this subq
+     * @param string $elementname field name
+     * @return string field name with prefix unique to this subq used in form
      */
-    public function field_name($elementname) {
-        return $this->field_name_prefix().$elementname;
+    public function form_field_name($elementname) {
+        return $this->form_field_name_prefix().$elementname;
+    }
+
+
+    /**
+     * @return string used in question response array and qt_vars.
+     */
+    protected function step_data_name_prefix() {
+        return $this->questionidentifier.':';
+    }
+
+    /**
+     * @param string $elementname response data key or qt_var name.
+     * @return string step data name with prefix unique to this subq used in question response array and qt_vars.
+     */
+    public function step_data_name($elementname) {
+        return $this->step_data_name_prefix().$elementname;
     }
 
     /**
@@ -283,7 +299,7 @@ abstract class qtype_combined_combinable_base {
      * @return question_attempt_step_subquestion_adapter.
      */
     public function get_substep($step) {
-        return new question_attempt_step_subquestion_adapter($step, $this->field_name_prefix());
+        return new question_attempt_step_subquestion_adapter($step, $this->step_data_name_prefix());
     }
 
     /**
@@ -312,7 +328,7 @@ abstract class qtype_combined_combinable_base {
             $text = '';
             $format = editors_get_preferred_format();
         }
-        $editorfieldname = $this->field_name($fieldname);
+        $editorfieldname = $this->form_field_name($fieldname);
         $draftid = file_get_submitted_draft_itemid($editorfieldname);
 
         $text = file_prepare_draft_area($draftid, $context, $component, $fieldname, $subquestionid, $fileoptions, $text);
@@ -391,8 +407,8 @@ abstract class qtype_combined_combinable_base {
     public function get_this_form_data_from($allformdata) {
         $this->formdata = new stdClass();
         foreach ($allformdata as $key => $value) {
-            if (strpos($key, $this->field_name_prefix()) === 0) {
-                $afterprefix = substr($key, strlen($this->field_name_prefix()));
+            if (strpos($key, $this->form_field_name_prefix()) === 0) {
+                $afterprefix = substr($key, strlen($this->form_field_name_prefix()));
                 $this->formdata->$afterprefix = $value;
             }
         }
@@ -443,7 +459,7 @@ abstract class qtype_combined_combinable_base {
      */
     public function preserve_submitted_data() {
         return ($this->has_submitted_data()
-            && !optional_param($this->field_name('notincludedinquestiontextwilldelete'), false, PARAM_BOOL));
+            && !optional_param($this->form_field_name('notincludedinquestiontextwilldelete'), false, PARAM_BOOL));
     }
 
     /**
@@ -465,7 +481,7 @@ abstract class qtype_combined_combinable_base {
      * @return bool
      */
     protected function html_field_has_submitted_data($fieldname) {
-        $htmlfielddata = optional_param_array($this->field_name($fieldname), array(), PARAM_RAW_TRIMMED);
+        $htmlfielddata = optional_param_array($this->form_field_name($fieldname), array(), PARAM_RAW_TRIMMED);
         return isset($htmlfielddata['text']) && !html_is_blank($htmlfielddata['text']);
     }
 
@@ -475,12 +491,12 @@ abstract class qtype_combined_combinable_base {
     protected function has_submitted_question_option_data() {
         foreach ($this->type->subq_form_fragment_question_option_fields() as $fieldname => $default) {
             if ($default === false) { // Default is empty.
-                if (optional_param($this->field_name($fieldname), false, PARAM_BOOL)) {
+                if (optional_param($this->form_field_name($fieldname), false, PARAM_BOOL)) {
                     // Has data if true.
                     return true;
                 }
             } else if ($default === true) { // Default is not empty.
-                if (!optional_param($this->field_name($fieldname), true, PARAM_BOOL)) {
+                if (!optional_param($this->form_field_name($fieldname), true, PARAM_BOOL)) {
                     // Has data if false.
                     return true;
                 }
@@ -494,7 +510,7 @@ abstract class qtype_combined_combinable_base {
      * @return bool is the submitted data in array with index $fieldname for this subq empty?
      */
     protected function submitted_data_array_not_empty($fieldname) {
-        foreach (optional_param_array($this->field_name($fieldname), array(), PARAM_RAW_TRIMMED) as $value) {
+        foreach (optional_param_array($this->form_field_name($fieldname), array(), PARAM_RAW_TRIMMED) as $value) {
             if (!empty($value)) {
                 return true;
             }

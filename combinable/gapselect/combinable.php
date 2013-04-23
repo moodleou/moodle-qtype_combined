@@ -66,10 +66,10 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
      * @param                 $repeatenabled
      */
     public function add_form_fragment(moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
-        $mform->addElement('advcheckbox', $this->field_name('shuffleanswers'), get_string('shuffle', 'qtype_gapselect'));
+        $mform->addElement('advcheckbox', $this->form_field_name('shuffleanswers'), get_string('shuffle', 'qtype_gapselect'));
 
         $answerel = array($mform->createElement('text',
-                                                $this->field_name('answer'),
+                                                $this->form_field_name('answer'),
                                                 get_string('choicex', 'qtype_gapselect'),
                                                 array('size'=>30, 'class'=>'tweakcss')));
 
@@ -89,12 +89,12 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
         $combinedform->repeat_elements($answerel,
                                         $repeatsatstart,
                                         array(),
-                                        $this->field_name('noofchoices'),
-                                        $this->field_name('morechoices'),
+                                        $this->form_field_name('noofchoices'),
+                                        $this->form_field_name('morechoices'),
                                         QUESTION_NUMANS_ADD,
                                         get_string('addmorechoiceblanks', 'qtype_gapselect'),
                                         true);
-        $mform->setType($this->field_name('answer'), PARAM_RAW_TRIMMED);
+        $mform->setType($this->form_field_name('answer'), PARAM_RAW_TRIMMED);
 
     }
 
@@ -138,14 +138,14 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
             if (!isset($this->formdata->answer[$answerindex])) {
                 $errors['questiontext'] = get_string('errormissingchoice', 'qtype_gapselect', $correctchoice);
             } else if ('' === trim($this->formdata->answer[$answerindex])) {
-                $errors[$this->field_name("answer[{$answerindex}]")] =
+                $errors[$this->form_field_name("answer[{$answerindex}]")] =
                                                                 get_string('errorblankchoice', 'qtype_gapselect', $correctchoice);
                 $errors['questiontext'] = get_string('errormissingchoice', 'qtype_gapselect', $correctchoice);
             }
         }
 
         if (count($nonemptyanswerblanks) < 2) {
-            $errors[$this->field_name("answer[0]")] = get_string('err_youneedmorechoices', 'qtype_combined');
+            $errors[$this->form_field_name("answer[0]")] = get_string('err_youneedmorechoices', 'qtype_combined');
         }
         return $errors;
     }

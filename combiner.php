@@ -297,21 +297,21 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
                 $headerlegend ='<span class="not_in_question_text">'.$headerlegend.'</span>';
             }
 
-            $mform->addElement('header', $subq->field_name('subqheader'), $headerlegend);
+            $mform->addElement('header', $subq->form_field_name('subqheader'), $headerlegend);
 
             if (!$subq->is_in_question_text()) {
-                $mform->addElement('hidden', $subq->field_name('notincludedinquestiontextwilldelete'), true);
-                $mform->setType($subq->field_name('notincludedinquestiontextwilldelete'), PARAM_BOOL);
+                $mform->addElement('hidden', $subq->form_field_name('notincludedinquestiontextwilldelete'), true);
+                $mform->setType($subq->form_field_name('notincludedinquestiontextwilldelete'), PARAM_BOOL);
             }
 
             $gradeoptions = question_bank::fraction_options();
-            $mform->addElement('select', $subq->field_name('defaultmark'), get_string('weighting', 'qtype_combined'),
+            $mform->addElement('select', $subq->form_field_name('defaultmark'), get_string('weighting', 'qtype_combined'),
                                $gradeoptions);
-            $mform->setDefault($subq->field_name('defaultmark'), $weightingdefault);
+            $mform->setDefault($subq->form_field_name('defaultmark'), $weightingdefault);
             $subq->add_form_fragment($combinedform, $mform, $repeatenabled);
-            $mform->addElement('editor', $subq->field_name('generalfeedback'), get_string('incorrectfeedback', 'qtype_combined'),
+            $mform->addElement('editor', $subq->form_field_name('generalfeedback'), get_string('incorrectfeedback', 'qtype_combined'),
                                array('rows' => 5), $combinedform->editoroptions);
-            $mform->setType($subq->field_name('generalfeedback'), PARAM_RAW);
+            $mform->setType($subq->form_field_name('generalfeedback'), PARAM_RAW);
             // Array key is ignored but we need to make sure that submitted values do not override new element values, so we want
             // the key to be unique for every subq in a question.
             $mform->addElement('hidden', "subqfragment_id[{$qtypeid}_{$qid}]", $qid);
@@ -362,19 +362,19 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
             if ($subq->is_in_form() && $subq->has_submitted_data()) {
                 $errors += $subq->validate();
             } else {
-                $errors += array($subq->field_name('defaultmark') => get_string('err_fillinthedetailshere', 'qtype_combined'));
+                $errors += array($subq->form_field_name('defaultmark') => get_string('err_fillinthedetailshere', 'qtype_combined'));
             }
             if ($subq->is_in_question_text()) {
-                $defaultmarkfieldname = $subq->field_name('defaultmark');
+                $defaultmarkfieldname = $subq->form_field_name('defaultmark');
                 $fractionsum += $fromform[$defaultmarkfieldname];
             } else {
-                $errors += array($subq->field_name('defaultmark') => $subq->message_in_form_if_not_included_in_question_text());
+                $errors += array($subq->form_field_name('defaultmark') => $subq->message_in_form_if_not_included_in_question_text());
             }
         }
         if (abs($fractionsum - 1) > 0.00001) {
             foreach ($this->subqs as $subq) {
                 if ($subq->is_in_form()) {
-                    $errors += array($subq->field_name('defaultmark') => get_string('err_weightingsdonotaddup', 'qtype_combined'));
+                    $errors += array($subq->form_field_name('defaultmark') => get_string('err_weightingsdonotaddup', 'qtype_combined'));
                 }
             }
         }
@@ -395,7 +395,7 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
         foreach ($this->subqs as $subq) {
             $fromsubqtoform = $subq->data_to_form($context, $fileoptions);
             foreach ($fromsubqtoform as $property => $value) {
-                $fieldname = $subq->field_name($property);
+                $fieldname = $subq->form_field_name($property);
                 $toform->{$fieldname} = $value;
             }
         }
@@ -634,7 +634,7 @@ abstract class qtype_combined_param_to_pass_through_to_subq_base {
     abstract public function __construct($alldata);
 
     /**
-     * @param $subq
+     * @param $subq qtype_combined_combinable_base
      * @return mixed
      */
     abstract public function for_subq($subq);
@@ -658,7 +658,7 @@ class qtype_combined_response_array_param extends qtype_combined_param_to_pass_t
     }
 
     /**
-     * @param $subq
+     * @param $subq qtype_combined_combinable_base
      * @return array response filtered for subq
      */
     public function for_subq($subq) {

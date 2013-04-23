@@ -53,20 +53,20 @@ class qtype_combined_combinable_varnumeric extends qtype_combined_combinable_tex
     public function add_form_fragment(moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
 
         $answergroupels = array();
-        $answergroupels[] = $mform->createElement('text', $this->field_name('answer[0]'), '', array('size' => 25));
+        $answergroupels[] = $mform->createElement('text', $this->form_field_name('answer[0]'), '', array('size' => 25));
         $answergroupels[] = $mform->createElement('text',
-                                                 $this->field_name('error[0]'),
+                                                 $this->form_field_name('error[0]'),
                                                  get_string('error', 'qtype_varnumericset'),
                                                  array('size' => 25));
-        $mform->setType($this->field_name('answer'), PARAM_TEXT);
-        $mform->setType($this->field_name('error'), PARAM_TEXT);
+        $mform->setType($this->form_field_name('answer'), PARAM_TEXT);
+        $mform->setType($this->form_field_name('error'), PARAM_TEXT);
         $mform->addElement('group',
-                           $this->field_name('answergroup'),
+                           $this->form_field_name('answergroup'),
                            get_string('answer', 'question'),
                            $answergroupels,
                            '',
                            false);
-        $mform->addElement('selectyesno', $this->field_name('requirescinotation'),
+        $mform->addElement('selectyesno', $this->form_field_name('requirescinotation'),
                            get_string('scinotation', 'qtype_combined'));
     }
 
@@ -87,11 +87,11 @@ class qtype_combined_combinable_varnumeric extends qtype_combined_combinable_tex
         $interpret = new qtype_varnumericset_number_interpreter_number_with_optional_sci_notation(false);
         if ('' !== trim($this->formdata->error[0])) {
             if (!$interpret->match($this->formdata->error[0])) {
-                $errors[$this->field_name('answergroup')] = get_string('err_notavalidnumberinerrortolerance', 'qtype_combined');
+                $errors[$this->form_field_name('answergroup')] = get_string('err_notavalidnumberinerrortolerance', 'qtype_combined');
             }
         }
         if (!$interpret->match($this->formdata->answer[0])) {
-            $errors[$this->field_name('answergroup')] = get_string('err_notavalidnumberinanswer', 'qtype_combined');
+            $errors[$this->form_field_name('answergroup')] = get_string('err_notavalidnumberinanswer', 'qtype_combined');
         }
 
         return $errors;

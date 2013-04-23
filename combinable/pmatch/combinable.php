@@ -59,10 +59,10 @@ class qtype_combined_combinable_pmatch extends qtype_combined_combinable_text_en
      */
     public function add_form_fragment(moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
         $susubels = array();
-        $susubels[] = $mform->createElement('selectyesno', $this->field_name('allowsubscript'));
-        $susubels[] = $mform->createElement('selectyesno', $this->field_name('allowsuperscript'),
+        $susubels[] = $mform->createElement('selectyesno', $this->form_field_name('allowsubscript'));
+        $susubels[] = $mform->createElement('selectyesno', $this->form_field_name('allowsuperscript'),
                                             get_string('allowsuperscript', 'qtype_pmatch'));
-        $mform->addGroup($susubels, $this->field_name('susubels'), get_string('allowsubscript', 'qtype_pmatch'),
+        $mform->addGroup($susubels, $this->form_field_name('susubels'), get_string('allowsubscript', 'qtype_pmatch'),
                                                                     '',
                                                                     false);
         $menu = array(
@@ -70,14 +70,14 @@ class qtype_combined_combinable_pmatch extends qtype_combined_combinable_text_en
             get_string('caseyes', 'qtype_pmatch')
         );
         $casedictels = array();
-        $casedictels[] = $mform->createElement('select', $this->field_name('usecase'), null, $menu);
-        $casedictels[] = $mform->createElement('selectyesno', $this->field_name('applydictionarycheck'),
+        $casedictels[] = $mform->createElement('select', $this->form_field_name('usecase'), null, $menu);
+        $casedictels[] = $mform->createElement('selectyesno', $this->form_field_name('applydictionarycheck'),
                                                                             get_string('applydictionarycheck', 'qtype_pmatch'));
-        $mform->addGroup($casedictels, $this->field_name('casedictels'), get_string('casesensitive', 'qtype_pmatch'), '', false);
-        $mform->setDefault($this->field_name('applydictionarycheck'), 1);
-        $mform->addElement('textarea', $this->field_name('answer[0]'), get_string('answer', 'question'),
+        $mform->addGroup($casedictels, $this->form_field_name('casedictels'), get_string('casesensitive', 'qtype_pmatch'), '', false);
+        $mform->setDefault($this->form_field_name('applydictionarycheck'), 1);
+        $mform->addElement('textarea', $this->form_field_name('answer[0]'), get_string('answer', 'question'),
                                                              array('rows' => '6', 'cols' => '80', 'class' => 'textareamonospace'));
-        $mform->setType($this->field_name('answer'), PARAM_RAW_TRIMMED);
+        $mform->setType($this->form_field_name('answer'), PARAM_RAW_TRIMMED);
     }
 
     public function data_to_form($context, $fileoptions) {
@@ -96,10 +96,10 @@ class qtype_combined_combinable_pmatch extends qtype_combined_combinable_text_en
         if ('' !== $trimmedanswer) {
             $expression = new pmatch_expression($trimmedanswer);
             if (!$expression->is_valid()) {
-                $errors[$this->field_name('answer[0]')] = $expression->get_parse_error();
+                $errors[$this->form_field_name('answer[0]')] = $expression->get_parse_error();
             }
         } else {
-            $errors[$this->field_name('answer[0]')] = get_string('err_providepmatchexpression', 'qtype_combined');
+            $errors[$this->form_field_name('answer[0]')] = get_string('err_providepmatchexpression', 'qtype_combined');
         }
         return $errors;
     }

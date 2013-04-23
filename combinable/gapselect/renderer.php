@@ -42,7 +42,7 @@ class qtype_combined_gapselect_embedded_renderer extends qtype_combined_embedded
         $place = $placeno + 1;
         $group = $question->places[$place];
 
-        $fieldname = $subq->field_name($question->field($place));
+        $fieldname = $subq->step_data_name($question->field($place));
 
         $value = $qa->get_last_qt_var($fieldname);
 
