@@ -32,6 +32,8 @@ type as follows :<ul>
   <li>[[{question identifier}:{$a}:h]] horizontal.</li></ul>
   <p>You should not enter anything else after the second colon.</p>';
 $string['err_correctanswerblank'] = 'You have marked this choice as correct but it is blank!';
+$string['err_duplicateids'] = 'Each embedded question instance should have a different identifier. You have used the following
+identifier(s) for more than one question \'{$a}\'.';
 $string['err_fillinthedetailsforsubq'] = 'You need to fill in the details to describe the sub question \'{$a}\'.';
 $string['err_fillinthedetailshere'] = 'You need to fill in the details for this sub question.';
 $string['err_nonecorrect'] = 'You have not marked any choices as correct.';
@@ -60,8 +62,6 @@ $string['err_thisqtypecannothavemorethanonecontrol'] = 'You have tried to embed 
 instance name \'{$a->qid}\'. This question type only allows you to embed one control per question instance.';
 $string['err_thisqtypedoesnotacceptextrainfo'] = 'This question type is embedded with the code [[{your question id}:{$a}]].
 You should not include anything after the qtype identifier, even a second colon.';
-$string['err_twodifferentqtypessameidentifier'] = 'You seem to have two different question instances embedded
-with the same identifier \'{$a->qid}\'. This is not allowed.';
 $string['err_unrecognisedqtype'] = 'The question type identifier \'{$a->qtype}\' you entered in embedded code
 \'{$a->fullcode}\'is not known.';
 $string['err_weightingsdonotaddup'] = 'Weightings for sub questions do not add up to 1.';

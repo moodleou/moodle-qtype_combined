@@ -53,9 +53,6 @@ abstract class qtype_combined_combiner_base {
     /** Question identifier must be one or more alphanumeric characters. */
     const VALID_QUESTION_IDENTIFIER_PATTTERN = '[a-zA-Z0-9]+';
 
-    /** Question type identifier must be one or more alphanumeric characters and / or underscores and / or hyphens. */
-    const VALID_QUESTION_TYPE_IDENTIFIER_PATTTERN = '[a-zA-Z0-9_-]+';
-
     /**
      * Prefix both for field names in sub question form fragments and also for collecting student responses in run-time question.
      */
@@ -86,7 +83,27 @@ abstract class qtype_combined_combiner_base {
                 return $error;
             }
         }
+        $duplicatedids = $this->find_duplicate_question_identifiers();
+        if (count($duplicatedids) !== 0) {
+            return get_string('err_duplicateids', 'qtype_combined', join(',', $duplicatedids));
+        }
         return null;
+    }
+
+    /**
+     * @return string[] array of duplicate ids.
+     */
+    protected function find_duplicate_question_identifiers() {
+        $listofsubqids = array();
+        $duplicateids = array();
+        foreach ($this->subqs as $subq) {
+            $subqidentifier = $subq->get_identifier();
+            if (false !== array_search($subqidentifier, $listofsubqids, true)) {
+                $duplicateids[] = $subqidentifier;
+            }
+            $listofsubqids[] = $subqidentifier;
+        }
+        return $duplicateids;
     }
 
     /**
@@ -114,11 +131,7 @@ abstract class qtype_combined_combiner_base {
 
         $subq = $this->find_or_create_question_instance($qtypeidentifier, $questionidentifier);
 
-        $error = $subq->found_in_question_text($thirdparam);
-        if (null !== $error) {
-            return $error;
-        }
-        return null; // Done, no error.
+        return $subq->found_in_question_text($thirdparam);
     }
 
     /**
