@@ -126,15 +126,6 @@ class qtype_combined extends question_type {
         return array();
     }
 
-    public function finished_edit_wizard($fromform) {
-        // Keep browser from leaving question instance editing page if 'Update' button was pressed.
-        if (!empty($fromform->updateform)) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
     public function export_to_xml($question, qformat_xml $format, $extra = null) {
         $output = '';
         $output .= $format->write_combined_feedback($question->options, $question->id, $question->contextid);
