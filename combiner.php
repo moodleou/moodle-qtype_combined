@@ -125,6 +125,9 @@ abstract class qtype_combined_combiner_base {
         if (1 !== preg_match($qidpattern, $questionidentifier)) {
             return get_string('err_invalidquestionidentifier', 'qtype_combined', $getstringhash);
         }
+        if (strlen($questionidentifier) > 10) {
+            return get_string('err_questionidentifiertoolong', 'qtype_combined', $questionidentifier);
+        }
         if (!qtype_combined_type_manager::is_identifier_known($qtypeidentifier)) {
             return get_string('err_unrecognisedqtype', 'qtype_combined', $getstringhash);
         }

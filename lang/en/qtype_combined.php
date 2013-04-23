@@ -39,6 +39,8 @@ $string['err_fillinthedetailshere'] = 'You need to fill in the details for this 
 $string['err_nonecorrect'] = 'You have not marked any choices as correct.';
 $string['err_notavalidnumberinanswer'] = 'You need to enter a valid number here in the answer field.';
 $string['err_notavalidnumberinerrortolerance'] = 'You have entered an invalid number in the error response field.';
+$string['err_questionidentifiertoolong'] = 'The sub question name \'{$a}\' is too long. You can use up to 10 alphanumeric
+characters.';
 $string['err_insufficientnoofcodeparts'] = 'Error, your code to embed a question control \'{$a->fullcode}\' has too few colon
 separated
 parts. You should have at least a question indentifier id, followed by a question type identifier.';
