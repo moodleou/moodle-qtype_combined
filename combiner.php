@@ -368,13 +368,20 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
                 $defaultmarkfieldname = $subq->form_field_name('defaultmark');
                 $fractionsum += $fromform[$defaultmarkfieldname];
             } else {
-                $errors += array($subq->form_field_name('defaultmark') => $subq->message_in_form_if_not_included_in_question_text());
+                $message = $subq->message_in_form_if_not_included_in_question_text();
+                $message = '<span class="not_in_question_text_message">'.$message.'</span>';
+                $qtmessage = get_string('embeddedquestionremovedfromform', 'qtype_combined');
+                $qtmessage = '<span class="not_in_question_text_message">'.$qtmessage.'</span>';
+
+                $errors += array($subq->form_field_name('defaultmark') => $message,
+                                                        'questiontext' => $qtmessage);
             }
         }
         if (abs($fractionsum - 1) > 0.00001) {
             foreach ($this->subqs as $subq) {
                 if ($subq->is_in_form()) {
-                    $errors += array($subq->form_field_name('defaultmark') => get_string('err_weightingsdonotaddup', 'qtype_combined'));
+                    $errors += array($subq->form_field_name('defaultmark') =>
+                                            get_string('err_weightingsdonotaddup', 'qtype_combined'));
                 }
             }
         }

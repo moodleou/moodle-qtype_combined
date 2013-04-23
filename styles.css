@@ -4,14 +4,10 @@
 }
 
 #page-question-type-combined .mform fieldset legend span.not_in_question_text {
-    color : darkred;
+    font-weight: bold;
 }
 
-#page-question-type-combined .mform fieldset div.not_in_question_text,
-#page-question-type-combined .mform fieldset div.not_in_question_text ul {
-    color : darkred;
-}
-
-#page-question-type-combined .mform div.fstatic span.noembeddedquestionsmessage {
-    color : darkred;
+#page-question-type-combined .mform div.error span.not_in_question_text_message {
+    font-weight: bold;
+    color : #000000;
 }
