@@ -110,4 +110,10 @@ class qtype_combined_combinable_varnumeric extends qtype_combined_combinable_tex
                 $this->submitted_data_array_not_empty('error') ||
                 parent::has_submitted_data();
     }
+
+    public function make() {
+        parent::make();
+        // Require scientific notation is always off for this question type even when the sup sub editor is on.
+        $this->question->requirescinotation = false;
+    }
 }
