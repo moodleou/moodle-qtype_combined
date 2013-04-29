@@ -74,7 +74,7 @@ class qtype_combined extends question_type {
                 $subquestion->parent = $fromform->id;
                 $subquestion->context = $fromform->context;
                 $subquestion->category = $fromform->category;
-                question_bank::get_qtype($subquestion->qtype)->save_imported_question($subquestion);
+                $this->save_imported_question($subquestion);
             }
 
         } else {
@@ -82,6 +82,76 @@ class qtype_combined extends question_type {
         }
 
         $this->save_hints($fromform, true);
+    }
+
+    /**
+     * This is a duplication of the functionality used to save an imported question. This function will be removed in Moodle 2.6
+     * when core Moodle is refactored so that save_question is used to save imported questions.
+     * @param $fromimport stdClass  Data from question import.
+     * @return bool|null            null if everything went OK, true if there is an error or false if a notice.
+     */
+    protected function save_imported_question($fromimport) {
+        global $USER, $DB, $CFG, $OUTPUT;
+        $fromimport->stamp = make_unique_id_code(); // Set the unique code (not to be changed).
+
+        $fromimport->createdby = $USER->id;
+        $fromimport->timecreated = time();
+        $fromimport->modifiedby = $USER->id;
+        $fromimport->timemodified = time();
+        $fileoptions = array(
+            'subdirs'  => false,
+            'maxfiles' => -1,
+            'maxbytes' => 0,
+        );
+
+        $fromimport->id = $DB->insert_record('question', $fromimport);
+
+        if (isset($fromimport->questiontextitemid)) {
+            $fromimport->questiontext = file_save_draft_area_files($fromimport->questiontextitemid,
+                                                                   $fromimport->context->id, 'question', 'questiontext',
+                                                                   $fromimport->id,
+                                                                   $fileoptions, $fromimport->questiontext);
+        } else if (isset($fromimport->questiontextfiles)) {
+            foreach ($fromimport->questiontextfiles as $file) {
+                $this->import_file($fromimport->context, 'question', 'questiontext', $fromimport->id, $file);
+            }
+        }
+        if (isset($fromimport->generalfeedbackitemid)) {
+            $fromimport->generalfeedback = file_save_draft_area_files($fromimport->generalfeedbackitemid,
+                                                                      $fromimport->context->id, 'question', 'generalfeedback',
+                                                                      $fromimport->id,
+                                                                      $fileoptions, $fromimport->generalfeedback);
+        } else if (isset($fromimport->generalfeedbackfiles)) {
+            foreach ($fromimport->generalfeedbackfiles as $file) {
+                $this->import_file($fromimport->context, 'question', 'generalfeedback', $fromimport->id, $file);
+            }
+        }
+        $DB->update_record('question', $fromimport);
+
+        // Now to save all the answers and type-specific options.
+
+        $result = question_bank::get_qtype($fromimport->qtype)->save_question_options($fromimport);
+
+        if (!empty($result->error)) {
+            echo $OUTPUT->notification($result->error);
+            return false;
+        }
+
+        if (!empty($result->notice)) {
+            echo $OUTPUT->notification($result->notice);
+            return true;
+        }
+
+        if (!empty($CFG->usetags) && isset($fromimport->tags)) {
+            require_once($CFG->dirroot.'/tag/lib.php');
+            tag_set('question', $fromimport->id, $fromimport->tags);
+        }
+        // Give the question a unique version stamp determined by question_hash().
+        $DB->set_field('question', 'version', question_hash($fromimport),
+                       array('id' => $fromimport->id));
+
+        return null;
+
     }
 
 
