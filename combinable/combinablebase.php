@@ -76,6 +76,19 @@ abstract class qtype_combined_combinable_type_base {
     }
 
     /**
+     * @param bool $plural
+     * @return string the name of the control or if plural is true the controls. There is no need to define a plural lang string
+     *                  if the subq cannot have more than one control in the question.
+     */
+    public function get_contol_name($plural) {
+        if ($plural) {
+            return get_string('controlname'.$this->qtypename.'plural', 'qtype_combined');
+        } else {
+            return get_string('controlname'.$this->qtypename, 'qtype_combined');
+        }
+    }
+
+    /**
      * @return string question type identifier used in question text that can be different to internal Moodle question type name.
      */
     public function get_identifier() {
@@ -246,6 +259,13 @@ abstract class qtype_combined_combinable_base {
     public $type;
 
     /**
+     * @var array the control nos that this sub question is responsible for. Controls are numbered from 1 onwards in the order they
+     *              are found in the question text. Many questions will only have one control embedded in text but some can have
+     *              more than one, eg. gapselect.
+     */
+    protected $controlnos;
+
+    /**
      * @param qtype_combined_combinable_type_base $type
      * @param string $questionidentifier from question text
      */
@@ -372,15 +392,28 @@ abstract class qtype_combined_combinable_base {
     /**
      * This sub question has been found in question text. Store third param, third param is null if no third param.
      * @param $thirdparam null|mixed the third param in the embedded code, null if only two params in embedded code.
+     * @param $controlno integer the control no, each subq can be responsible for more than one control in the question text.
      * @return null|string null if OK, string returned if there is an error.
      */
-    public function found_in_question_text($thirdparam) {
+    public function found_in_question_text($thirdparam, $controlno) {
         if ($this->foundinquestiontext && !$this->can_be_more_than_one_of_same_instance()) {
             $getstringhash = $this->get_string_hash();
             return get_string('err_thisqtypecannothavemorethanonecontrol', 'qtype_combined', $getstringhash);
         }
         $this->foundinquestiontext = true;
+        $this->store_control_no($controlno);
         return $this->process_third_param($thirdparam);
+    }
+
+    protected function store_control_no($controlno) {
+        $this->controlnos[] = $controlno;
+    }
+
+    /**
+     * @return array control nos.
+     */
+    public function get_control_nos() {
+        return $this->controlnos;
     }
 
     /**

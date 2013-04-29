@@ -77,8 +77,10 @@ abstract class qtype_combined_combiner_base {
             return  get_string('noembeddedquestions', 'qtype_combined');
         }
 
+        $controlno = 1;
         foreach ($matches[1] as $codeinsideprepostfix) {
-            $error = $this->make_combinable_instance_from_code_in_question_text($codeinsideprepostfix);
+            $error = $this->make_combinable_instance_from_code_in_question_text($codeinsideprepostfix, $controlno);
+            $controlno++;
             if ($error !== null) {
                 return $error;
             }
@@ -109,9 +111,10 @@ abstract class qtype_combined_combiner_base {
     /**
      * Create or just pass through the third embedded code param to each subq from question text.
      * @param $codeinsideprepostfix string The embedded code minus the enclosing brackets.
+     * @param $controlno integer the control no, each subq can be responsible for more than one control in the question text.
      * @return string|null first error encountered or null if no error.
      */
-    protected function make_combinable_instance_from_code_in_question_text($codeinsideprepostfix) {
+    protected function make_combinable_instance_from_code_in_question_text($codeinsideprepostfix, $controlno) {
         list($questionidentifier, $qtypeidentifier, $thirdparam) =
                                                     $this->decode_code_in_question_text($codeinsideprepostfix);
         $getstringhash = new stdClass();
@@ -134,7 +137,7 @@ abstract class qtype_combined_combiner_base {
 
         $subq = $this->find_or_create_question_instance($qtypeidentifier, $questionidentifier);
 
-        return $subq->found_in_question_text($thirdparam);
+        return $subq->found_in_question_text($thirdparam, $controlno);
     }
 
     /**
@@ -236,6 +239,7 @@ abstract class qtype_combined_combiner_base {
             $subq->found_in_db($subquestion);
         }
     }
+
 }
 
 /**
@@ -624,6 +628,39 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
             }
         }
         return null;
+    }
+
+
+    /**
+     * @param $response qtype_combined_response_array_param
+     * @return string errors
+     */
+    public function get_validation_error($response) {
+        $errors = array();
+        foreach ($this->subqs as $subqno => $subq) {
+            if (!$this->call_subq($subqno, 'is_complete_response', $response)) {
+                $questionerror = $this->call_subq($subqno, 'get_validation_error', $response);
+                $controlnos = $subq->get_control_nos();
+                $a = new stdClass();
+                $a->error = $questionerror;
+                if (count($controlnos) > 1) {
+                    $a->controlname = $subq->type->get_contol_name(true);
+                    $a->controlnos = join(', ', $controlnos);
+                    $errors[] = get_string('validationerror_multiplecontrols', 'qtype_combined', $a);
+                } else {
+                    $a->controlname = $subq->type->get_contol_name(false);
+                    $a->controlno = array_pop($controlnos);
+                    $errors[] = get_string('validationerror_singlecontrol', 'qtype_combined', $a);
+                }
+            }
+        }
+        $errorliststring = html_writer::alist($errors);
+
+        if (count($errors) > 1) {
+            return get_string('validationerrors', 'qtype_combined', $errorliststring);
+        } else {
+            return get_string('validationerror', 'qtype_combined', $errorliststring);
+        }
     }
 
 }

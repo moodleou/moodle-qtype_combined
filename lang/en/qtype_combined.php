@@ -23,6 +23,11 @@
  * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+$string['controlnamegapselect'] = 'drop down box';
+$string['controlnamegapselectplural'] = 'drop down boxes';
+$string['controlnameoumultiresponse'] = 'check box group';
+$string['controlnamepmatch'] = 'text input';
+$string['controlnamevarnumeric'] = 'numeric input';
 $string['correct'] = 'Correct';
 $string['correct_choice_embed_code'] = '[[{$a->qid}:{$a->qtype}:{correct choice}]]';
 $string['embeddedquestionremovedfromform'] = 'One or more embedded questions have been removed from the question text. The
@@ -89,7 +94,12 @@ $string['scinotation'] = 'Scientific notation';
 $string['subqheader'] = '\'{$a->qtype}\' input \'{$a->qid}\'';
 $string['subqheader_not_in_question_text'] = '\'{$a->qtype}\' input \'{$a->qid}\' (not embedded in question text).';
 $string['updateform'] = 'Verify the question text and update the form';
-$string['vertical_or_horizontal_embed_code'] = '[[{$a->qid}:{$a->qtype}:v]] or [[{$a->qid}:{$a->qtype}:h]] depending on if you want
+$string['validationerror_multiplecontrols'] = 'Inputs {$a->controlnos} ({$a->controlname}) - {$a->error}';
+$string['validationerror_singlecontrol'] = 'Input {$a->controlno} ({$a->controlname}) - {$a->error}';
+$string['validationerror'] = 'Part of your answer requires attention : {$a}';
+$string['validationerrors'] = 'Parts of your answer require attention : {$a}';
+$string['vertical_or_horizontal_embed_code'] = '[[{$a->qid}:{$a->qtype}:v]] or [[{$a->qid}:{$a->qtype}:h]] depending on if you
+want
 the options layed out vertically or horizontally.';
 $string['weighting'] = 'Weighting';
 $string['widthspecifier_embed_code'] = '[[{$a->qid}:{$a->qtype}:{width specifier}]] or just [[{$a->qid}:{$a->qtype}]]';
