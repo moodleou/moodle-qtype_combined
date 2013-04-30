@@ -117,6 +117,8 @@ class qtype_combined_renderer extends qtype_with_combined_feedback_renderer {
         list($a->num, $a->outof) = $qa->get_question()->get_num_parts_right($qa->get_last_qt_data());
         if (is_null($a->outof)) {
             return '';
+        } else if ($a->num == 1) {
+            return get_string('yougot1right', 'qtype_combined');
         } else {
             return get_string('yougotnright', 'qtype_combined', $a);
         }
