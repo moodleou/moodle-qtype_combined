@@ -75,22 +75,19 @@ class qtype_combined_renderer extends qtype_with_combined_feedback_renderer {
                                                  array('class' => 'numpartscorrect'));
         }
 
-        if ($hint) {
-            $output .= $this->hint($qa, $hint);
+        if ($options->feedback) {
+            $subqincorrect = $this->feedback_for_suqs_not_graded_correct($qa, $options);
+            $output .= html_writer::nonempty_tag('div', $subqincorrect,
+                                                 array('class' => 'subqincorrectfeedback'));
         }
 
-        if ($options->feedback) {
-            $output .= $this->feedback_for_suqs_not_graded_correct($qa, $options);
+        if ($hint) {
+            $output .= $this->hint($qa, $hint);
         }
 
         if ($options->generalfeedback) {
             $output .= html_writer::nonempty_tag('div', $this->general_feedback($qa),
                                                  array('class' => 'generalfeedback'));
-        }
-
-        if ($options->rightanswer) {
-            $output .= html_writer::nonempty_tag('div', $this->correct_response($qa),
-                                                 array('class' => 'rightanswer'));
         }
 
         return $output;
