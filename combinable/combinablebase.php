@@ -712,7 +712,7 @@ abstract class qtype_combined_combinable_text_entry
         $matches = array();
         if (null === $this->widthparam) {
             return 20;
-        } else if (1 === preg_match('![0-9]*!', $this->widthparam, $matches)) {
+        } else if (1 === preg_match('![0-9]+!', $this->widthparam, $matches)) {
             $length = $matches[0];
         } else {
             $length = strlen($this->widthparam);
