@@ -54,7 +54,7 @@ class qtype_combined_edit_form extends question_edit_form {
         } else if (isset($this->question->id)) {
             return $this->question->questiontext;
         } else {
-            return $this->combiner->default_question_text();
+            return qtype_combined_type_manager::default_question_text();
         }
     }
 
@@ -83,7 +83,7 @@ class qtype_combined_edit_form extends question_edit_form {
         $toform = $this->data_preprocessing_combined_feedback($toform, true);
         $toform = $this->data_preprocessing_hints($toform, false, true);
         if (empty($toform->id)) {
-            $defaulttext = $this->combiner->default_question_text();
+            $defaulttext = qtype_combined_type_manager::default_question_text();
             if ($toform->questiontext['format'] === FORMAT_HTML) {
                 $toform->questiontext['text'] = format_text($defaulttext, FORMAT_PLAIN);
             } else {

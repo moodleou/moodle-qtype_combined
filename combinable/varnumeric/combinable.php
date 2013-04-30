@@ -46,6 +46,10 @@ class qtype_combined_combinable_type_varnumeric extends qtype_combined_combinabl
         return array('requirescinotation' => null);
     }
 
+    protected function third_param_for_default_question_text() {
+        return '__10__';
+    }
+
 }
 
 class qtype_combined_combinable_varnumeric extends qtype_combined_combinable_text_entry {

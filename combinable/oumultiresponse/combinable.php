@@ -49,6 +49,10 @@ class qtype_combined_combinable_type_oumultiresponse extends qtype_combined_comb
         }
         return $this->add_per_answer_properties($data);
     }
+
+    protected function third_param_for_default_question_text() {
+        return 'v';
+    }
 }
 
 class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinable_accepts_vertical_or_horizontal_layout_param {

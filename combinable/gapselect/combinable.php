@@ -51,6 +51,9 @@ class qtype_combined_combinable_type_gapselect extends qtype_combined_combinable
         return $this->add_per_answer_properties($data);
     }
 
+    protected function third_param_for_default_question_text() {
+        return '1';
+    }
 }
 
 class qtype_combined_combinable_gapselect extends qtype_combined_combinable_accepts_numerical_param {

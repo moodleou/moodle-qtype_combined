@@ -219,6 +219,27 @@ abstract class qtype_combined_combinable_type_base {
         return array();
     }
 
+    public function embedded_code_for_default_question_text($questionname) {
+        $prefix = qtype_combined_combiner_base::EMBEDDED_CODE_PREFIX;
+        $postfix = qtype_combined_combiner_base::EMBEDDED_CODE_POSTFIX;
+        $separator = qtype_combined_combiner_base::EMBEDDED_CODE_SEPARATOR;
+        $parts = array($questionname, $this->identifier);
+        $thirdparam = $this->third_param_for_default_question_text();
+        if (!is_null($thirdparam)) {
+            $parts[] = $thirdparam;
+        }
+        return $prefix.join($separator, $parts).$postfix;
+    }
+
+    /**
+     * Override this method in your child class in order to include a third param in
+     * the embedded code in the default question text.
+     * @return null|string
+     */
+    protected function third_param_for_default_question_text() {
+        return null;
+    }
+
 }
 
 /**

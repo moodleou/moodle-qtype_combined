@@ -248,17 +248,6 @@ abstract class qtype_combined_combiner_base {
 class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
 
     /**
-     * @return string the default question text when you first open the form. Also used to determine what subq form fragments
-     * should be shown when you first start to create a question.
-     */
-    public function default_question_text() {
-        return "[[1:numeric:__10__]]\n\n".
-            "[[2:pmatch]]\n\n".
-            "[[3:multiresponse:v]]\n\n".
-            "[[4:selectmenu:1]]\n";
-    }
-
-    /**
      * Construct the part of the form for the user to fill in the details for each subq.
      * This method must determine which subqs should appear in the form based on the user submitted question text and also what
      * items have previously been in the form. We don't want to lose any data submitted without a warning
@@ -772,7 +761,7 @@ class qtype_combined_step_param extends qtype_combined_param_to_pass_through_to_
 class qtype_combined_type_manager {
 
     /**
-     * @var qtype_combined_combinable_type_base[] key is qtype indentifier string.
+     * @var qtype_combined_combinable_type_base[] key is qtype identifier string.
      */
     protected static $combinableplugins = null;
 
@@ -849,6 +838,24 @@ class qtype_combined_type_manager {
             }
         }
         return null;
+    }
+
+    /**
+     * @return string the default question text when you first open the form. Also used to determine what subq form fragments
+     * should be shown when you first start to create a question.
+     */
+    public static function default_question_text() {
+        $i = 1;
+        $codes = array();
+        self::find_and_load_all_combinable_qtype_hook_classes();
+        $identifiers = array_keys(self::$combinableplugins);
+        sort($identifiers);
+        foreach ($identifiers as $identifier) {
+            $type = self::$combinableplugins[$identifier];
+            $codes[] = $type->embedded_code_for_default_question_text($i);
+            $i++;
+        }
+        return join("\n\n", $codes);
     }
 
 }
