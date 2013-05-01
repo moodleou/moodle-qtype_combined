@@ -80,16 +80,26 @@ $string['err_youneedmorechoices'] = 'You need to enter two or more choices.';
 $string['incorrectfeedback'] = 'Feedback for any incorrect response';
 $string['noembeddedquestions'] = 'You have deleted all embedded sub question elements from the question text!';
 $string['pluginname'] = 'Combined';
-$string['pluginname_help'] = 'Create a cloze question type with embedded response fields in the question text to enter a numeric
-or text value or select a value from a number of options.';
+$string['pluginname_help'] = ' Create a question with embedded response fields in your question text.
+
+Depending on the sub question types installed in your Moodle you may ask the student to enter a numeric or text value or select a
+value from a number of options. Embed codes in the question text will be replaced by either check boxes, select boxes or a text
+entry field so the student can enter their answer.
+
+When you create a new question all the codes to embed available sub question types are automatically added to the question text
+as examples of codes you can use. And at the same time the appropriate form fragments to specify the options for each question
+appear below the question text entry field. Edit the
+question text and change the codes in the question text to change which types of sub questions to include in the question text and
+then press the "Verify the question text and update the form" button to have the correct parts of the form displayed to edit
+your sub question settings.';
 $string['pluginname_link'] = 'question/type/combined';
 $string['pluginnameadding'] = 'Adding a combined question';
 $string['pluginnameediting'] = 'Editing a combined question';
 $string['pluginnamesummary'] = 'A combined question type which allows the embedding of the response fields for various available
 sub questions in the question text.
 
-So the student can enter a numeric or short text answer or choose an answer or answer(s) from
- using a select box, check boxes or radio boxes.';
+Depending on which question types you have installed, the student can enter a numeric or short text answer or choose an answer or
+answers using a select box or check boxes.';
 $string['scinotation'] = 'Scientific notation';
 $string['subqheader'] = '\'{$a->qtype}\' input \'{$a->qid}\'';
 $string['subqheader_not_in_question_text'] = '\'{$a->qtype}\' input \'{$a->qid}\' (not embedded in question text).';
