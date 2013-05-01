@@ -837,7 +837,10 @@ class qtype_combined_type_manager {
                 return $type->get_identifier();
             }
         }
-        return null;
+        if (!isset(self::$combinableplugins[$qtypename])) {
+            print_error('subquestiontypenotinstalled', 'qtype_combined', '', $qtypename);
+        }
+
     }
 
     /**

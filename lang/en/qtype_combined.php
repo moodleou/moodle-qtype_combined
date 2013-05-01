@@ -103,6 +103,8 @@ answers using a select box or check boxes.';
 $string['scinotation'] = 'Scientific notation';
 $string['subqheader'] = '\'{$a->qtype}\' input \'{$a->qid}\'';
 $string['subqheader_not_in_question_text'] = '\'{$a->qtype}\' input \'{$a->qid}\' (not embedded in question text).';
+$string['subquestiontypenotinstalled'] = 'You are attempting to use a combined question with a sub question type \'{$a}\' that
+is not installed.';
 $string['updateform'] = 'Verify the question text and update the form';
 $string['validationerror_multiplecontrols'] = 'Inputs {$a->controlnos} ({$a->controlname}) - {$a->error}';
 $string['validationerror_singlecontrol'] = 'Input {$a->controlno} ({$a->controlname}) - {$a->error}';
