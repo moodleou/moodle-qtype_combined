@@ -78,7 +78,7 @@ class qtype_combined_combinable_pmatch extends qtype_combined_combinable_text_en
         $mform->addGroup($casedictels, $this->form_field_name('casedictels'), get_string('casesensitive', 'qtype_pmatch'), '', false);
         $mform->setDefault($this->form_field_name('applydictionarycheck'), 1);
         $mform->addElement('textarea', $this->form_field_name('answer[0]'), get_string('answer', 'question'),
-                                                             array('rows' => '6', 'cols' => '80', 'class' => 'textareamonospace'));
+                                                             array('rows' => '6', 'cols' => '57', 'class' => 'textareamonospace'));
         $mform->setType($this->form_field_name('answer'), PARAM_RAW_TRIMMED);
     }
 
