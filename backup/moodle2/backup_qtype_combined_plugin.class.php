@@ -46,10 +46,6 @@ class backup_qtype_combined_plugin extends backup_qtype_plugin {
         // Connect the visible container ASAP.
         $plugin->add_child($pluginwrapper);
 
-        // This qtype uses standard question_answers, add them here
-        // to the tree before any other information that will use them.
-        $this->add_question_question_answers($pluginwrapper);
-
         // Now create the qtype own structures.
         $combined = new backup_nested_element('combined', array('id'), array(
             'correctfeedback', 'correctfeedbackformat',
