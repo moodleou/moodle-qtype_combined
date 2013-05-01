@@ -16,3 +16,31 @@
     margin: 0 0 0.5em;
 }
 
+body#page-question-type-combined div[id^=fgroup_id_subqpmatch][id*=susubels] label[for*='allowsubscript']{
+    position: absolute;
+    left: -10000px;
+    font-weight: normal;
+    font-size: 1em;
+}
+
+body#page-question-type-combined div[id^=fgroup_id_subqpmatch][id*=casedictels] label[for*='usecase']{
+    position: absolute;
+    left: -10000px;
+    font-weight: normal;
+    font-size: 1em;
+}
+
+body#page-question-type-combined div[id^=fgroup_id_subqmultiresponse][id*=answergroup] label[for*='answer']{
+    position: absolute;
+    left: -10000px;
+    font-weight: normal;
+    font-size: 1em;
+}
+
+body#page-question-type-combined div[id^=fgroup_id_subqnumeric][id*=answergroup] label[for*='answer']{
+    position: absolute;
+    left: -10000px;
+    font-weight: normal;
+    font-size: 1em;
+}
+

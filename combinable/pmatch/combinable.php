@@ -59,7 +59,8 @@ class qtype_combined_combinable_pmatch extends qtype_combined_combinable_text_en
      */
     public function add_form_fragment(moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
         $susubels = array();
-        $susubels[] = $mform->createElement('selectyesno', $this->form_field_name('allowsubscript'));
+        $susubels[] = $mform->createElement('selectyesno', $this->form_field_name('allowsubscript'),
+                                            get_string('allowsubscript', 'qtype_pmatch'));
         $susubels[] = $mform->createElement('selectyesno', $this->form_field_name('allowsuperscript'),
                                             get_string('allowsuperscript', 'qtype_pmatch'));
         $mform->addGroup($susubels, $this->form_field_name('susubels'), get_string('allowsubscript', 'qtype_pmatch'),
@@ -70,7 +71,8 @@ class qtype_combined_combinable_pmatch extends qtype_combined_combinable_text_en
             get_string('caseyes', 'qtype_pmatch')
         );
         $casedictels = array();
-        $casedictels[] = $mform->createElement('select', $this->form_field_name('usecase'), null, $menu);
+        $casedictels[] = $mform->createElement('select', $this->form_field_name('usecase'),
+                                               get_string('casesensitive', 'qtype_pmatch'), $menu);
         $casedictels[] = $mform->createElement('selectyesno', $this->form_field_name('applydictionarycheck'),
                                                                             get_string('applydictionarycheck', 'qtype_pmatch'));
         $mform->addGroup($casedictels, $this->form_field_name('casedictels'), get_string('casesensitive', 'qtype_pmatch'), '', false);

@@ -57,7 +57,8 @@ class qtype_combined_combinable_varnumeric extends qtype_combined_combinable_tex
     public function add_form_fragment(moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
 
         $answergroupels = array();
-        $answergroupels[] = $mform->createElement('text', $this->form_field_name('answer[0]'), '', array('size' => 25));
+        $answergroupels[] = $mform->createElement('text', $this->form_field_name('answer[0]'),
+                                                  get_string('answer', 'question'), array('size' => 25));
         $answergroupels[] = $mform->createElement('text',
                                                  $this->form_field_name('error[0]'),
                                                  get_string('error', 'qtype_varnumericset'),
