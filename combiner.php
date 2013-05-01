@@ -794,6 +794,9 @@ class qtype_combined_type_manager {
                 self::instantiate_type_class($qtypename, self::FOUND_IN_COMBINABLE_DIR_OF_COMBINED);
             }
         }
+        if (count(self::$combinableplugins) === 0) {
+            print_error('nosubquestiontypesinstalled', 'qtype_combined');
+        }
     }
 
     /**
