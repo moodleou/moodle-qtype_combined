@@ -43,6 +43,12 @@ abstract class qtype_combined_combinable_type_base {
     protected $qtypename;
 
     /**
+     * @var int either @link qtype_combined_type_manager::FOUND_IN_COMBINABLE_DIR_OF_COMBINED
+     *          or @link qtype_combined_type_manager::FOUND_IN_OTHER_QTYPE_DIR
+     */
+    protected $foundwhere;
+
+    /**
      * @param string $qtypename this is the internal Moodle question type name
      * @param integer $foundwhere
      * @see qtype_combined_type_manager::FOUND_IN_COMBINABLE_DIR_OF_COMBINED
@@ -76,16 +82,25 @@ abstract class qtype_combined_combinable_type_base {
     }
 
     /**
+     * Get a student readable description of the part of the sub question to be used in validation message.
+     * The name of the thing embedded in the text that the student sees, they should need to have no knowledge of the underlying
+     * sub question type to understand the message eg. numeric input, text input, drop down boxes.
+     * There is no need to define a plural lang string if the sub question cannot have more than one control in the question.
      * @param bool $plural
-     * @return string the name of the control or if plural is true the controls. There is no need to define a plural lang string
-     *                  if the subq cannot have more than one control in the question.
+     * @return string the name of the control or if plural is true the controls.
      */
     public function get_control_name($plural) {
-        if ($plural) {
-            return get_string('controlname'.$this->qtypename.'plural', 'qtype_combined');
+        if ($this->foundwhere === qtype_combined_type_manager::FOUND_IN_COMBINABLE_DIR_OF_COMBINED) {
+            $langfile = 'qtype_combined';
+            $stringid = 'controlname'.$this->qtypename;
         } else {
-            return get_string('controlname'.$this->qtypename, 'qtype_combined');
+            $langfile = 'qtype_'.$this->qtypename;
+            $stringid = 'combinedcontrolname'.$this->qtypename;
         }
+        if ($plural) {
+            $stringid = $stringid.'plural';
+        }
+        return get_string($stringid, $langfile);
     }
 
     /**
