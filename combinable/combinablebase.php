@@ -80,7 +80,7 @@ abstract class qtype_combined_combinable_type_base {
      * @return string the name of the control or if plural is true the controls. There is no need to define a plural lang string
      *                  if the subq cannot have more than one control in the question.
      */
-    public function get_contol_name($plural) {
+    public function get_control_name($plural) {
         if ($plural) {
             return get_string('controlname'.$this->qtypename.'plural', 'qtype_combined');
         } else {

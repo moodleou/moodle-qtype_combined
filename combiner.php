@@ -633,11 +633,11 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
                 $a = new stdClass();
                 $a->error = $questionerror;
                 if (count($controlnos) > 1) {
-                    $a->controlname = $subq->type->get_contol_name(true);
+                    $a->controlname = $subq->type->get_control_name(true);
                     $a->controlnos = join(', ', $controlnos);
                     $errors[] = get_string('validationerror_multiplecontrols', 'qtype_combined', $a);
                 } else {
-                    $a->controlname = $subq->type->get_contol_name(false);
+                    $a->controlname = $subq->type->get_control_name(false);
                     $a->controlno = array_pop($controlnos);
                     $errors[] = get_string('validationerror_singlecontrol', 'qtype_combined', $a);
                 }
