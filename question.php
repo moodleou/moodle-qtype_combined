@@ -75,6 +75,13 @@ class qtype_combined_question extends question_graded_automatically_with_countba
         return (false === array_search(false, $subqiscompletes));
     }
 
+    public function is_gradable_response(array $response) {
+        $subqisgradables = $this->combiner->call_all_subqs('is_gradable_response',
+                                                           new qtype_combined_response_array_param($response));
+        // Question is gradable if any of the subqs are gradable.
+        return (false !== array_search(true, $subqisgradables));
+    }
+
     public function get_validation_error(array $response) {
         return $this->combiner->get_validation_error(new qtype_combined_response_array_param($response));
     }
