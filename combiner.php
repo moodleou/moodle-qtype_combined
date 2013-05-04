@@ -161,7 +161,7 @@ abstract class qtype_combined_combiner_base {
      * @param $questionidentifier
      * @return qtype_combined_combinable_base
      */
-    protected function find_or_create_question_instance($qtypeidentifier, $questionidentifier) {
+    public function find_or_create_question_instance($qtypeidentifier, $questionidentifier) {
         $existing = $this->find_question_instance($qtypeidentifier, $questionidentifier);
         if ($existing !== null) {
             return $existing;
