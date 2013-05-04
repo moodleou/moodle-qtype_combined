@@ -126,20 +126,21 @@ class qtype_combined_renderer extends qtype_with_combined_feedback_renderer {
 }
 
 /**
- * Subclass for generating the bits of output specific to sub-questions.
+ * Interface that must be implemented for generating the bits of output specific to sub-questions.
  *
- * @copyright 2011 The Open University
+ * @copyright 2013 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class qtype_combined_embedded_renderer_base extends qtype_renderer {
+interface qtype_combined_subquestion_renderer_interface {
 
-    abstract public function subquestion(question_attempt $qa,
+    public function subquestion(question_attempt $qa,
                                          question_display_options $options,
                                          qtype_combined_combinable_base $subq,
                                          $placeno);
 }
 
-class qtype_combined_text_entry_renderer_base extends qtype_combined_embedded_renderer_base {
+class qtype_combined_text_entry_renderer_base extends qtype_renderer
+    implements qtype_combined_subquestion_renderer_interface {
 
     /**
      * @param question_attempt                      $qa

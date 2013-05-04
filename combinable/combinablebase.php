@@ -68,6 +68,7 @@ abstract class qtype_combined_combinable_type_base {
             require_once($CFG->dirroot."/question/type/combined/combinable/{$this->qtypename}/renderer.php");
             return $PAGE->get_renderer('qtype_combined', $this->qtypename.'_embedded');
         } else {
+            require_once($CFG->dirroot."/question/type/{$this->qtypename}/combinable/renderer.php");
             return $PAGE->get_renderer('qtype_'.$this->qtypename, 'embedded');
         }
     }

@@ -28,7 +28,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-class qtype_combined_oumultiresponse_embedded_renderer extends qtype_combined_embedded_renderer_base {
+class qtype_combined_oumultiresponse_embedded_renderer extends qtype_renderer
+    implements qtype_combined_subquestion_renderer_interface {
 
     public function subquestion(question_attempt $qa,
                                 question_display_options $options,
