@@ -181,4 +181,20 @@ class qtype_combined_question extends question_graded_automatically_with_countba
         }
         return array($totalpartscorrect, $totalparts);
     }
+
+
+    public function classify_response(array $response) {
+        $aggregatedresponses = array();
+        $subqclassifiedresponses = $this->combiner->call_all_subqs('classify_response', new qtype_combined_response_array_param
+        ($response));
+        foreach ($subqclassifiedresponses as $subqno => $classifiedresponses) {
+            $subqtype = $this->combiner->get_subq_property($subqno, 'qtype')->name();
+            $subqname = $this->combiner->get_subq_property($subqno, 'name');
+            foreach ($classifiedresponses as $subqsubqid => $classifiedresponse) {
+                $subqid = qtype_combined_type_manager::response_id($subqname, $subqtype, $subqsubqid);
+                $aggregatedresponses[$subqid] = $classifiedresponse;
+            }
+        }
+        return $aggregatedresponses;
+    }
 }

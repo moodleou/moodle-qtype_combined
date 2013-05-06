@@ -187,13 +187,25 @@ class qtype_combined extends question_type {
     }
 
     public function get_random_guess_score($questiondata) {
-        // TODO needs to pass through to sub-questions.
-        return 0;
+        $overallrandomguessscore = 0;
+        foreach ($questiondata->subquestions as $subqdata) {
+            $subqrandomguessscore = question_bank::get_qtype($subqdata->qtype)->get_random_guess_score($subqdata);
+            $overallrandomguessscore += $subqdata->defaultmark * $subqrandomguessscore;
+        }
+        return $overallrandomguessscore;
     }
 
     public function get_possible_responses($questiondata) {
-        // TODO needs to pass through to sub-questions.
-        return array();
+        $allpossibleresponses = array();
+        foreach ($questiondata->subquestions as $subqdata) {
+            $subqpossresponses = question_bank::get_qtype($subqdata->qtype)->get_possible_responses($subqdata);
+            foreach ($subqpossresponses as $subqid => $subqpossresponse) {
+                $respclassid = qtype_combined_type_manager::response_id($subqdata->name, $subqdata->qtype, $subqid);
+                $allpossibleresponses[$respclassid] = $subqpossresponse;
+            }
+        }
+        ksort($allpossibleresponses);
+        return $allpossibleresponses;
     }
 
     public function export_to_xml($question, qformat_xml $format, $extra = null) {

@@ -864,5 +864,10 @@ class qtype_combined_type_manager {
         return join("\n\n", $codes);
     }
 
+    public static function response_id($subqid, $subqtype, $subqresponseid) {
+        $subtypeid = self::translate_qtype_to_qtype_identifier($subqtype);
+        return join(':', array($subqid, $subtypeid, $subqresponseid));
+    }
+
 }
 
