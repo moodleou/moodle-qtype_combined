@@ -27,7 +27,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot .'/question/type/combined/combiner.php');
+require_once($CFG->dirroot .'/question/type/combined/combiner/forform.php');
 
 /**
  * Combined question editing form definition.
