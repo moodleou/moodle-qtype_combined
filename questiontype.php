@@ -198,10 +198,13 @@ class qtype_combined extends question_type {
     public function get_possible_responses($questiondata) {
         $allpossibleresponses = array();
         foreach ($questiondata->subquestions as $subqdata) {
-            $subqpossresponses = question_bank::get_qtype($subqdata->qtype)->get_possible_responses($subqdata);
-            foreach ($subqpossresponses as $subqid => $subqpossresponse) {
+            $possresponses = question_bank::get_qtype($subqdata->qtype)->get_possible_responses($subqdata);
+            foreach ($possresponses as $subqid => $subqpossresponses) {
                 $respclassid = qtype_combined_type_manager::response_id($subqdata->name, $subqdata->qtype, $subqid);
-                $allpossibleresponses[$respclassid] = $subqpossresponse;
+                foreach ($subqpossresponses as $subqpossresponse) {
+                    $subqpossresponse->fraction = $subqpossresponse->fraction * $subqdata->defaultmark;
+                }
+                $allpossibleresponses[$respclassid] = $subqpossresponses;
             }
         }
         ksort($allpossibleresponses);
