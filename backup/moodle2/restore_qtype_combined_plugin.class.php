@@ -23,6 +23,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot.'/question/type/combined/combiner/restore.php');
 
 /**
  * restore plugin class that provides the necessary information
@@ -86,5 +87,21 @@ class restore_qtype_combined_plugin extends restore_qtype_plugin {
         $contents[] = new restore_decode_content('qtype_combined', $fields, 'qtype_combined');
 
         return $contents;
+    }
+
+    public function recode_response($questionid, $sequencenumber, array $response) {
+        $combiner = new qtype_combined_combiner_for_restore();
+
+        $combiner->load_subq_data_from_db($questionid);
+
+        $recodedresponses = array();
+        foreach ($combiner->get_subq_responses($response) as $subqno => $subqresponse) {
+            $subqtype = $combiner->get_subq_type($subqno);
+            $subqid = $combiner->get_subq_id($subqno);
+            $recodedresponses[$subqno] =
+                $this->step->questions_recode_response_data($subqtype, $subqid, $sequencenumber, $subqresponse);
+        }
+
+        return $combiner->aggregate_response_arrays($recodedresponses);
     }
 }

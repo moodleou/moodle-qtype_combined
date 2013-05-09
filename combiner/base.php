@@ -240,6 +240,35 @@ abstract class qtype_combined_combiner_base {
         }
     }
 
+    /**
+     * @param array $arrays array of response arrays returned from method subq_method_calls.
+     * @param null|question_attempt_step $step
+     * @return array aggregated array with prefixes added to each subqs response array keys.
+     */
+    public function aggregate_response_arrays($arrays, $step = null) {
+        $aggregated = array();
+        foreach ($arrays as $i => $array) {
+            $substep = $this->subqs[$i]->get_substep($step);
+            $aggregated += $this->add_prefixes_to_response_array($substep, $array);
+        }
+        return $aggregated;
+    }
+
+
+    /**
+     * Take a response array from a subq and add prefixes.
+     * @param question_attempt_step_subquestion_adapter|null $substep
+     * @param array $response
+     * @return array
+     */
+    protected function add_prefixes_to_response_array($substep, $response) {
+        $keysadded= array();
+        foreach ($response as $key => $value) {
+            $keysadded[$substep->add_prefix($key)] = $value;
+        }
+        return $keysadded;
+    }
+
 }
 
 /**
@@ -355,6 +384,5 @@ class qtype_combined_type_manager {
         $subtypeid = self::translate_qtype_to_qtype_identifier($subqtype);
         return join(':', array($subqid, $subtypeid, $subqresponseid));
     }
-
 }
 

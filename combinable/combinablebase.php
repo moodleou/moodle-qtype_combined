@@ -645,6 +645,10 @@ abstract class qtype_combined_combinable_base {
      * passed through  to renderer to know which embedded control to render.
      */
     abstract protected function get_third_params();
+
+    public function get_id() {
+        return $this->questionrec->id;
+    }
 }
 
 /**

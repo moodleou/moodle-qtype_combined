@@ -59,20 +59,6 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
     }
 
     /**
-     * Take a response array from a subq and add prefixes.
-     * @param question_attempt_step_subquestion_adapter|null $substep
-     * @param array $response
-     * @return array
-     */
-    protected function add_prefixes_to_response_array($substep, $response) {
-        $keysadded= array();
-        foreach ($response as $key => $value) {
-            $keysadded[$substep->add_prefix($key)] = $value;
-        }
-        return $keysadded;
-    }
-
-    /**
      * Call a method on question_definition object for all sub questions.
      * @param string $methodname
      * @param qtype_combined_param_to_pass_through_to_subq_base|mixed  $params,.... a variable number of arguments (or none)
@@ -117,20 +103,6 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
      */
     public function get_subq_property($i, $propertyname) {
         return $this->subqs[$i]->question->{$propertyname};
-    }
-
-    /**
-     * @param array $arrays array of response arrays returned from method subq_method_calls.
-     * @param null|question_attempt_step $step
-     * @return array aggregated array with prefixes added to each subqs response array keys.
-     */
-    public function aggregate_response_arrays($arrays, $step = null) {
-        $aggregated = array();
-        foreach ($arrays as $i => $array) {
-            $substep = $this->subqs[$i]->get_substep($step);
-            $aggregated += $this->add_prefixes_to_response_array($substep, $array);
-        }
-        return $aggregated;
     }
 
     /**
