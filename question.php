@@ -64,8 +64,13 @@ class qtype_combined_question extends question_graded_automatically_with_countba
     }
 
     public function summarise_response(array $response) {
-        $summaries = $this->combiner->call_all_subqs('summarise_response', new qtype_combined_response_array_param($response));
-        return implode('; ', $summaries);
+        $subqsummaries = $this->combiner->call_all_subqs('summarise_response', new qtype_combined_response_array_param($response));
+        $summarytexts = array();
+        foreach ($subqsummaries as $subqno => $summary) {
+            $subqname = $this->combiner->get_subq_property($subqno, 'name');
+            $summarytexts[] = "$subqname [{$summary}]";
+        }
+        return implode(', ', $summarytexts);
     }
 
     public function is_complete_response(array $response) {
