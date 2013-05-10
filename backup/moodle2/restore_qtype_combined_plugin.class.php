@@ -95,13 +95,24 @@ class restore_qtype_combined_plugin extends restore_qtype_plugin {
         $combiner->load_subq_data_from_db($questionid);
 
         $recodedresponses = array();
-        foreach ($combiner->get_subq_responses($response) as $subqno => $subqresponse) {
+        $subqresponses = $combiner->get_subq_responses($response);
+        foreach ($subqresponses as $subqno => $subqresponse) {
             $subqtype = $combiner->get_subq_type($subqno);
             $subqid = $combiner->get_subq_id($subqno);
             $recodedresponses[$subqno] =
                 $this->step->questions_recode_response_data($subqtype, $subqid, $sequencenumber, $subqresponse);
         }
+        $subqresponsesrecoded = $combiner->aggregate_response_arrays($recodedresponses);
 
-        return $combiner->aggregate_response_arrays($recodedresponses);
+        // Remove responses recoded by sub questions to leave just
+        // parts of response array for the main question e.g. '-finish' => 1.
+        // I don't want to assume that the response recoding will not change the keys,
+        // just in case.
+        $subqresponseswithprefixes = $combiner->aggregate_response_arrays($subqresponses);
+        foreach (array_keys($subqresponseswithprefixes) as $recodedkey) {
+            unset($response[$recodedkey]);
+        }
+
+        return $subqresponsesrecoded + $response;
     }
 }
