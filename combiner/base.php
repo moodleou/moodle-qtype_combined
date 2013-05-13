@@ -25,6 +25,7 @@
  */
 
 require_once($CFG->dirroot.'/question/type/combined/combinable/combinablebase.php');
+require_once($CFG->dirroot.'/question/type/combined/combinable/combinabletypebase.php');
 
 /**
  * Class qtype_combined_combiner_base
