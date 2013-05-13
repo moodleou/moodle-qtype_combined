@@ -60,6 +60,7 @@ class qtype_combined_edit_form extends question_edit_form {
 
     protected function definition_inner($mform) {
         $mform->addElement('submit', 'updateform', get_string('updateform', 'qtype_combined'));
+        $mform->registerNoSubmitButton('updateform');
         $mform->closeHeaderBefore('updateform');
 
         if (isset($this->question->id)) {
@@ -100,14 +101,6 @@ class qtype_combined_edit_form extends question_edit_form {
         $errors = parent::validation($fromform, $files);
 
         $errors += $this->combiner->validate_subqs_data_in_form($fromform, $files);
-
-        if (0 === count($errors)){
-            if (!empty($fromform['updateform'])) {
-                // This doesn't display an error message but prevents the data from saving and Moodle stays on the question
-                // editing page.
-                $errors['updateform'] = '';
-            }
-        }
 
         return $errors;
     }
