@@ -28,7 +28,6 @@ $string['controlnamegapselectplural'] = 'drop down boxes';
 $string['controlnameoumultiresponse'] = 'check box group';
 $string['controlnamepmatch'] = 'text input';
 $string['controlnamevarnumeric'] = 'numeric input';
-$string['correct'] = 'Correct';
 $string['correct_choice_embed_code'] = '[[{$a->qid}:{$a->qtype}:{correct choice}]]';
 $string['embeddedquestionremovedfromform'] = 'One or more embedded questions have been removed from the question text. The
 question data for these questions is still shown below, but it will be permanently removed when you either press the \'Verify the
