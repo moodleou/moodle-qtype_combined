@@ -92,7 +92,8 @@ class qtype_combined_combinable_varnumeric extends qtype_combined_combinable_tex
         $interpret = new qtype_varnumericset_number_interpreter_number_with_optional_sci_notation(false);
         if ('' !== trim($this->formdata->error[0])) {
             if (!$interpret->match($this->formdata->error[0])) {
-                $errors[$this->form_field_name('answergroup')] = get_string('err_notavalidnumberinerrortolerance', 'qtype_combined');
+                $errors[$this->form_field_name('answergroup')] =
+                                                    get_string('err_notavalidnumberinerrortolerance', 'qtype_combined');
             }
         }
         if (!$interpret->match($this->formdata->answer[0])) {

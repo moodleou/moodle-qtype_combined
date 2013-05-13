@@ -49,7 +49,6 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
 
         $this->load_subq_data_from_db($questionid, true);
 
-
         foreach ($this->subqs as $i => $subq) {
             if (!$subq->is_in_question_text() && !$subq->preserve_submitted_data()) {
                 if ($subq->is_in_db()) {
@@ -86,7 +85,8 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
                                $gradeoptions);
             $mform->setDefault($subq->form_field_name('defaultmark'), $weightingdefault);
             $subq->add_form_fragment($combinedform, $mform, $repeatenabled);
-            $mform->addElement('editor', $subq->form_field_name('generalfeedback'), get_string('incorrectfeedback', 'qtype_combined'),
+            $mform->addElement('editor', $subq->form_field_name('generalfeedback'),
+                               get_string('incorrectfeedback', 'qtype_combined'),
                                array('rows' => 5), $combinedform->editoroptions);
             $mform->setType($subq->form_field_name('generalfeedback'), PARAM_RAW);
             // Array key is ignored but we need to make sure that submitted values do not override new element values, so we want

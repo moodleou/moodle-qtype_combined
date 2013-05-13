@@ -45,7 +45,6 @@ class qtype_combined_renderer extends qtype_with_combined_feedback_renderer {
 
         $questiontext = $question->combiner->render_subqs($questiontext, $qa, $options);
 
-
         $result = html_writer::tag('div', $questiontext, array('class' => 'qtext'));
 
         if ($qa->get_state() == question_state::$invalid) {

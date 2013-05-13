@@ -75,7 +75,8 @@ class qtype_combined_combinable_pmatch extends qtype_combined_combinable_text_en
                                                get_string('casesensitive', 'qtype_pmatch'), $menu);
         $casedictels[] = $mform->createElement('selectyesno', $this->form_field_name('applydictionarycheck'),
                                                                             get_string('applydictionarycheck', 'qtype_pmatch'));
-        $mform->addGroup($casedictels, $this->form_field_name('casedictels'), get_string('casesensitive', 'qtype_pmatch'), '', false);
+        $mform->addGroup($casedictels, $this->form_field_name('casedictels'),
+                                                                        get_string('casesensitive', 'qtype_pmatch'), '', false);
         $mform->setDefault($this->form_field_name('applydictionarycheck'), 1);
         $mform->addElement('textarea', $this->form_field_name('answer[0]'), get_string('answer', 'question'),
                                                              array('rows' => '6', 'cols' => '57', 'class' => 'textareamonospace'));

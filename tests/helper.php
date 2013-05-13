@@ -56,6 +56,7 @@ class qtype_combined_test_helper {
     }
 
     /**
+     * @param string $name
      * @return qtype_gapselect_question
      */
     protected static function make_a_gapselect_question($name) {
@@ -98,8 +99,8 @@ class qtype_combined_test_helper {
         return $combined;
     }
 
-
     /**
+     * @param string $name
      * @return qtype_oumultiresponse_question
      */
     protected static function make_oumultiresponse_question_two_of_four($name) {
@@ -178,6 +179,7 @@ class qtype_combined_test_helper {
     }
 
     /**
+     * @param string $name
      * @return qtype_pmatch_question
      */
     protected static function make_a_pmatch_question($name) {
@@ -232,6 +234,7 @@ class qtype_combined_test_helper {
 
 
     /**
+     * @param string $name
      * @return qtype_varnumericset_question
      */
     protected static function make_a_varnumericset_question($name) {

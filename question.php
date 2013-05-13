@@ -153,11 +153,10 @@ class qtype_combined_question extends question_graded_automatically_with_countba
      */
     protected function overall_state($subqstates) {
         $subqstates = array_unique($subqstates);
-        // Make it a zero based index for easy indexing.
-        $subqstates = array_values($subqstates);
+
         if (count($subqstates) === 1) {
             // All subqs in same state.
-            return $subqstates[0];
+            return reset($subqstates);
         } else {
             if (count($subqstates) === 2 &&
                 (false !== array_search(question_state::$gaveup, $subqstates)) &&

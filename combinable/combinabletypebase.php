@@ -37,7 +37,7 @@ abstract class qtype_combined_combinable_type_base {
     protected $identifier = null;
 
     /**
-     * @var this is the internal Moodle question type name.
+     * @var string this is the internal Moodle question type name.
      */
     protected $qtypename;
 
@@ -59,7 +59,7 @@ abstract class qtype_combined_combinable_type_base {
     }
 
     /**
-     * @return qtype_combined_embedded_renderer_base
+     * @return qtype_renderer
      */
     public function embedded_renderer() {
         global $PAGE, $CFG;

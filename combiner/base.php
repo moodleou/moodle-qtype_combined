@@ -143,8 +143,8 @@ abstract class qtype_combined_combiner_base {
 
     /**
      * Access the array of subqs using the qtype and question identifier (identifiers as in question text).
-     * @param $qtypeidentifier the identifier as used in the question text ie. not the internal Moodle question type name.
-     * @param $questionidentifier the question identifier that is the first param of the embedded code.
+     * @param string $qtypeidentifier the identifier as used in the question text ie. not the internal Moodle question type name.
+     * @param string $questionidentifier the question identifier that is the first param of the embedded code.
      * @return null|qtype_combined_combinable_base null if not found or the existing subq if there is one that matches.
      */
     protected function find_question_instance($qtypeidentifier, $questionidentifier) {
@@ -175,7 +175,7 @@ abstract class qtype_combined_combiner_base {
 
     /**
      * Break down code in question text into three params, with null meaning no param.
-     * @param $codeinsideprepostfix code taken from inside square brackets.
+     * @param string $codeinsideprepostfix code taken from inside square brackets.
      * @return array three params.
      */
     protected function decode_code_in_question_text($codeinsideprepostfix) {
@@ -327,7 +327,7 @@ class qtype_combined_type_manager {
     }
 
     /**
-     * @param $typeidentifier the identifier as found in the question text.
+     * @param string $typeidentifier the identifier as found in the question text.
      * @return bool
      */
     public static function is_identifier_known($typeidentifier) {
@@ -386,4 +386,3 @@ class qtype_combined_type_manager {
         return join(':', array($subqid, $subtypeid, $subqresponseid));
     }
 }
-
