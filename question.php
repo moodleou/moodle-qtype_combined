@@ -102,22 +102,23 @@ class qtype_combined_question extends question_graded_automatically_with_countba
 
     public function check_file_access($qa, $options, $component, $filearea,
             $args, $forcedownload) {
-        if ($component == 'question' && $filearea == 'generalfeedback') {
-            // We are (mis)using subq general feedback field to store incorrect feedback.
-            // We will override the general feedback access control here for subqs so that subq general feeback files can
-            // be shown whenever the feedback option is on and not just when the general feedback option is on.
-            list($qid, $filename) = $args;
-            $subq = $this->combiner->find_subq_with_id($qid);
-            if ($subq !== null) {
+        if ($component == 'question' && $filearea == 'hint') {
+            return $this->check_hint_file_access($qa, $options, $args);
+        }
+
+        // If this is not a hint then first arg is question id.
+        list($qid, $filename) = $args;
+        $subq = $this->combiner->find_subq_with_id($qid);
+        if ($subq !== null) {
+            if ($component == 'question' && $filearea == 'generalfeedback') {
+                // We are (mis)using subq general feedback field to store incorrect feedback.
+                // We will override the general feedback access control here for subqs so that subq general feeback files can
+                // be shown whenever the feedback option is on and not just when the general feedback option is on.
                 return (bool)$options->feedback;
             } else {
-                return parent::check_file_access($qa, $options, $component, $filearea,
-                                                 array($args, $filename), $forcedownload);
+                // Pass through to subq.
+                return $subq->question->check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
             }
-
-        } else if ($component == 'question' && $filearea == 'hint') {
-            return $this->check_hint_file_access($qa, $options, $args);
-
         } else {
             return parent::check_file_access($qa, $options, $component, $filearea,
                     $args, $forcedownload);
