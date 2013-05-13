@@ -29,7 +29,7 @@ require_once($CFG->dirroot.'/question/type/combined/combiner/base.php');
 /**
  * Class qtype_combined_combiner_for_saving_subqs
  */
-class qtype_combined_combiner_for_saving_subqs extends qtype_combined_combiner_base {
+class qtype_combined_combiner_for_question_type extends qtype_combined_combiner_base {
 
     /**
      * Save subq data. Default values are added to the values from the form and then the data is passed through to the
@@ -43,6 +43,13 @@ class qtype_combined_combiner_for_saving_subqs extends qtype_combined_combiner_b
         $this->get_subq_data_from_form_data($fromform);
         foreach ($this->subqs as $subq) {
             $subq->save($contextid);
+        }
+    }
+
+    public function move_subq_files($questionid, $oldcontextid, $newcontextid) {
+        $subqrecs = $this->get_subq_data_from_db($questionid);
+        foreach ($subqrecs as $subq) {
+            question_bank::get_qtype($subq->qtype, true)->move_files($subq->id, $oldcontextid, $newcontextid);
         }
     }
 

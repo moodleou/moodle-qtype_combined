@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->dirroot . '/question/engine/lib.php');
 require_once($CFG->dirroot . '/question/type/combined/question.php');
-require_once($CFG->dirroot .'/question/type/combined/combiner/saving.php');
+require_once($CFG->dirroot .'/question/type/combined/combiner/forquestiontype.php');
 require_once($CFG->dirroot .'/question/type/combined/combiner/runtime.php');
 
 /**
@@ -46,6 +46,9 @@ class qtype_combined extends question_type {
         parent::move_files($questionid, $oldcontextid, $newcontextid);
         $this->move_files_in_combined_feedback($questionid, $oldcontextid, $newcontextid);
         $this->move_files_in_hints($questionid, $oldcontextid, $newcontextid);
+
+        $combiner = new qtype_combined_combiner_for_question_type();
+        $combiner->move_subq_files($questionid, $oldcontextid, $newcontextid);
     }
 
     protected function delete_files($questionid, $contextid) {
@@ -56,7 +59,7 @@ class qtype_combined extends question_type {
 
     public function save_question_options($fromform) {
         global $DB;
-        $combiner = new qtype_combined_combiner_for_saving_subqs();
+        $combiner = new qtype_combined_combiner_for_question_type();
 
         if (!$options = $DB->get_record('qtype_combined', array('questionid' => $fromform->id))) {
             $options = new stdClass();
