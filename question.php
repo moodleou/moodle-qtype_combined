@@ -119,6 +119,9 @@ class qtype_combined_question extends question_graded_automatically_with_countba
                 // Pass through to subq.
                 return $subq->question->check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
             }
+        } else if ($component == 'question' && in_array($filearea,
+                                                     array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback'))) {
+            return $this->check_combined_feedback_file_access($qa, $options, $filearea);
         } else {
             return parent::check_file_access($qa, $options, $component, $filearea,
                     $args, $forcedownload);
