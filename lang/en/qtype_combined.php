@@ -22,11 +22,6 @@
  * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-$string['controlnamegapselect'] = 'drop down box';
-$string['controlnamegapselectplural'] = 'drop down boxes';
-$string['controlnameoumultiresponse'] = 'check box group';
-$string['controlnamepmatch'] = 'text input';
-$string['controlnamevarnumeric'] = 'numeric input';
 $string['correct_choice_embed_code'] = '[[{$a->qid}:{$a->qtype}:{correct choice}]]';
 $string['embeddedquestionremovedfromform'] = 'One or more embedded questions have been removed from the question text. The
 question data for these questions is still shown below, but it will be permanently removed when you either press the \'Verify the
@@ -37,14 +32,10 @@ type as follows :<ul>
  <li>[[{question identifier}:{$a}:v]] vertical OR</li>
   <li>[[{question identifier}:{$a}:h]] horizontal.</li></ul>
   <p>You should not enter anything else after the second colon.</p>';
-$string['err_correctanswerblank'] = 'You have marked this choice as correct but it is blank!';
 $string['err_duplicateids'] = 'Each embedded question instance should have a different identifier. You have used the following
 identifier(s) for more than one question \'{$a}\'.';
 $string['err_fillinthedetailsforsubq'] = 'You need to fill in the details to describe the sub question \'{$a}\'.';
 $string['err_fillinthedetailshere'] = 'You need to fill in the details for this sub question.';
-$string['err_nonecorrect'] = 'You have not marked any choices as correct.';
-$string['err_notavalidnumberinanswer'] = 'You need to enter a valid number here in the answer field.';
-$string['err_notavalidnumberinerrortolerance'] = 'You have entered an invalid number in the error response field.';
 $string['err_questionidentifiertoolong'] = 'The sub question name \'{$a}\' is too long. You can use up to 10 alphanumeric
 characters.';
 $string['err_insufficientnoofcodeparts'] = 'Error, your code to embed a question control \'{$a->fullcode}\' has too few colon
@@ -62,7 +53,6 @@ follows
   the number.</li></ul>
   <p>You should not enter anything else after the second colon.</p>';
 $string['err_invalidquestionidentifier'] = 'Your question identifier code consist of one or more alphanumeric characters.';
-$string['err_providepmatchexpression'] = 'You must provide a pmatch expression here.';
 $string['err_subq_not_included_in_question_text'] = 'It seems you have removed this question from the question text.
 Embed this question in the form with the code {$a} or it will be removed when you submit this form again.';
 $string['err_thisqtypecannothavemorethanonecontrol'] = 'You have tried to embed more than one control for question type
@@ -74,7 +64,6 @@ $string['err_unrecognisedqtype'] = 'The question type identifier \'{$a->qtype}\'
 \'{$a->fullcode}\'is not known.';
 $string['err_weightingsdonotaddup'] = 'Weightings for sub questions do not add up to 1.';
 $string['err_you_must_provide_third_param'] = 'You must provide a third param for question type {$a}.';
-$string['err_youneedmorechoices'] = 'You need to enter two or more choices.';
 $string['incorrectfeedback'] = 'Feedback for any incorrect response';
 $string['noembeddedquestions'] = 'You have deleted all embedded sub question elements from the question text!';
 $string['pluginname'] = 'Combined';
@@ -98,7 +87,6 @@ sub questions in the question text.
 
 Depending on which question types you have installed, the student can enter a numeric or short text answer or choose an answer or
 answers using a select box or check boxes.';
-$string['scinotation'] = 'Scientific notation';
 $string['subqheader'] = '\'{$a->qtype}\' input \'{$a->qid}\'';
 $string['subqheader_not_in_question_text'] = '\'{$a->qtype}\' input \'{$a->qid}\' (not embedded in question text).';
 $string['subquestiontypenotinstalled'] = 'You are attempting to use a combined question with a sub question type \'{$a}\' that
