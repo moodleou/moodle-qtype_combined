@@ -18,8 +18,7 @@
  * Code that deals with loading subqs and the users interaction with them at run time, ie. when
  * a combined question is used in an activity such as the quiz or previewed as a question preview.
  *
- * @package    qtype
- * @subpackage combined
+ * @package    qtype_combined
  * @copyright  2013 The Open University
  * @author     James Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

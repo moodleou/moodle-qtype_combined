@@ -15,11 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains tests that walks a question through the interactive
- * behaviour.
+ * This file contains tests that walks a question through simulated student attempts.
  *
- * @package   qtype_gapselect
- * @copyright 2012 The Open University
+ * @package   qtype_combined
+ * @copyright 2013 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,9 +31,9 @@ require_once($CFG->dirroot . '/question/type/combined/tests/helper.php');
 
 
 /**
- * Unit tests for the gap-select question type.
+ * Unit tests for the combined question type.
  *
- * @copyright 2012 The Open University
+ * @copyright 2013 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @group qtype_combined
  */

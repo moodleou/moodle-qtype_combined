@@ -17,8 +17,8 @@
 /**
  * Contains the helper class for the combined question type tests.
  *
- * @package   qtype_gapselect
- * @copyright 2011 The Open University
+ * @package   qtype_combined
+ * @copyright 2013 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Test helper class for the combined question type.
  *
- * @copyright 2011 The Open University
+ * @copyright 2013 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_combined_test_helper {

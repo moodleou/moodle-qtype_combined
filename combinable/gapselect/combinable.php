@@ -17,8 +17,7 @@
 /**
  * Defines the hooks necessary to make the gapselect question type combinable
  *
- * @package    qtype
- * @subpackage combined
+ * @package    qtype_combined
  * @copyright  2013 The Open University
  * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
