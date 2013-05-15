@@ -86,6 +86,8 @@ abstract class qtype_combined_combinable_base {
     }
 
     /**
+     * Normally set to false, set it to true if there can be more than one control embedded in the question text for this sub
+     * question type.
      * @return bool Can there be more of one 'heads' of this question with same identifier in question text.
      */
     public function can_be_more_than_one_of_same_instance() {

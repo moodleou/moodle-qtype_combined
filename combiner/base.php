@@ -17,6 +17,10 @@
 /**
  * Code that deals with finding and loading code from subqs.
  *
+ * Classes contained here:
+ * - qtype_combined_combiner_base - An instance of this class stores everything to do with the subqs for one combined question.
+ * - qtype_combined_type_manager - Code to find hook classes for all question types that are available and load them.
+ *
  * @package    qtype_combined
  * @copyright  2013 The Open University
  * @author     James Pratt <me@jamiep.org>
@@ -272,7 +276,7 @@ abstract class qtype_combined_combiner_base {
 }
 
 /**
- * Class qtype_combined_type_manager
+ * Class qtype_combined_type_manager. Code to find hook classes that are available and load them.
  */
 class qtype_combined_type_manager {
 
@@ -380,6 +384,13 @@ class qtype_combined_type_manager {
         return join("\n\n", $codes);
     }
 
+    /**
+     * Function used by response analysis reporting code to create unique id string for each response part.
+     * @param $subqid string second param of embed code
+     * @param $subqtype string Moodle question type
+     * @param $subqresponseid string the response part id string used within subq.
+     * @return string
+     */
     public static function response_id($subqid, $subqtype, $subqresponseid) {
         $subtypeid = self::translate_qtype_to_qtype_identifier($subqtype);
         return join(':', array($subqid, $subtypeid, $subqresponseid));

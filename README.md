@@ -10,7 +10,10 @@ So the student can enter a numeric or short text answer or choose an answer or a
 
 This question type was written by Jamie Pratt (http://jamiep.org/) commissioned by the Open University, UK.
 
-This question type is compatible with Moodle 2.4+  (master branch).
+This question type is compatible with Moodle 2.5+
+
+It will work with Moodle 2.4 with this [patch](https://github.com/jamiepratt/moodle-qtype_combined/compare/wip_MDL-39230_2_5) to
+make combined question import work.
 
 ###Requires
 
@@ -22,10 +25,14 @@ these question types as sub questions:
 * [oumultiresponse](https://github.com/moodleou/moodle-qtype_oumultiresponse/)
 * [varnumeric](https://github.com/moodleou/moodle-qtype_varnumeric/)
 
-And you can make other question types work with this combined question type by adding the directory combinable/ to your question
+####Making other question types combinable
+
+You can make other question types work with this combined question type by adding the directory combinable/ to your question
 type. See examples of the files which are required in the combinable directory in the question types above. Or for a built in
 question type or where you don't want to change the code in the other question type plug ins directory you can put the required
 files in question/type/combined/combinable/{questiontypename}/
+
+See question/type/combined/combinable/README.md for more information.
 
 
 ###Installation
