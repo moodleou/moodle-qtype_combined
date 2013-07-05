@@ -66,6 +66,11 @@ $string['err_weightingsdonotaddup'] = 'Weightings for sub questions do not add u
 $string['err_you_must_provide_third_param'] = 'You must provide a third param for question type {$a}.';
 $string['incorrectfeedback'] = 'Feedback for any incorrect response';
 $string['noembeddedquestions'] = 'You have deleted all embedded sub question elements from the question text!';
+$string['nosubquestiontypesinstalled'] = 'This question type allows for the combination of the functionality of other question
+types. You need to install at least one of these other question types which will be used as sub questions.
+
+See the <a href="https://moodle.org/plugins/view.php?plugin=qtype_combined">entry in the plug-in db</a> for more details and a
+list of question types that can be used as sub questions.';
 $string['pluginname'] = 'Combined';
 $string['pluginname_help'] = ' Create a question with embedded response fields in your question text.
 
