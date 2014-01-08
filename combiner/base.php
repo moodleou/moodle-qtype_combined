@@ -304,7 +304,7 @@ class qtype_combined_type_manager {
         global $CFG;
         if (null === self::$combinableplugins) {
             self::$combinableplugins = array();
-            $pluginselsewhere = get_plugin_list_with_file('qtype', 'combinable/combinable.php', true);
+            $pluginselsewhere = core_component::get_plugin_list_with_file('qtype', 'combinable/combinable.php', true);
             foreach ($pluginselsewhere as $qtypename => $unused) {
                 self::instantiate_type_class($qtypename, self::FOUND_IN_OTHER_QTYPE_DIR);
             }
