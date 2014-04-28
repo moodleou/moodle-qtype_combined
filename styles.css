@@ -36,6 +36,10 @@ body#page-question-type-combined div[id^=fgroup_id_subqmultiresponse][id*=answer
     font-weight: normal;
     font-size: 1em;
 }
+body#page-question-type-combined div[id^=fgroup_id_subqmultiresponse][id*=answergroup] label[for*='correctanswer']{
+    position: static;
+    left: 0;
+}
 
 body#page-question-type-combined div[id^=fgroup_id_subqnumeric][id*=answergroup] label[for*='answer']{
     position: absolute;
