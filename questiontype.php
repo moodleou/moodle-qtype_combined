@@ -29,8 +29,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->dirroot . '/question/engine/lib.php');
 require_once($CFG->dirroot . '/question/type/combined/question.php');
-require_once($CFG->dirroot .'/question/type/combined/combiner/forquestiontype.php');
-require_once($CFG->dirroot .'/question/type/combined/combiner/runtime.php');
+require_once($CFG->dirroot . '/question/type/combined/combiner/forquestiontype.php');
+require_once($CFG->dirroot . '/question/type/combined/combiner/runtime.php');
 
 /**
  * The combined question type.

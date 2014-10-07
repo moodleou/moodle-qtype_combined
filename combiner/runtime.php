@@ -47,13 +47,38 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
      * @return string                  question text with embed codes replaced
      */
     public function render_subqs($questiontext, question_attempt $qa, question_display_options $options) {
+        // This will be an array $startpos => array('length' => $embedcodelen, 'replacement' => $html).
+        $replacements = array();
+
         foreach ($this->subqs as $subq) {
             $embedcodes = $subq->question_text_embed_codes();
+            $currentpos = 0;
             foreach ($embedcodes as $placeno => $embedcode) {
                 $renderedembeddedquestion = $subq->type->embedded_renderer()->subquestion($qa, $options, $subq, $placeno);
-                $questiontext = str_replace($embedcode, $renderedembeddedquestion, $questiontext);
+
+                // Now replace the first occurrence of the placeholder.
+                $pos = strpos($questiontext, $embedcode, $currentpos);
+                if ($pos === false) {
+                    throw new coding_exception('Expected subquestion ' . $embedcode .
+                            ' code not found in question text ' . $questiontext);
+                }
+                $embedcodelen = strlen($embedcode);
+                $replacements[$pos] = array('length' => $embedcodelen, 'replacement' => $renderedembeddedquestion);
+                $questiontext = substr_replace($questiontext,
+                        str_repeat('X', $embedcodelen), $pos, $embedcodelen);
+                $currentpos = $pos + $embedcodelen;
             }
         }
+
+        // Now we actually do the replacements working from the end of the string,
+        // so each replacement does not change the position of things still to be
+        // replaced.
+        krsort($replacements);
+        foreach ($replacements as $startpos => $details) {
+            $questiontext = substr_replace($questiontext,
+                    $details['replacement'], $startpos, $details['length']);
+        }
+
         return $questiontext;
     }
 

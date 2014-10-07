@@ -145,6 +145,342 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
         $this->check_current_mark(2);
     }
 
+    /**
+     * There used to be a bug if two parts of the same varnumeric subquestion
+     * had the same right answer. This test checks for that.
+     */
+    public function test_interactive_behaviour_combined_gapselect_with_repeats() {
+        if ($notfound = qtype_combined_test_helper::safe_include_test_helpers('gapselect')) {
+            $this->markTestSkipped($notfound);
+        }
+
+        // Create a combined question.
+        question_bank::load_question_definition_classes('combined');
+        $combined = new qtype_combined_question();
+
+        test_question_maker::initialise_a_question($combined);
+
+        $combined->name = 'Selection from drop down list question';
+        $combined->questiontext = 'Classify: Cat [[gs:selectmenu:1]], Dog [[gs:selectmenu:1]].';
+        $combined->generalfeedback = '';
+        $combined->qtype = question_bank::get_qtype('combined');
+
+        test_question_maker::set_standard_combined_feedback_fields($combined);
+
+        $combined->combiner = new qtype_combined_combiner_for_run_time_question_instance();
+        $combined->combiner->find_included_subqs_in_question_text($combined->questiontext);
+
+        $subq = $combined->combiner->find_or_create_question_instance('selectmenu', 'gs');
+
+        $gapselect = new qtype_gapselect_question();
+        test_question_maker::initialise_a_question($gapselect);
+        $gapselect->qtype = question_bank::get_qtype('gapselect');
+        $gapselect->name = 'gs';
+        $gapselect->questiontext = '[[1]] [[1]]';
+        $gapselect->generalfeedback = 'You made at least one incorrect choice.';
+        $gapselect->shufflechoices = true;
+        $gapselect->choices = array(
+            1 => array(
+                1 => new qtype_gapselect_choice('mammal', 1),
+                2 => new qtype_gapselect_choice('insect', 1)
+            ));
+        $gapselect->places = array(1 => 1, 2 => 1);
+        $gapselect->rightchoices = array(1 => 1, 2 => 1);
+        $gapselect->textfragments = array('', ' ', ' ', '');
+
+        $subq->question = $gapselect;
+
+        $combined->hints = array(
+                new question_hint_with_parts(1, 'This is the first hint.', FORMAT_HTML, false, false),
+                new question_hint_with_parts(2, 'This is the second hint.', FORMAT_HTML, true, true),
+        );
+
+        // Start an attempt.
+        $this->start_attempt_at_question($combined, 'interactive', 6);
+        $orderedchoices = $combined->combiner->call_subq(0, 'get_ordered_choices', 1);
+        $selectoptions = array('' => get_string('choosedots'));
+        foreach ($orderedchoices as $orderedchoicevalue => $orderedchoice) {
+            $selectoptions[$orderedchoicevalue] = $orderedchoice->text;
+        }
+        if ($selectoptions[1] == 'insect') {
+            $this->assertEquals('mammal', $selectoptions[2]);
+            $mammal = 2;
+            $insect = 1;
+        } else {
+            $this->assertEquals('mammal', $selectoptions[1]);
+            $this->assertEquals('insect', $selectoptions[2]);
+            $mammal = 1;
+            $insect = 2;
+        }
+
+        // Check the initial state.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_select_expectation('gs:p1', $selectoptions, null, true),
+                $this->get_contains_select_expectation('gs:p2', $selectoptions, null, true),
+                $this->get_contains_submit_button_expectation(true),
+                $this->get_does_not_contain_feedback_expectation(),
+                $this->get_tries_remaining_expectation(3),
+                $this->get_no_hint_visible_expectation());
+
+        // Check a partially right answer.
+        $this->process_submission(array('gs:p1' => $mammal, 'gs:p2' => $insect, '-submit' => 1));
+
+        // Verify.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_select_expectation('gs:p1', $selectoptions, $mammal, true),
+                $this->get_contains_select_expectation('gs:p2', $selectoptions, $insect, true),
+                $this->get_contains_submit_button_expectation(false),
+                $this->get_contains_try_again_button_expectation(true),
+                $this->get_does_not_contain_correctness_expectation(),
+                new question_pattern_expectation('/' . preg_quote(
+                        get_string('notcomplete', 'qbehaviour_interactive'), '/') . '/'),
+                $this->get_contains_hint_expectation('This is the first hint'));
+
+        // Do try again.
+        $this->process_submission(array('-tryagain' => 1));
+
+        // Verify.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_select_expectation('gs:p1', $selectoptions, $mammal, true),
+                $this->get_contains_select_expectation('gs:p2', $selectoptions, $insect, true),
+                $this->get_contains_submit_button_expectation(true),
+                $this->get_does_not_contain_correctness_expectation(),
+                $this->get_does_not_contain_feedback_expectation(),
+                $this->get_tries_remaining_expectation(2),
+                $this->get_no_hint_visible_expectation());
+
+        // Submit the right answer.
+        $this->process_submission(array('gs:p1' => $mammal, 'gs:p2' => $mammal, '-submit' => 1));
+
+        // Verify.
+        $this->check_current_state(question_state::$gradedright);
+        $this->check_current_mark(5);
+        $this->check_current_output(
+                $this->get_contains_select_expectation('gs:p1', $selectoptions, $mammal, false),
+                $this->get_contains_select_expectation('gs:p2', $selectoptions, $mammal, false),
+                $this->get_contains_submit_button_expectation(false),
+                $this->get_contains_correct_expectation(),
+                $this->get_no_hint_visible_expectation());
+    }
+
+    /**
+     * There used to be a bug if the student typed input into one box which
+     * matches a placeholder for a subquestion later in the question text.
+     * This test checks for that.
+     */
+    public function test_interactive_behaviour_combined_hack_attempt() {
+        if ($notfound = qtype_combined_test_helper::safe_include_test_helpers('pmatch')) {
+            $this->markTestSkipped($notfound);
+        }
+
+        // Create a combined question.
+        question_bank::load_question_definition_classes('combined');
+        $combined = new qtype_combined_question();
+
+        test_question_maker::initialise_a_question($combined);
+
+        $combined->name = 'Selection from drop down list question';
+        $combined->questiontext = 'Type &#x5b;&#x5b;2:pmatch&#x5d;&#x5d; in the first box, ' .
+                'if you dare! [[1:pmatch]][[2:pmatch]].';
+        $combined->generalfeedback = '';
+        $combined->qtype = question_bank::get_qtype('combined');
+        $combined->hints = array(
+                new question_hint_with_parts(1, 'This is the first hint.', FORMAT_HTML, false, false),
+                new question_hint_with_parts(2, 'This is the second hint.', FORMAT_HTML, true, true),
+        );
+        test_question_maker::set_standard_combined_feedback_fields($combined);
+
+        $combined->combiner = new qtype_combined_combiner_for_run_time_question_instance();
+        $combined->combiner->find_included_subqs_in_question_text($combined->questiontext);
+
+        // First pmatch subquestion.
+        question_bank::load_question_definition_classes('pmatch');
+        $subq = $combined->combiner->find_or_create_question_instance('pmatch', '1');
+
+        $pmatch = new qtype_pmatch_question();
+        test_question_maker::initialise_a_question($pmatch);
+        $pmatch->qtype = question_bank::get_qtype('pmatch');
+        $pmatch->name = '1';
+        $pmatch->questiontext = '';
+        $pmatch->generalfeedback = '';
+        $pmatch->pmatchoptions = new pmatch_options();
+        $pmatch->answers = array(
+            13 => new question_answer(13, 'match(frog)', 1.0, '', FORMAT_HTML),
+        );
+        $pmatch->applydictionarycheck = false;
+        $subq->question = $pmatch;
+
+        // Second pmatch subquestion.
+        $subq = $combined->combiner->find_or_create_question_instance('pmatch', '2');
+
+        $pmatch = new qtype_pmatch_question();
+        test_question_maker::initialise_a_question($pmatch);
+        $pmatch->qtype = question_bank::get_qtype('pmatch');
+        $pmatch->name = '2';
+        $pmatch->questiontext = '';
+        $pmatch->generalfeedback = '';
+        $pmatch->pmatchoptions = new pmatch_options();
+        $pmatch->answers = array(
+                14 => new question_answer(13, 'match(toad)', 1.0, '', FORMAT_HTML),
+        );
+        $pmatch->applydictionarycheck = false;
+        $subq->question = $pmatch;
+
+        // Start an attempt.
+        $this->start_attempt_at_question($combined, 'interactive', 6);
+
+        // Check the initial state.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_text_expectation('1:answer', '', true),
+                $this->get_contains_text_expectation('2:answer', '', true),
+                $this->get_contains_submit_button_expectation(true),
+                $this->get_does_not_contain_feedback_expectation(),
+                $this->get_tries_remaining_expectation(3),
+                $this->get_no_hint_visible_expectation());
+
+        // Submit a malicious response.
+        $this->process_submission(array('1:answer' => '[[2:pmatch]]', '2:answer' => 'Ha! Ha!', '-submit' => 1));
+
+        // Verify.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_text_expectation('1:answer', '[[2:pmatch]]', false),
+                $this->get_contains_text_expectation('2:answer', 'Ha! Ha!', false),
+                $this->get_contains_submit_button_expectation(false),
+                $this->get_contains_try_again_button_expectation(true),
+                $this->get_does_not_contain_correctness_expectation(),
+                new question_pattern_expectation('/' . preg_quote(
+                        get_string('notcomplete', 'qbehaviour_interactive'), '/') . '/'),
+                $this->get_contains_hint_expectation('This is the first hint'));
+    }
+
+
+    /**
+     * There used to be a bug if the student typed input into one box which
+     * matches a placeholder for a subquestion later in the question text.
+     * This test checks for that.
+     */
+    public function test_interactive_behaviour_combined_interleaved_subqs() {
+        if ($notfound = qtype_combined_test_helper::safe_include_test_helpers('pmatch', 'gapselect')) {
+            $this->markTestSkipped($notfound);
+        }
+
+        // Create a combined question.
+        question_bank::load_question_definition_classes('combined');
+        $combined = new qtype_combined_question();
+
+        test_question_maker::initialise_a_question($combined);
+
+        $combined->name = 'Selection from drop down list question';
+        $combined->questiontext = 'Tricky: [[1:selectmenu:1]][[2:pmatch]][[1:selectmenu:1]].';
+        $combined->generalfeedback = '';
+        $combined->qtype = question_bank::get_qtype('combined');
+        $combined->hints = array(
+                new question_hint_with_parts(1, 'This is the first hint.', FORMAT_HTML, false, false),
+                new question_hint_with_parts(2, 'This is the second hint.', FORMAT_HTML, true, true),
+        );
+        test_question_maker::set_standard_combined_feedback_fields($combined);
+
+        $combined->combiner = new qtype_combined_combiner_for_run_time_question_instance();
+        $combined->combiner->find_included_subqs_in_question_text($combined->questiontext);
+
+        $subq = $combined->combiner->find_or_create_question_instance('selectmenu', '1');
+
+        // Gap-select subquestion.
+        question_bank::load_question_definition_classes('gapselect');
+        $gapselect = new qtype_gapselect_question();
+        test_question_maker::initialise_a_question($gapselect);
+        $gapselect->qtype = question_bank::get_qtype('gapselect');
+        $gapselect->defaultmark = 0.5;
+        $gapselect->name = 'gs';
+        $gapselect->questiontext = '[[1]] [[1]]';
+        $gapselect->generalfeedback = 'You made at least one incorrect choice.';
+        $gapselect->shufflechoices = true;
+        $gapselect->choices = array(
+                1 => array(
+                        1 => new qtype_gapselect_choice('mammal', 1),
+                        2 => new qtype_gapselect_choice('insect', 1)
+                ));
+        $gapselect->places = array(1 => 1, 2 => 1);
+        $gapselect->rightchoices = array(1 => 1, 2 => 1);
+        $gapselect->textfragments = array('', ' ', '');
+
+        $subq->question = $gapselect;
+
+        // Pmatch subquestion.
+        question_bank::load_question_definition_classes('pmatch');
+        $subq = $combined->combiner->find_or_create_question_instance('pmatch', '2');
+
+        $pmatch = new qtype_pmatch_question();
+        test_question_maker::initialise_a_question($pmatch);
+        $pmatch->qtype = question_bank::get_qtype('pmatch');
+        $pmatch->defaultmark = 0.5;
+        $pmatch->name = '1';
+        $pmatch->questiontext = '';
+        $pmatch->generalfeedback = '';
+        $pmatch->pmatchoptions = new pmatch_options();
+        $pmatch->answers = array(
+                13 => new question_answer(13, 'match(frog)', 1.0, '', FORMAT_HTML),
+        );
+        $pmatch->applydictionarycheck = false;
+        $subq->question = $pmatch;
+
+        // Start an attempt.
+        $this->start_attempt_at_question($combined, 'interactive', 9);
+
+        // Work out gapselect choice order.
+        $orderedchoices = $combined->combiner->call_subq(0, 'get_ordered_choices', 1);
+        $selectoptions = array('' => get_string('choosedots'));
+        foreach ($orderedchoices as $orderedchoicevalue => $orderedchoice) {
+            $selectoptions[$orderedchoicevalue] = $orderedchoice->text;
+        }
+        if ($selectoptions[1] == 'insect') {
+            $this->assertEquals('mammal', $selectoptions[2]);
+            $mammal = 2;
+            $insect = 1;
+        } else {
+            $this->assertEquals('mammal', $selectoptions[1]);
+            $this->assertEquals('insect', $selectoptions[2]);
+            $mammal = 1;
+            $insect = 2;
+        }
+
+        // Check the initial state.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_select_expectation('1:p1', $selectoptions, null, true),
+                $this->get_contains_text_expectation('2:answer', '', true),
+                $this->get_contains_select_expectation('1:p2', $selectoptions, null, true),
+                $this->get_contains_submit_button_expectation(true),
+                $this->get_does_not_contain_feedback_expectation(),
+                $this->get_tries_remaining_expectation(3),
+                $this->get_no_hint_visible_expectation());
+
+        // Submit a correct response.
+        $this->process_submission(array('1:p1' => $mammal, '2:answer' => 'frog', '1:p2' => $mammal, '-submit' => 1));
+
+        // Verify.
+        $this->check_current_state(question_state::$gradedright);
+        $this->check_current_mark(9);
+        $this->check_current_output(
+                $this->get_contains_select_expectation('1:p1', $selectoptions, $mammal, false),
+                $this->get_contains_text_expectation('2:answer', 'frog', false),
+                $this->get_contains_select_expectation('1:p2', $selectoptions, $mammal, false),
+                $this->get_contains_submit_button_expectation(false),
+                $this->get_contains_correct_expectation(),
+                $this->get_no_hint_visible_expectation());
+    }
+
     protected function get_contains_num_parts_correct($num) {
         $a = new stdClass();
         $a->num = $num;
