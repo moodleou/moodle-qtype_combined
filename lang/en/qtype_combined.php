@@ -22,6 +22,10 @@
  * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+
+$string['controlnamegapselect'] = 'drop down box';
+$string['controlnamegapselectplural'] = 'drop down boxes';
 $string['correct_choice_embed_code'] = '[[{$a->qid}:{$a->qtype}:{correct choice}]]';
 $string['embeddedquestionremovedfromform'] = 'One or more embedded questions have been removed from the question text. The
 question data for these questions is still shown below, but it will be permanently removed when you either press the \'Verify the
