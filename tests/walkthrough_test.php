@@ -94,7 +94,6 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                                 array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), 2, false),
                 $this->get_contains_select_expectation('gs:p3',
                                 array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 2, false),
-                        $this->get_contains_submit_button_expectation(false),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
                 $this->get_contains_hint_expectation('This is the first hint'));
@@ -131,7 +130,6 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                                 array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), 1, false),
                 $this->get_contains_select_expectation('gs:p3',
                                 array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 1, false),
-                $this->get_contains_submit_button_expectation(false),
                 $this->get_contains_correct_expectation(),
                 $this->get_no_hint_visible_expectation());
 
@@ -231,7 +229,6 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
         $this->check_current_output(
                 $this->get_contains_select_expectation('gs:p1', $selectoptions, $mammal, true),
                 $this->get_contains_select_expectation('gs:p2', $selectoptions, $insect, true),
-                $this->get_contains_submit_button_expectation(false),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
                 $this->get_contains_hint_expectation('This is the first hint'));
@@ -260,7 +257,6 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
         $this->check_current_output(
                 $this->get_contains_select_expectation('gs:p1', $selectoptions, $mammal, false),
                 $this->get_contains_select_expectation('gs:p2', $selectoptions, $mammal, false),
-                $this->get_contains_submit_button_expectation(false),
                 $this->get_contains_correct_expectation(),
                 $this->get_no_hint_visible_expectation());
     }
@@ -351,7 +347,6 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
         $this->check_current_output(
                 $this->get_contains_text_expectation('1:answer', '[[2:pmatch]]', false),
                 $this->get_contains_text_expectation('2:answer', 'Ha! Ha!', false),
-                $this->get_contains_submit_button_expectation(false),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
                 $this->get_contains_hint_expectation('This is the first hint'));
@@ -470,7 +465,6 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('1:p1', $selectoptions, $mammal, false),
                 $this->get_contains_text_expectation('2:answer', 'frog', false),
                 $this->get_contains_select_expectation('1:p2', $selectoptions, $mammal, false),
-                $this->get_contains_submit_button_expectation(false),
                 $this->get_contains_correct_expectation(),
                 $this->get_no_hint_visible_expectation());
     }
@@ -538,7 +532,6 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
             $this->get_contains_mc_checkbox_expectation('mc:choice1', false, true),
             $this->get_contains_mc_checkbox_expectation('mc:choice2', false, false),
             $this->get_contains_mc_checkbox_expectation('mc:choice3', false, true),
-            $this->get_contains_submit_button_expectation(false),
             $this->get_contains_try_again_button_expectation(true),
             $this->get_does_not_contain_correctness_expectation(),
             $this->get_contains_hint_expectation('Hint 1'),
@@ -581,7 +574,6 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
             $this->get_contains_mc_checkbox_expectation('mc:choice1', false, false),
             $this->get_contains_mc_checkbox_expectation('mc:choice2', false, false),
             $this->get_contains_mc_checkbox_expectation('mc:choice3', false, true),
-            $this->get_contains_submit_button_expectation(false),
             $this->get_contains_try_again_button_expectation(true),
             $this->get_does_not_contain_correctness_expectation(),
             $this->get_contains_hint_expectation('Hint 2'),
@@ -620,7 +612,6 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
             $this->get_contains_mc_checkbox_expectation('mc:choice1', false, false),
             $this->get_contains_mc_checkbox_expectation('mc:choice2', false, true),
             $this->get_contains_mc_checkbox_expectation('mc:choice3', false, false),
-            $this->get_contains_submit_button_expectation(false),
             $this->get_does_not_contain_try_again_button_expectation(),
             $this->get_contains_correct_expectation(),
             $this->get_contains_standard_correct_combined_feedback_expectation());
@@ -696,7 +687,6 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                                    array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), 2, false),
             $this->get_contains_select_expectation('gs:p3',
                                    array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 2, false),
-            $this->get_contains_submit_button_expectation(false),
             $this->get_contains_try_again_button_expectation(true),
             $this->get_does_not_contain_correctness_expectation(),
             $this->get_contains_hint_expectation('Hint 1'),
@@ -753,7 +743,6 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                                    array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), 2, false),
             $this->get_contains_select_expectation('gs:p3',
                                    array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 2, false),
-            $this->get_contains_submit_button_expectation(false),
             $this->get_contains_try_again_button_expectation(true),
             $this->get_does_not_contain_correctness_expectation(),
             $this->get_contains_hint_expectation('Hint 2'),
@@ -806,7 +795,6 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                                    array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), 1, false),
             $this->get_contains_select_expectation('gs:p3',
                                    array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 1, false),
-            $this->get_contains_submit_button_expectation(false),
             $this->get_does_not_contain_try_again_button_expectation(),
             $this->get_contains_correct_expectation(),
             $this->get_contains_standard_correct_combined_feedback_expectation());
@@ -1061,7 +1049,6 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
             $this->get_contains_select_expectation('gs:p3',
                                            array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 2, false),
             $this->get_contains_text_expectation('pm:answer', 'Sarah', false),
-            $this->get_contains_submit_button_expectation(false),
             $this->get_contains_try_again_button_expectation(true),
             $this->get_does_not_contain_correctness_expectation(),
             $this->get_contains_hint_expectation('Hint 1'),
@@ -1124,7 +1111,6 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
             $this->get_contains_select_expectation('gs:p3',
                                                array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 2, false),
             $this->get_contains_text_expectation('pm:answer', 'Tom', false),
-            $this->get_contains_submit_button_expectation(false),
             $this->get_contains_try_again_button_expectation(true),
             $this->get_does_not_contain_correctness_expectation(),
             $this->get_contains_hint_expectation('Hint 2'),
@@ -1187,7 +1173,6 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
             $this->get_contains_select_expectation('gs:p3',
                                                array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 1, false),
             $this->get_contains_text_expectation('pm:answer', 'Tom', false),
-            $this->get_contains_submit_button_expectation(false),
             $this->get_does_not_contain_try_again_button_expectation(),
             $this->get_contains_correct_expectation(),
             $this->get_contains_standard_correct_combined_feedback_expectation());
@@ -1277,7 +1262,6 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                                                array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 2, false),
             $this->get_contains_text_expectation('pm:answer', 'Sarah', false),
             $this->get_contains_text_expectation('vn:answer', '-4', false),
-            $this->get_contains_submit_button_expectation(false),
             $this->get_contains_try_again_button_expectation(true),
             $this->get_does_not_contain_correctness_expectation(),
             $this->get_contains_hint_expectation('Hint 1'),
@@ -1343,7 +1327,6 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                                                array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 2, false),
             $this->get_contains_text_expectation('pm:answer', 'Tom', false),
             $this->get_contains_text_expectation('vn:answer', '-4.2', false),
-            $this->get_contains_submit_button_expectation(false),
             $this->get_contains_try_again_button_expectation(true),
             $this->get_does_not_contain_correctness_expectation(),
             $this->get_contains_hint_expectation('Hint 2'),
@@ -1409,7 +1392,6 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                                                array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 1, false),
             $this->get_contains_text_expectation('pm:answer', 'Tom', false),
             $this->get_contains_text_expectation('vn:answer', '-4.2', false),
-            $this->get_contains_submit_button_expectation(false),
             $this->get_does_not_contain_try_again_button_expectation(),
             $this->get_contains_correct_expectation(),
             $this->get_contains_standard_correct_combined_feedback_expectation());
