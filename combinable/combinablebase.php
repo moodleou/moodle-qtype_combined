@@ -304,8 +304,8 @@ abstract class qtype_combined_combinable_base {
      * @return bool Should form fragment for this subq be redisplayed to prevent data loss.
      */
     public function preserve_submitted_data() {
-        return ($this->has_submitted_data()
-            && !optional_param($this->form_field_name('notincludedinquestiontextwilldelete'), false, PARAM_BOOL));
+        $value = $this->get_submitted_param('notincludedinquestiontextwilldelete', false);
+        return ($this->has_submitted_data() && !$value);
     }
 
     /**
@@ -327,7 +327,7 @@ abstract class qtype_combined_combinable_base {
      * @return bool
      */
     protected function html_field_has_submitted_data($fieldname) {
-        $htmlfielddata = optional_param_array($this->form_field_name($fieldname), array(), PARAM_RAW_TRIMMED);
+        $htmlfielddata = $this->get_submitted_param_array($fieldname);
         return isset($htmlfielddata['text']) && !html_is_blank($htmlfielddata['text']);
     }
 
@@ -337,12 +337,12 @@ abstract class qtype_combined_combinable_base {
     protected function has_submitted_question_option_data() {
         foreach ($this->type->subq_form_fragment_question_option_fields() as $fieldname => $default) {
             if ($default === false) { // Default is empty.
-                if (optional_param($this->form_field_name($fieldname), false, PARAM_BOOL)) {
+                if ($this->get_submitted_param($fieldname, false)) {
                     // Has data if true.
                     return true;
                 }
             } else if ($default === true) { // Default is not empty.
-                if (!optional_param($this->form_field_name($fieldname), true, PARAM_BOOL)) {
+                if (!$this->get_submitted_param($fieldname, true)) {
                     // Has data if false.
                     return true;
                 }
@@ -356,7 +356,7 @@ abstract class qtype_combined_combinable_base {
      * @return bool is the submitted data in array with index $fieldname for this subq empty?
      */
     protected function submitted_data_array_not_empty($fieldname) {
-        foreach (optional_param_array($this->form_field_name($fieldname), array(), PARAM_RAW_TRIMMED) as $value) {
+        foreach ($this->get_submitted_param_array($fieldname) as $value) {
             if (!empty($value)) {
                 return true;
             }
@@ -424,6 +424,34 @@ abstract class qtype_combined_combinable_base {
 
     public function get_id() {
         return $this->questionrec->id;
+    }
+
+    /**
+     * Returns a boolean element from the submitted form parameters.
+     * @param string $fieldname The name of the parameter to be returned
+     * @param bool $default The default value
+     * @return bool
+     */
+    protected function get_submitted_param($fieldname, $default) {
+        if (isset($this->formdata)) {
+            return (bool) $this->formdata->$fieldname;
+        } else {
+            // The optional_param is required when validating the question.
+            return optional_param($this->form_field_name($fieldname), $default, PARAM_BOOL);
+        }
+    }
+
+    /**
+     * Returns an array element from the submitted form parameters.
+     * @param string $fieldname The name of the parameter to be returned
+     * @return array
+     */
+    protected function get_submitted_param_array($fieldname) {
+        if (isset($this->formdata)) {
+            return $this->formdata->$fieldname;
+        } else {
+            return optional_param_array($this->form_field_name($fieldname), array(), PARAM_RAW_TRIMMED);
+        }
     }
 }
 
