@@ -188,7 +188,7 @@ class qtype_combined_text_entry_renderer_base extends qtype_renderer
             $textareaattributes = array('name' => $inputname, 'rows' => 2, 'cols' => $size);
             $input = html_writer::tag('span', html_writer::tag('textarea', $currentanswer,
                                                                $textareaattributes + $generalattributes),
-                                                               array('class'=>'answerwrap'));
+                                                               array('class' => 'answerwrap'));
             $supsuboptions = array(
                 'supsub' => $supsuboption
             );
@@ -205,7 +205,13 @@ class qtype_combined_text_entry_renderer_base extends qtype_renderer
             }
             $input = html_writer::empty_tag('input', $inputattributes + $generalattributes);
         }
+
         $input .= $feedbackimg;
+
+        // Add accessibility label for input.
+        $inputinplace = html_writer::tag('label', get_string('answer') . ' ' . $subq->get_identifier(),
+                array('for' => $generalattributes['id'], 'class' => 'accesshide'));
+        $input = $inputinplace .= $input;
 
         return $input;
     }

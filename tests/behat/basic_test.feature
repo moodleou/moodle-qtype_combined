@@ -93,9 +93,9 @@ Feature: Test all the basic functionality of this question type
     And I press "Start again with these options"
 
     # Attempt the question
-    And I set the part "1:answer" to "2.88" in the combined question
-    And I set the part "2:answer" to "ethanoic acid" in the combined question
-    And I set the part "4:p1" to "Vinagrette" in the combined question
+    And I set the field "Answer 1" to "2.88"
+    And I set the field "Answer 2" to "ethanoic acid"
+    And I set the field "Answer 4" to "Vinagrette"
     And I press "Check"
     Then I should see "Part of your answer requires attention :"
     And I should see "Input 3 (check box group) - Please select at least one answer."

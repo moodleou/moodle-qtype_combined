@@ -72,6 +72,10 @@ class qtype_combined_gapselect_embedded_renderer extends qtype_renderer
 
         $selecthtml = html_writer::select($selectoptions, $qa->get_qt_field_name($fieldname),
                                           $value, get_string('choosedots'), $attributes) . ' ' . $feedbackimage;
-        return html_writer::tag('span', $selecthtml, array('class' => 'control'));
+
+        // Add accessibility label for input.
+        $labelhtml = html_writer::tag('label', get_string('answer') . ' ' . $subq->get_identifier(),
+                array('for' => $attributes['id'], 'class' => 'accesshide'));
+        return html_writer::tag('span', $labelhtml . $selecthtml, array('class' => 'control'));
     }
 }
