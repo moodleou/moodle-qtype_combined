@@ -81,7 +81,6 @@ Feature: Test all the basic functionality of this question type
     # Preview it.
     When I click on "Preview" "link" in the "Combined 001" "table_row"
     And I switch to "questionpreview" window
-    Then I should see "Preview question: Combined 001"
 
     # Set display and behaviour options
     And I set the following fields to these values:
