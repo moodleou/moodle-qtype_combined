@@ -1,5 +1,5 @@
 @ou @ou_vle @qtype @qtype_combined
-Feature: Test all the basic functionality of this question type
+Feature: Test all the basic functionality of combined question type
   In order to evaluate students responses, As a teacher I need to
   create and preview combined (Combined) questions.
 
