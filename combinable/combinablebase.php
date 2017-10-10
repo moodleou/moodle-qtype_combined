@@ -185,7 +185,10 @@ abstract class qtype_combined_combinable_base {
         } else {
             $subqoptions = array();
             foreach (array_keys($this->type->subq_form_fragment_question_option_fields()) as $fieldname) {
-                $subqoptions[$fieldname] = $this->questionrec->options->$fieldname;
+                // Check to prevent notice when field name is different from value in database name.
+                if (isset($this->questionrec->options->$fieldname)) {
+                    $subqoptions[$fieldname] = $this->questionrec->options->$fieldname;
+                }
             }
             return array('defaultmark' => $this->questionrec->defaultmark) + $generalfb + $subqoptions;
         }

@@ -168,3 +168,47 @@ Feature: Test all the basic functionality of combined question type
       | Question name | Edited question name |
     And I press "id_submitbutton"
     Then I should see "Edited question name"
+
+  @javascript
+  Scenario: Test pmatch combine question for convert and synonyms.
+    Given I log in as "teacher1"
+    When I am on "Course 1" course homepage
+    And I navigate to "Question bank" node in "Course administration"
+    And I press "Create a new question ..."
+    And I set the field "Combined" to "1"
+    And I press "Add"
+    And I should see "Adding a combined question"
+    And I set the field "Question name" to "Combined 001"
+    And I set the field "Question text" to "[[1:pmatch]]"
+    And I press "Verify the question text and update the form"
+    And I follow "'pmatch' input '1'"
+    And I set the following fields to these values:
+      | Weighting                           | 100%              |
+      | Check spelling of student           | No                |
+      | Answer                              | match(number ten) |
+      | Feedback for any incorrect response | General feedback  |
+      | Word                                | ten               |
+      | Synonyms                            | 10                |
+    And I press "Save changes and continue editing"
+    # Preview it.
+    And I follow "Preview"
+    # Check entering the correct answer.
+    And I switch to "questionpreview" window
+    And I set the field "Answer 1" to "number ten"
+    And I press "Submit and finish"
+    Then I should see "Your answer is correct."
+    # Check entering using synonyms feature.
+    When I press "Start again"
+    And I set the field "Answer 1" to "number 10"
+    And I press "Submit and finish"
+    Then I should see "Your answer is correct."
+    # Check entering using convert to space feature.
+    When I press "Start again"
+    And I set the field "Answer 1" to "number;ten"
+    And I press "Submit and finish"
+    Then I should see "Your answer is correct."
+    # Check entering incorrect answer.
+    When I press "Start again"
+    And I set the field "Answer 1" to "number_ten"
+    And I press "Submit and finish"
+    And I should see "Your answer is incorrect."

@@ -72,7 +72,8 @@ class qtype_combined_question_test extends advanced_testcase {
             'category' => 1,
             'name' => 'Test combined with varnumeric',
             'questiontext' => array(
-                    'text' => 'Choose a answer? [[1:multiresponse:v]]<br>What is 1 - 1? [[2:numeric:__10__]]',
+                    'text' => 'Choose a answer? [[1:multiresponse:v]]<br>What is 1 - 1? [[2:numeric:__10__]]
+                        <br>Pmatch question [[3:pmatch]]',
                     'format' => 1
             ),
             'defaultmark' => 1,
@@ -80,7 +81,7 @@ class qtype_combined_question_test extends advanced_testcase {
                     'text' => '',
                     'format' => 1
             ),
-            'subq:multiresponse:1:defaultmark' => 0.5,
+            'subq:multiresponse:1:defaultmark' => 0.3333333,
             'subq:multiresponse:1:shuffleanswers' => 1,
             'subq:multiresponse:1:noofchoices' => 3,
             'subq:multiresponse:1:answer' => array('a', 'b', 'c'),
@@ -91,13 +92,15 @@ class qtype_combined_question_test extends advanced_testcase {
             ),
             'subqfragment_id' => array(
                     'multiresponse_1' => '1',
-                    'numeric_2' => '2'
+                    'numeric_2' => '2',
+                    'pmatch_3' => '3'
             ),
             'subqfragment_type' => array(
                     'multiresponse_1' => 'multiresponse',
-                    'numeric_2' => 'numeric'
+                    'numeric_2' => 'numeric',
+                    'pmatch_3' => 'pmatch'
             ),
-            'subq:numeric:2:defaultmark' => 0.5,
+            'subq:numeric:2:defaultmark' => 0.3333333,
             'subq:numeric:2:answer' => array('0'),
             'subq:numeric:2:error' => array(''),
             'subq:numeric:2:requirescinotation' => 0,
@@ -105,6 +108,22 @@ class qtype_combined_question_test extends advanced_testcase {
                     'text' => 'OK',
                     'format' => 1
             ),
+            'subq:pmatch:3:defaultmark' => 0.3333333,
+            'subq:pmatch:3:allowsubscript' => 0,
+            'subq:pmatch:3:allowsuperscript' => 0,
+            'subq:pmatch:3:usecase' => 0,
+            'subq:pmatch:3:applydictionarycheck' => 1,
+            'subq:pmatch:3:extenddictionary' => '',
+            'subq:pmatch:3:converttospace' => '[];,./',
+            'subq:pmatch:3:synonymsdata' => array(
+                    array(
+                        'word' => 'AA', 'synonyms' => 'BB'
+                    )
+            ),
+            'subq:pmatch:3:answer' => ['match(100)'],
+            'subq:pmatch:3:generalfeedback[text]' => 'ABCDEF',
+            'subq:pmatch:3:generalfeedback[format]' => 1,
+            'subq:pmatch:3:generalfeedback[itemid]' => 571101409,
             'correctfeedback' => array(
                     'text' => 'Your answer is correct.',
                     'format' => 1
@@ -141,6 +160,12 @@ class qtype_combined_question_test extends advanced_testcase {
 
         // Try an empty numeric answer (should not validate).
         $fromform['subq:numeric:2:answer'] = array('');
+        $errors = $mform->validation($fromform, array());
+        $this->assertNotEmpty($errors);
+
+        // Check duplicate synonym.
+        $fromform['subq:numeric:2:answer'] = array(0);
+        $fromform['subq:pmatch:3:synonymsdata'][] = array('word' => 'AA', 'synonyms' => 'BB');
         $errors = $mform->validation($fromform, array());
         $this->assertNotEmpty($errors);
     }
