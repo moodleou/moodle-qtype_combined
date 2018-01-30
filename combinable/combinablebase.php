@@ -450,7 +450,7 @@ abstract class qtype_combined_combinable_base {
      * @return array
      */
     protected function get_submitted_param_array($fieldname) {
-        if (isset($this->formdata)) {
+        if (isset($this->formdata->$fieldname)) {
             return $this->formdata->$fieldname;
         } else {
             return optional_param_array($this->form_field_name($fieldname), array(), PARAM_RAW_TRIMMED);
