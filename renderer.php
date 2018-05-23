@@ -172,11 +172,7 @@ class qtype_combined_text_entry_renderer_base extends qtype_renderer
         $usehtml = false;
         $supsuboption = $subq->get_sup_sub_editor_option();
         if (null !== $supsuboption) {
-            if (class_exists('editor_ousupsub_helper')) {
-                $editor = editor_ousupsub_helper::get_editor();
-            } else {
-                $editor = get_texteditor('supsub');
-            }
+            $editor = get_texteditor('ousupsub');
             if ($editor !== false) {
                 $usehtml = true;
             }
