@@ -84,7 +84,8 @@ class qtype_combined_question_test extends advanced_testcase {
             'subq:multiresponse:1:defaultmark' => 0.3333333,
             'subq:multiresponse:1:shuffleanswers' => 1,
             'subq:multiresponse:1:noofchoices' => 3,
-            'subq:multiresponse:1:answer' => array('a', 'b', 'c'),
+            'subq:multiresponse:1:answer' => array(['text' => 'a', 'format' => 1], ['text' => 'a', 'format' => 1],
+                    ['text' => 'a', 'format' => 1]),
             'subq:multiresponse:1:correctanswer' => array('1', '0', '0'),
             'subq:multiresponse:1:generalfeedback' => array(
                     'text' => 'OK',

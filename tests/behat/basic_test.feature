@@ -47,17 +47,20 @@ Feature: Test all the basic functionality of combined question type
 
     # Multiresponse part.
     Then I follow "'multiresponse' input '3'"
+    And I click on "Expand all" "link"
+    And I press "Blanks for 3 more choices"
     And I set the following fields to these values:
-      | id_subqmultiresponse3defaultmark     | 25%      |
-      | id_subqmultiresponse3answer_0        | carbon   |
-      | id_subqmultiresponse3correctanswer_0 | 1        |
-      | id_subqmultiresponse3answer_1        | hydrogen |
-      | id_subqmultiresponse3correctanswer_1 | 1        |
-      | id_subqmultiresponse3answer_2        | oxygen   |
-      | id_subqmultiresponse3correctanswer_2 | 1        |
-      | id_subqmultiresponse3answer_3        | nitrogen |
-      | id_subqmultiresponse3answer_4        | fluorine |
-      | id_subqmultiresponse3answer_5        | chlorine |
+      | id_subqmultiresponse3defaultmark     | 25%                                              |
+      | id_subqmultiresponse3answer_0        | carbon                                           |
+      | id_subqmultiresponse3correctanswer_0 | 1                                                |
+      | id_subqmultiresponse3answer_1        | hydrogen                                         |
+      | id_subqmultiresponse3correctanswer_1 | 1                                                |
+      | id_subqmultiresponse3answer_2        | oxygen                                           |
+      | id_subqmultiresponse3correctanswer_2 | 1                                                |
+      | id_subqmultiresponse3answer_3        | nitrogen                                         |
+      | id_subqmultiresponse3answer_4        | fluorine                                         |
+      | id_subqmultiresponse3answer_5        | chlorine                                         |
+      | id_subqmultiresponse3answer_6        | <b>bromine</b>                                   |
       | id_subqmultiresponse3generalfeedback | Your choice of elements is not entirely correct. |
 
     # Selectmenu part.
@@ -92,6 +95,8 @@ Feature: Test all the basic functionality of combined question type
     And I press "Start again with these options"
 
     # Attempt the question
+    # Test html editor for answer field in Combined MultiResponse.
+    And "//label/b[contains(text(), 'bromine')]" "xpath_element" should be visible
     And I set the field "Answer 1" to "2.88"
     And I set the field "Answer 2" to "ethanoic acid"
     And I set the field "Answer 4" to "Vinagrette"
@@ -142,17 +147,18 @@ Feature: Test all the basic functionality of combined question type
       | id_subqpmatch2answer_0        | match_mw (ethanoic acid)           |
       | id_subqpmatch2generalfeedback | You have the incorrect IUPAC name. |
 
-      | id_subqmultiresponse3defaultmark     | 25%      |
-      | id_subqmultiresponse3answer_0        | carbon   |
-      | id_subqmultiresponse3correctanswer_0 | 1        |
-      | id_subqmultiresponse3answer_1        | hydrogen |
-      | id_subqmultiresponse3correctanswer_1 | 1        |
-      | id_subqmultiresponse3answer_2        | oxygen   |
-      | id_subqmultiresponse3correctanswer_2 | 1        |
-      | id_subqmultiresponse3answer_3        | nitrogen |
-      | id_subqmultiresponse3answer_4        | fluorine |
-      | id_subqmultiresponse3answer_5        | chlorine |
-      | id_subqmultiresponse3generalfeedback | Your choice of elements is not entirely correct. |
+      | id_subqmultiresponse3defaultmark     | 25%                                                                                                                                                                                                                                                         |
+      | id_subqmultiresponse3answer_0        | carbon                                                                                                                                                                                                                                                      |
+      | id_subqmultiresponse3correctanswer_0 | 1                                                                                                                                                                                                                                                           |
+      | id_subqmultiresponse3answer_1        | hydrogen                                                                                                                                                                                                                                                    |
+      | id_subqmultiresponse3correctanswer_1 | 1                                                                                                                                                                                                                                                           |
+      | id_subqmultiresponse3answer_2        | oxygen                                                                                                                                                                                                                                                      |
+      | id_subqmultiresponse3correctanswer_2 | 1                                                                                                                                                                                                                                                           |
+      | id_subqmultiresponse3answer_3        | nitrogen                                                                                                                                                                                                                                                    |
+      | id_subqmultiresponse3answer_4        | fluorine                                                                                                                                                                                                                                                    |
+      | id_subqmultiresponse3answer_5        | chlorine                                                                                                                                                                                                                                                    |
+      | id_subqmultiresponse3answer_6        | <b>bromine</b>                                                                                                                                                                                                                                              |
+      | id_subqmultiresponse3generalfeedback | Your choice of elements is not entirely correct.                                                                                                                                                                                                            |
 
       | id_subqselectmenu4defaultmark        | 25%           |
       | id_subqselectmenu4answer_0           | Wine          |
