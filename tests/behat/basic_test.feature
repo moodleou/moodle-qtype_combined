@@ -218,3 +218,55 @@ Feature: Test all the basic functionality of combined question type
     And I set the field "Answer 1" to "number_ten"
     And I press "Submit and finish"
     And I should see "Your answer is incorrect."
+
+  @javascript
+  Scenario: Test duplicating a combined question and editing subquestions before saving
+    Given I log in as "teacher1"
+    When I am on "Course 1" course homepage
+    And I navigate to "Question bank" node in "Course administration"
+    And I press "Create a new question ..."
+    And I set the field "Combined" to "1"
+    And I press "Add"
+    And I should see "Adding a combined question"
+    And I set the field "Question name" to "Duplication test"
+    And I set the field "Question text" to "Cat: [[1:selectmenu:1]], Dog: [[2:selectmenu:1]]"
+    And I press "Verify the question text and update the form"
+    And I expand all fieldsets
+    And I set the following fields to these values:
+      | id_subqselectmenu1defaultmark | 50%     |
+      | id_subqselectmenu1answer_0    | Kitten  |
+      | id_subqselectmenu1answer_1    | Tadpole |
+      | id_subqselectmenu2defaultmark | 50%     |
+      | id_subqselectmenu2answer_0    | Puppy   |
+      | id_subqselectmenu2answer_1    | Foal    |
+    And I press "Save changes"
+    And I click on "Duplicate" "link" in the "Duplication test" "table_row"
+    And I set the field "Question name" to "The new question"
+    And I set the field "Question text" to "[[1:selectmenu:1]]"
+    And I expand all fieldsets
+    And I set the following fields to these values:
+      | id_subqselectmenu1defaultmark | 100%    |
+      | id_subqselectmenu1answer_0    | Kitten  |
+      | id_subqselectmenu1answer_1    | Tadpole |
+      | id_subqselectmenu2defaultmark | 50%     |
+      | id_subqselectmenu2answer_0    | Puppy   |
+      | id_subqselectmenu2answer_1    | Foal    |
+    And I press "Save changes"
+    Then I should see "One or more embedded questions have been removed from the question text"
+    And I press "Save changes"
+    And I click on "Preview" "link" in the "Duplication test" "table_row"
+    # Check entering the correct answer for original question.
+    And I switch to "questionpreview" window
+    And I set the field "Answer 1" to "Kitten"
+    And I set the field "Answer 2" to "Puppy"
+    And I press "Submit and finish"
+    And I should see "Your answer is correct."
+    And I switch to the main window
+    And I click on "Preview" "link" in the "The new question" "table_row"
+    # Check entering the correct answer for original question.
+    And I switch to "questionpreview" window
+    And I set the field "Answer 1" to "Kitten"
+    And I set the field "Answer 2" to "Puppy"
+    And I press "Submit and finish"
+    And I should see "Your answer is correct."
+    And I switch to the main window

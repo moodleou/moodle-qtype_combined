@@ -44,7 +44,13 @@ class qtype_combined_combiner_for_question_type extends qtype_combined_combiner_
         $this->load_subq_data_from_db($fromform->id);
         $this->get_subq_data_from_form_data($fromform);
         foreach ($this->subqs as $subq) {
-            $subq->save($contextid);
+            if (!$subq->is_in_question_text() && !$subq->preserve_submitted_data()) {
+                if ($subq->is_in_db()) {
+                    $subq->delete();
+                }
+            } else {
+                $subq->save($contextid);
+            }
         }
     }
 

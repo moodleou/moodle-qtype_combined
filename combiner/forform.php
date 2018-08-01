@@ -52,9 +52,6 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
 
         foreach ($this->subqs as $i => $subq) {
             if (!$subq->is_in_question_text() && !$subq->preserve_submitted_data()) {
-                if ($subq->is_in_db()) {
-                    $subq->delete();
-                }
                 unset($this->subqs[$i]);
             }
         }
