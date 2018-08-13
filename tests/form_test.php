@@ -52,7 +52,7 @@ class qtype_combined_question_test extends advanced_testcase {
         $category = question_make_default_categories(array($context));
 
         $question = new stdClass();
-        $question->id = -1;
+        $question->id = '1';
         $question->category = $category->id;
         $question->qtype = 'combined';
         $question->createdby = 1;

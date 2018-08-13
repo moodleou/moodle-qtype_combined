@@ -32,6 +32,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * Class qtype_combined_combinable_base
  * Defines a sub question instance.
@@ -166,7 +169,7 @@ abstract class qtype_combined_combinable_base {
 
         $text = file_prepare_draft_area($draftid, $context, $component, $fieldname, $subquestionid, $fileoptions, $text);
 
-        return array($fieldname => array('text' =>  $text,
+        return array($fieldname => array('text' => $text,
                                          'format' => $format,
                                          'itemid' => $draftid));
     }
@@ -178,7 +181,8 @@ abstract class qtype_combined_combinable_base {
      * @return array data to go in form from db with field name as array key not yet with additional question instance prefix.
      */
     public function data_to_form($context, $fileoptions) {
-        $generalfb =$this->editor_data_to_form('question', 'generalfeedback', $this->questionrec, $context->id, $fileoptions);
+        $generalfb = $this->editor_data_to_form('question', 'generalfeedback',
+                $this->questionrec, $context->id, $fileoptions);
 
         if ($this->questionrec === null) {
             return $generalfb;

@@ -24,6 +24,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot.'/question/type/combined/combiner/base.php');
 
 /**
@@ -88,13 +90,13 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
      * @param qtype_combined_param_to_pass_through_to_subq_base|mixed  $params,.... a variable number of arguments (or none)
      * @return array of return values returned from method call on all subqs.
      */
-    public function call_all_subqs($methodname/*, ... */) {
+    public function call_all_subqs($methodname, ...$params) {
         $returned = array();
-        $args = func_get_args();
 
         foreach ($this->subqs as $i => $unused) {
             // Call $this->call_subq($i, then same arguments as used to call this method).
-            $returned[$i] = call_user_func_array(array($this, 'call_subq'), array_merge(array($i), $args));
+            $returned[$i] = call_user_func_array(array($this, 'call_subq'),
+                    array_merge(array($i, $methodname), $params));
         }
         return $returned;
     }
@@ -102,15 +104,14 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
     /**
      * Call a method on question_definition object for all sub questions.
      * @param integer $i the index no of the sub question
-     * @param string $methodname
-     * @param qtype_combined_param_to_pass_through_to_subq_base|mixed  $params,....
+     * @param string $methodname the method to call
+     * @param qtype_combined_param_to_pass_through_to_subq_base|mixed $params parameters to pass to the call
      * @return array of return values returned from method call on all subqs.
      */
-    public function call_subq($i, $methodname/*, ... */) {
+    public function call_subq($i, $methodname, ...$params) {
         $subq = $this->subqs[$i];
-        $paramsarray = array_slice(func_get_args(), 2);
         $paramsarrayfiltered = array();
-        foreach ($paramsarray as $paramno => $param) {
+        foreach ($params as $paramno => $param) {
             if (is_a($param, 'qtype_combined_param_to_pass_through_to_subq_base')) {
                 $paramsarrayfiltered[$paramno] = $param->for_subq($subq);
             } else {
@@ -166,7 +167,7 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
         $finalresponse = end($subqresponses);
         foreach (array_values($subqresponses) as $responseno => $subqresponse) {
             if ($question->is_same_response($subqresponse, $finalresponse)) {
-                return array_slice($subqresponses, 0, $responseno+1);
+                return array_slice($subqresponses, 0, $responseno + 1);
             }
         }
         return $subqresponses;

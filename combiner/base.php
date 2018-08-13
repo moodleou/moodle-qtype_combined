@@ -27,6 +27,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot.'/question/type/combined/combinable/combinablebase.php');
 require_once($CFG->dirroot.'/question/type/combined/combinable/combinabletypebase.php');
 
@@ -266,7 +268,7 @@ abstract class qtype_combined_combiner_base {
      * @return array
      */
     protected function add_prefixes_to_response_array($substep, $response) {
-        $keysadded= array();
+        $keysadded = array();
         foreach ($response as $key => $value) {
             $keysadded[$substep->add_prefix($key)] = $value;
         }

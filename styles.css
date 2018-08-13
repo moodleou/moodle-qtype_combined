@@ -9,39 +9,40 @@
 
 #page-question-type-combined .mform div.error span.not_in_question_text_message {
     font-weight: bold;
-    color : #000000;
+    color: #000;
 }
 
-.que.combined .numpartscorrect, .que.combined .subqincorrectfeedback {
+.que.combined .numpartscorrect,
+.que.combined .subqincorrectfeedback {
     margin: 0 0 0.5em;
 }
 
-body#page-question-type-combined div[id^=fgroup_id_subqpmatch][id*=susubels] label[for*='allowsubscript']{
+body#page-question-type-combined div[id^=fgroup_id_subqpmatch][id*=susubels] label[for*='allowsubscript'] {
     position: absolute;
     left: -10000px;
     font-weight: normal;
     font-size: 1em;
 }
 
-body#page-question-type-combined div[id^=fgroup_id_subqpmatch][id*=casedictels] label[for*='usecase']{
+body#page-question-type-combined div[id^=fgroup_id_subqpmatch][id*=casedictels] label[for*='usecase'] {
     position: absolute;
     left: -10000px;
     font-weight: normal;
     font-size: 1em;
 }
 
-body#page-question-type-combined div[id^=fgroup_id_subqmultiresponse][id*=answergroup] label[for*='answer']{
+body#page-question-type-combined div[id^=fgroup_id_subqmultiresponse][id*=answergroup] label[for*='answer'] {
     position: absolute;
     left: -10000px;
     font-weight: normal;
     font-size: 1em;
 }
-body#page-question-type-combined div[id^=fgroup_id_subqmultiresponse][id*=answergroup] label[for*='correctanswer']{
+body#page-question-type-combined div[id^=fgroup_id_subqmultiresponse][id*=answergroup] label[for*='correctanswer'] {
     position: static;
     left: 0;
 }
 
-body#page-question-type-combined div[id^=fgroup_id_subqnumeric][id*=answergroup] label[for*='answer']{
+body#page-question-type-combined div[id^=fgroup_id_subqnumeric][id*=answergroup] label[for*='answer'] {
     position: absolute;
     left: -10000px;
     font-weight: normal;

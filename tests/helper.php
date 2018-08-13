@@ -35,13 +35,13 @@ defined('MOODLE_INTERNAL') || die();
 class qtype_combined_test_helper {
 
     /**
-     * @param string $qtype, .... variable number of params accepted, they are all strings, qtypes whose helpers to include
+     * @param array $qtypes, ... variable number of params accepted, they are all strings, qtypes whose helpers to include
      * @return bool|string error - false or a message about qtypes that are not installed
      */
-    public static function safe_include_test_helpers(/*... */) {
+    public static function safe_include_test_helpers(...$qtypes) {
         global $CFG;
         $notfound = array();
-        foreach (func_get_args() as $qtype) {
+        foreach ($qtypes as $qtype) {
             if (!is_readable($CFG->dirroot.'/question/type/'.$qtype.'/tests/helper.php')) {
                 $notfound[] = $qtype;
             }

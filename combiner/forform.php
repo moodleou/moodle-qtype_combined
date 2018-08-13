@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot.'/question/type/combined/combiner/base.php');
 
 /**
@@ -58,7 +60,7 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
         }
         foreach ($this->subqs as $subq) {
 
-            $weightingdefault = round(1/count($this->subqs), 7);
+            $weightingdefault = round(1 / count($this->subqs), 7);
             $weightingdefault = "$weightingdefault";
 
             $a = new stdClass();
@@ -69,7 +71,7 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
                 $headerlegend = get_string('subqheader', 'qtype_combined', $a);
             } else {
                 $headerlegend = get_string('subqheader_not_in_question_text', 'qtype_combined', $a);
-                $headerlegend ='<span class="not_in_question_text">'.$headerlegend.'</span>';
+                $headerlegend = '<span class="not_in_question_text">' . $headerlegend . '</span>';
             }
 
             $mform->addElement('header', $subq->form_field_name('subqheader'), $headerlegend);
