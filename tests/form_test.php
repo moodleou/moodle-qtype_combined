@@ -44,16 +44,17 @@ class qtype_combined_question_test extends advanced_testcase {
     public function test_form_validation() {
 
         $this->resetAfterTest(true);
+        $this->setAdminUser();
 
         $gen = $this->getDataGenerator();
         $course = $gen->create_course();
         $context = context_course::instance($course->id);
         $contexts = new question_edit_contexts($context);
-        $category = question_make_default_categories(array($context));
+        $category = question_make_default_categories($contexts->all());
 
         $question = new stdClass();
-        $question->id = '1';
         $question->category = $category->id;
+        $question->contextid = $category->contextid;
         $question->qtype = 'combined';
         $question->createdby = 1;
         $question->questiontext = 'Initial text';

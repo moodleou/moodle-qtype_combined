@@ -147,7 +147,8 @@ class qtype_combined extends question_type {
 
         if (!empty($CFG->usetags) && isset($fromimport->tags)) {
             require_once($CFG->dirroot.'/tag/lib.php');
-            tag_set('question', $fromimport->id, $fromimport->tags);
+            core_tag_tag::set_item_tags('core_question', 'question', $fromimport->id,
+                    $fromimport->context, $fromimport->tags);
         }
         // Give the question a unique version stamp determined by question_hash().
         $DB->set_field('question', 'version', question_hash($fromimport),
