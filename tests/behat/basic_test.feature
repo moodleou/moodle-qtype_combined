@@ -239,7 +239,7 @@ Feature: Test all the basic functionality of combined question type
       | id_subqselectmenu2defaultmark | 50%     |
       | id_subqselectmenu2answer_0    | Puppy   |
       | id_subqselectmenu2answer_1    | Foal    |
-    And I press "Save changes"
+    And I press "id_submitbutton"
     And I click on "Duplicate" "link" in the "Duplication test" "table_row"
     And I set the field "Question name" to "The new question"
     And I set the field "Question text" to "[[1:selectmenu:1]]"
@@ -251,9 +251,9 @@ Feature: Test all the basic functionality of combined question type
       | id_subqselectmenu2defaultmark | 50%     |
       | id_subqselectmenu2answer_0    | Puppy   |
       | id_subqselectmenu2answer_1    | Foal    |
-    And I press "Save changes"
+    And I press "id_submitbutton"
     Then I should see "One or more embedded questions have been removed from the question text"
-    And I press "Save changes"
+    And I press "id_submitbutton"
     And I click on "Preview" "link" in the "Duplication test" "table_row"
     # Check entering the correct answer for original question.
     And I switch to "questionpreview" window
@@ -266,7 +266,6 @@ Feature: Test all the basic functionality of combined question type
     # Check entering the correct answer for original question.
     And I switch to "questionpreview" window
     And I set the field "Answer 1" to "Kitten"
-    And I set the field "Answer 2" to "Puppy"
     And I press "Submit and finish"
     And I should see "Your answer is correct."
     And I switch to the main window
