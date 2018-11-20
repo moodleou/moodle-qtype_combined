@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @copyright  2016 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_combined_question_test extends advanced_testcase {
+class qtype_combined_form_test extends advanced_testcase {
 
     /**
      * Test editing form validation, particularly with the numeric subquestion.
@@ -180,10 +180,12 @@ class qtype_combined_question_test extends advanced_testcase {
 
         $gen = $this->getDataGenerator();
         $course = $gen->create_course();
-
         $context = context_course::instance($course->id);
+        $contexts = new question_edit_contexts($context);
+        $category = question_make_default_categories($contexts->all());
+
         $fromform = [
-                'category' => 1,
+                'category' => $category->id,
                 'name' => 'Test combined with varnumeric',
                 'questiontext' => '<pre>Cat : [[1:selectmenu:1]], Dog: [[2:selectmenu:1]]</pre>',
                 'defaultmark' => 1,
@@ -254,9 +256,9 @@ class qtype_combined_question_test extends advanced_testcase {
         $subq2 = $combiner->find_or_create_question_instance('selectmenu', 2);
         $this->assertTrue($subq1->is_in_db());
         $this->assertTrue($subq2->is_in_db());
-        // We created a combine quesstion with false data case 1 is_in_db = false .
+        // We created a combine question with false data case 1 is_in_db = false .
         $fromform2 = [
-                'category' => 1,
+                'category' => $category->id,
                 'name' => 'Test combined with varnumeric',
                 'questiontext' => '<pre>Cat : [[1:selectmenu:1]], Dog: [[2:selectmenu:1]]</pre>',
                 'defaultmark' => 1,
@@ -343,7 +345,7 @@ class qtype_combined_question_test extends advanced_testcase {
 
         // We created a combine quesstion with false data case 2 is_in_db = true.
         $fromform3 = [
-                'category' => 1,
+                'category' => $category->id,
                 'name' => 'Test combined with varnumeric',
                 'questiontext' => '<pre>Cat : [[1:selectmenu:1]]</pre>',
                 'defaultmark' => 1,

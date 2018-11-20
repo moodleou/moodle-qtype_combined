@@ -18,10 +18,10 @@ Feature: Test all the basic functionality of combined question type
   Scenario: Create, edit and preview a combined question.
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I navigate to "Question bank" node in "Course administration"
+    And I navigate to "Question bank" in current page administration
     Then I press "Create a new question ..."
     And I set the field "Combined" to "1"
-    And I press "Add"
+    And I click on "Add" "button" in the "Choose a question type to add" "dialogue"
     Then I should see "Adding a combined question"
     And I set the field "Question name" to "Combined 001"
     And I set the field "Question text" to "What is the pH of a 0.1M solution? [[1:numeric:__10__]]. <br/>What is the IUPAC name of the molecule? [[2:pmatch:__20__]]. <br/>Which elements are shown? [[3:multiresponse]]. <br/>When a solution is combined with oil the result is a [[4:selectmenu:2]]"
@@ -128,7 +128,7 @@ Feature: Test all the basic functionality of combined question type
     When I restore "test_backup.mbz" backup into a new course using this options:
       | Schema | Course name | Course 2 |
     Then I should see "Course 2"
-    When I navigate to "Question bank" node in "Course administration"
+    When I navigate to "Question bank" in current page administration
     Then I should see "Combined 001"
 
     # Edit the copy and verify the form field contents.
@@ -179,10 +179,10 @@ Feature: Test all the basic functionality of combined question type
   Scenario: Test pmatch combine question for convert and synonyms.
     Given I log in as "teacher1"
     When I am on "Course 1" course homepage
-    And I navigate to "Question bank" node in "Course administration"
+    And I navigate to "Question bank" in current page administration
     And I press "Create a new question ..."
     And I set the field "Combined" to "1"
-    And I press "Add"
+    And I click on "Add" "button" in the "Choose a question type to add" "dialogue"
     And I should see "Adding a combined question"
     And I set the field "Question name" to "Combined 001"
     And I set the field "Question text" to "[[1:pmatch]]"
@@ -218,15 +218,16 @@ Feature: Test all the basic functionality of combined question type
     And I set the field "Answer 1" to "number_ten"
     And I press "Submit and finish"
     And I should see "Your answer is incorrect."
+    And I switch to the main window
 
   @javascript
   Scenario: Test duplicating a combined question and editing subquestions before saving
     Given I log in as "teacher1"
     When I am on "Course 1" course homepage
-    And I navigate to "Question bank" node in "Course administration"
+    And I navigate to "Question bank" in current page administration
     And I press "Create a new question ..."
     And I set the field "Combined" to "1"
-    And I press "Add"
+    And I click on "Add" "button" in the "Choose a question type to add" "dialogue"
     And I should see "Adding a combined question"
     And I set the field "Question name" to "Duplication test"
     And I set the field "Question text" to "Cat: [[1:selectmenu:1]], Dog: [[2:selectmenu:1]]"
