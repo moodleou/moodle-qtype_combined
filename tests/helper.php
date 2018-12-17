@@ -198,6 +198,7 @@ class qtype_combined_test_helper {
         $combined = new qtype_combined_question();
 
         test_question_maker::initialise_a_question($combined);
+        $combined->contextid = context_system::instance()->id;
 
         $combined->name = 'Selection from drop down list question';
         $combined->questiontext = 'Choose correct 2 check boxes [[mc:multiresponse]]. '.
@@ -221,6 +222,8 @@ class qtype_combined_test_helper {
 
         $subq = $combined->combiner->find_or_create_question_instance('pmatch', 'pm');
         $subq->question = self::make_a_pmatch_question('pm');
+        $subq->question->contextid = $combined->contextid;
+
         $subq->question->defaultmark = 0.25;
 
         $combined->hints = array(
@@ -264,6 +267,7 @@ class qtype_combined_test_helper {
         $combined = new qtype_combined_question();
 
         test_question_maker::initialise_a_question($combined);
+        $combined->contextid = context_system::instance()->id;
 
         $combined->name = 'Selection from drop down list question';
         $combined->questiontext = 'Choose correct 2 check boxes [[mc:multiresponse]]. '.
@@ -288,6 +292,7 @@ class qtype_combined_test_helper {
 
         $subq = $combined->combiner->find_or_create_question_instance('pmatch', 'pm');
         $subq->question = self::make_a_pmatch_question('pm');
+        $subq->question->contextid = $combined->contextid;
         $subq->question->defaultmark = 0.25;
 
         $subq = $combined->combiner->find_or_create_question_instance('numeric', 'vn');
