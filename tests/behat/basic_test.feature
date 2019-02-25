@@ -41,7 +41,7 @@ Feature: Test all the basic functionality of combined question type
     Then I follow "'pmatch' input '2'"
     And I set the following fields to these values:
       | id_subqpmatch2defaultmark     | 25%                                |
-      | Check spelling of student     | No                                 |
+      | Spell checking                | No                                 |
       | id_subqpmatch2answer_0        | match_mw (ethanoic acid)           |
       | id_subqpmatch2generalfeedback | You have the incorrect IUPAC name. |
 
@@ -143,7 +143,7 @@ Feature: Test all the basic functionality of combined question type
       | id_subqnumeric1generalfeedback | You have the incorrect value for the pH |
 
       | id_subqpmatch2defaultmark     | 25%                                |
-      | Check spelling of student     | No                                 |
+      | Spell checking                | No                                 |
       | id_subqpmatch2answer_0        | match_mw (ethanoic acid)           |
       | id_subqpmatch2generalfeedback | You have the incorrect IUPAC name. |
 
@@ -190,7 +190,7 @@ Feature: Test all the basic functionality of combined question type
     And I follow "'pmatch' input '1'"
     And I set the following fields to these values:
       | Weighting                           | 100%              |
-      | Check spelling of student           | No                |
+      | Spell checking                      | No                |
       | Answer                              | match(number ten) |
       | Feedback for any incorrect response | General feedback  |
       | Word                                | ten               |
