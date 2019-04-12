@@ -99,6 +99,7 @@ Depending on which question types you have installed, the student can enter a nu
 answers using a select box or check boxes.';
 $string['subqheader'] = '\'{$a->qtype}\' input \'{$a->qid}\'';
 $string['subqheader_not_in_question_text'] = '\'{$a->qtype}\' input \'{$a->qid}\' (not embedded in question text).';
+$string['subquestiontypes'] = 'Sub-question types';
 $string['subquestiontypenotinstalled'] = 'You are attempting to use a combined question with a sub question type \'{$a}\' that
 is not installed.';
 $string['updateform'] = 'Verify the question text and update the form';

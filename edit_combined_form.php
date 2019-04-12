@@ -52,26 +52,28 @@ class qtype_combined_edit_form extends question_edit_form {
             return $submitteddata['text'];
         } else if (isset($this->question->id)) {
             return $this->question->questiontext;
-        } else {
-            return qtype_combined_type_manager::default_question_text();
         }
     }
 
     protected function definition_inner($mform) {
-        $mform->addElement('submit', 'updateform', get_string('updateform', 'qtype_combined'));
-        $mform->registerNoSubmitButton('updateform');
-        $mform->closeHeaderBefore('updateform');
-
         if (isset($this->question->id)) {
             $qid = $this->question->id;
         } else {
             $qid = null;
         }
         $this->combiner->form_for_subqs($qid,
-                                        $this->get_current_question_text(),
-                                        $this,
-                                        $mform,
-                                        $this->question->formoptions->repeatelements);
+                $this->get_current_question_text(),
+                $this,
+                $mform,
+                $this->question->formoptions->repeatelements);
+
+        $subq = $mform->createElement('static', 'subq', get_string('subquestiontypes', 'qtype_combined'),
+                qtype_combined_type_manager::get_example_placeholders());
+        $mform->insertElementBefore($subq, 'defaultmark');
+
+        $verify = $mform->createElement('submit', 'updateform', get_string('updateform', 'qtype_combined'));
+        $mform->insertElementBefore($verify, 'defaultmark');
+        $mform->registerNoSubmitButton('updateform');
 
         $this->add_combined_feedback_fields(true);
 
@@ -82,17 +84,9 @@ class qtype_combined_edit_form extends question_edit_form {
         $toform = parent::data_preprocessing($toform);
         $toform = $this->data_preprocessing_combined_feedback($toform, true);
         $toform = $this->data_preprocessing_hints($toform, false, true);
-        if (empty($toform->id)) {
-            $defaulttext = qtype_combined_type_manager::default_question_text();
-            if ($toform->questiontext['format'] === FORMAT_HTML) {
-                $toform->questiontext['text'] = format_text($defaulttext, FORMAT_PLAIN);
-            } else {
-                $toform->questiontext['text'] = $defaulttext;
-            }
-        } else {
+        if (!empty($toform->id)) {
             $toform = $this->combiner->data_to_form($toform->id, $toform, $this->context, $this->fileoptions);
         }
-
         return $toform;
     }
 
