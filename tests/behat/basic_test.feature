@@ -41,7 +41,7 @@ Feature: Test all the basic functionality of combined question type
     Then I follow "'pmatch' input '2'"
     And I set the following fields to these values:
       | id_subqpmatch2defaultmark     | 25%                                |
-      | Spell checking                | No                                 |
+      | Spell checking                | Do not check spelling of student   |
       | id_subqpmatch2answer_0        | match_mw (ethanoic acid)           |
       | id_subqpmatch2generalfeedback | You have the incorrect IUPAC name. |
 
@@ -143,7 +143,7 @@ Feature: Test all the basic functionality of combined question type
       | id_subqnumeric1generalfeedback | You have the incorrect value for the pH |
 
       | id_subqpmatch2defaultmark     | 25%                                |
-      | Spell checking                | No                                 |
+      | Spell checking                | Do not check spelling of student   |
       | id_subqpmatch2answer_0        | match_mw (ethanoic acid)           |
       | id_subqpmatch2generalfeedback | You have the incorrect IUPAC name. |
 
@@ -189,12 +189,12 @@ Feature: Test all the basic functionality of combined question type
     And I press "Verify the question text and update the form"
     And I follow "'pmatch' input '1'"
     And I set the following fields to these values:
-      | Weighting                           | 100%              |
-      | Spell checking                      | No                |
-      | Answer                              | match(number ten) |
-      | Feedback for any incorrect response | General feedback  |
-      | Word                                | ten               |
-      | Synonyms                            | 10                |
+      | Weighting                           | 100%                             |
+      | Spell checking                      | Do not check spelling of student |
+      | Answer                              | match(number ten)                |
+      | Feedback for any incorrect response | General feedback                 |
+      | Word                                | ten                              |
+      | Synonyms                            | 10                               |
     And I press "Save changes and continue editing"
     # Preview it.
     And I follow "Preview"
