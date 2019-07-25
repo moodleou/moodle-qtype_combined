@@ -77,6 +77,7 @@ class qtype_combined extends question_type {
                 $subquestion->parent = $fromform->id;
                 $subquestion->context = $fromform->context;
                 $subquestion->category = $fromform->category;
+                $subquestion->idnumber = null;
                 $this->save_imported_question($subquestion);
             }
 
