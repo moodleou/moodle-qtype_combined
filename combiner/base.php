@@ -268,6 +268,9 @@ abstract class qtype_combined_combiner_base {
      * @return array
      */
     protected function add_prefixes_to_response_array($substep, $response) {
+        if ($response === null) {
+            return [];
+        }
         $keysadded = array();
         foreach ($response as $key => $value) {
             $keysadded[$substep->add_prefix($key)] = $value;

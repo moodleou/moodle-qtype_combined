@@ -114,6 +114,7 @@ class qtype_combined_form_test extends advanced_testcase {
             'subq:pmatch:3:allowsubscript' => 0,
             'subq:pmatch:3:allowsuperscript' => 0,
             'subq:pmatch:3:usecase' => 0,
+            'subq:pmatch:3:modelanswer' => '',
             'subq:pmatch:3:applydictionarycheck' => 1,
             'subq:pmatch:3:extenddictionary' => '',
             'subq:pmatch:3:converttospace' => '[];,./',
@@ -168,6 +169,11 @@ class qtype_combined_form_test extends advanced_testcase {
         // Check duplicate synonym.
         $fromform['subq:numeric:2:answer'] = array(0);
         $fromform['subq:pmatch:3:synonymsdata'][] = array('word' => 'AA', 'synonyms' => 'BB');
+        $errors = $mform->validation($fromform, array());
+        $this->assertNotEmpty($errors);
+
+        // Check model answer.
+        $fromform['subq:pmatch:3:modelanswer'] = 'frog';
         $errors = $mform->validation($fromform, array());
         $this->assertNotEmpty($errors);
     }

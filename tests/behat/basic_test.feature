@@ -44,6 +44,7 @@ Feature: Test all the basic functionality of combined question type
       | Spell checking                | Do not check spelling of student   |
       | id_subqpmatch2answer_0        | match_mw (ethanoic acid)           |
       | id_subqpmatch2generalfeedback | You have the incorrect IUPAC name. |
+      | Model answer                  | ethanoic acid                      |
 
     # Multiresponse part.
     Then I follow "'multiresponse' input '3'"
@@ -118,6 +119,11 @@ Feature: Test all the basic functionality of combined question type
     Then I press "Check"
     And I should see "Your answer is correct."
     And I should see "The molecule is ethanoic acid which is more commonly known as acetic acid or in dilute solution as vinegar. The constituent elements are carbon (grey), hydrogen (white) and oxygen (red). A 0.1M solution has a pH of 2.88 and when a solution is combined with oil the result is a vinaigrette."
+
+    When I press "Start again"
+    And I press "Fill in correct responses"
+    Then the field "Answer 2" matches value "ethanoic acid"
+
     And I switch to the main window
 
     # Backup the course and restore it.
