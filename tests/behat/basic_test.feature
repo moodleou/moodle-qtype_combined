@@ -83,7 +83,7 @@ Feature: Test all the basic functionality of combined question type
     Then I should see "Combined 001"
 
     # Preview it.
-    When I click on "Preview" "link" in the "Combined 001" "table_row"
+    When I choose "Preview" action for "Combined 001" in the question bank
     And I switch to "questionpreview" window
 
     # Set display and behaviour options
@@ -138,7 +138,7 @@ Feature: Test all the basic functionality of combined question type
     Then I should see "Combined 001"
 
     # Edit the copy and verify the form field contents.
-    When I click on "Edit" "link" in the "Combined 001" "table_row"
+    When I choose "Edit question" action for "Combined 001" in the question bank
     Then the following fields match these values:
       | Question name   | Combined 001 |
       | Question text   | What is the pH of a 0.1M solution? [[1:numeric:__10__]]. <br/>What is the IUPAC name of the molecule? [[2:pmatch:__20__]]. <br/>Which elements are shown? [[3:multiresponse]]. <br/>When a solution is combined with oil the result is a [[4:selectmenu:2]] |
@@ -247,7 +247,7 @@ Feature: Test all the basic functionality of combined question type
       | id_subqselectmenu2answer_0    | Puppy   |
       | id_subqselectmenu2answer_1    | Foal    |
     And I press "id_submitbutton"
-    And I click on "Duplicate" "link" in the "Duplication test" "table_row"
+    And I choose "Duplicate" action for "Duplication test" in the question bank
     And I set the field "Question name" to "The new question"
     And I set the field "Question text" to "[[1:selectmenu:1]]"
     And I expand all fieldsets
@@ -261,7 +261,7 @@ Feature: Test all the basic functionality of combined question type
     And I press "id_submitbutton"
     Then I should see "One or more embedded questions have been removed from the question text"
     And I press "id_submitbutton"
-    And I click on "Preview" "link" in the "Duplication test" "table_row"
+    And I choose "Preview" action for "Duplication test" in the question bank
     # Check entering the correct answer for original question.
     And I switch to "questionpreview" window
     And I set the field "Answer 1" to "Kitten"
@@ -269,7 +269,7 @@ Feature: Test all the basic functionality of combined question type
     And I press "Submit and finish"
     And I should see "Your answer is correct."
     And I switch to the main window
-    And I click on "Preview" "link" in the "The new question" "table_row"
+    And I choose "Preview" action for "The new question" in the question bank
     # Check entering the correct answer for original question.
     And I switch to "questionpreview" window
     And I set the field "Answer 1" to "Kitten"
