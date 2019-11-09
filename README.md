@@ -23,9 +23,6 @@ these question types as sub questions:
 This question type was written by Jamie Pratt (http://jamiep.org/) for the
 Open University (http://www.open.ac.uk/).
 
-This version of this question type is compatible with Moodle 3.4+. There are
-other versions available for Moodle 2.5+.
-
 
 ## Installation
 

@@ -1,10 +1,17 @@
 # Change log for the Variable numeric question type
 
 
+## Changes in 1.9
+
+* Usability improvements in the editing form for question authors.
+* Fixes Moodle XML import with Moodle 3.6 and later.
+* Fixes in the automated tests due to changes in the other question types used.
+* Fix Behat tests to work with Moodle 3.8.
+
+
 ## Changes in 1.8
 
 * Fix a nasty bug where editing a question while duplicating it could break the original question.
-* Fix Behat tests to work with Moodle 3.6.
 
 
 ## Changes in 1.7
