@@ -24,7 +24,7 @@ Feature: Test all the basic functionality of combined question type
     And I click on "Add" "button" in the "Choose a question type to add" "dialogue"
     Then I should see "Adding a combined question"
     And I set the field "Question name" to "Combined 001"
-    And I set the field "Question text" to "What is the pH of a 0.1M solution? [[1:numeric:__10__]]. <br/>What is the IUPAC name of the molecule? [[2:pmatch:__20__]]. <br/>Which elements are shown? [[3:multiresponse]]. <br/>When a solution is combined with oil the result is a [[4:selectmenu:2]]"
+    And I set the field "Question text" to "What is the pH of a 0.1M solution? [[1:numeric:__10__]]<br/>What is the IUPAC name of the molecule? [[2:pmatch:__20__]]<br/>Which elements are shown? [[3:multiresponse]]<br/>Which element is shown as white? [[5:singlechoice]]<br/>When a solution is combined with oil the result is a [[4:selectmenu:2]]"
     Then I set the field "General feedback" to "The molecule is ethanoic acid which is more commonly known as acetic acid or in dilute solution as vinegar. The constituent elements are carbon (grey), hydrogen (white) and oxygen (red). A 0.1M solution has a pH of 2.88 and when a solution is combined with oil the result is a vinaigrette."
     And I press "Verify the question text and update the form"
 
@@ -32,7 +32,7 @@ Feature: Test all the basic functionality of combined question type
     # Numeric part.
     Then I follow "'numeric' input '1'"
     And I set the following fields to these values:
-      | id_subqnumeric1defaultmark     | 25%                                     |
+      | id_subqnumeric1defaultmark     | 20%                                     |
       | id_subqnumeric1answer_0        | 2.88                                    |
       | Scientific notation            | No                                      |
       | id_subqnumeric1generalfeedback | You have the incorrect value for the pH |
@@ -40,7 +40,7 @@ Feature: Test all the basic functionality of combined question type
     # Pmatch part.
     Then I follow "'pmatch' input '2'"
     And I set the following fields to these values:
-      | id_subqpmatch2defaultmark     | 25%                                |
+      | id_subqpmatch2defaultmark     | 20%                                |
       | Spell checking                | Do not check spelling of student   |
       | id_subqpmatch2answer_0        | match_mw (ethanoic acid)           |
       | id_subqpmatch2generalfeedback | You have the incorrect IUPAC name. |
@@ -51,28 +51,43 @@ Feature: Test all the basic functionality of combined question type
     And I click on "Expand all" "link"
     And I press "Blanks for 3 more choices"
     And I set the following fields to these values:
-      | id_subqmultiresponse3defaultmark     | 25%                                              |
-      | id_subqmultiresponse3answer_0        | carbon                                           |
+      | id_subqmultiresponse3defaultmark     | 20%                                              |
+      | id_subqmultiresponse3answer_0        | C/carbon                                         |
       | id_subqmultiresponse3correctanswer_0 | 1                                                |
-      | id_subqmultiresponse3answer_1        | hydrogen                                         |
+      | id_subqmultiresponse3answer_1        | H/hydrogen                                       |
       | id_subqmultiresponse3correctanswer_1 | 1                                                |
-      | id_subqmultiresponse3answer_2        | oxygen                                           |
+      | id_subqmultiresponse3answer_2        | O/oxygen                                         |
       | id_subqmultiresponse3correctanswer_2 | 1                                                |
-      | id_subqmultiresponse3answer_3        | nitrogen                                         |
-      | id_subqmultiresponse3answer_4        | fluorine                                         |
-      | id_subqmultiresponse3answer_5        | chlorine                                         |
-      | id_subqmultiresponse3answer_6        | <b>bromine</b>                                   |
+      | id_subqmultiresponse3answer_3        | N/nitrogen                                       |
+      | id_subqmultiresponse3answer_4        | F/fluorine                                       |
+      | id_subqmultiresponse3answer_5        | Cl/chlorine                                      |
+      | id_subqmultiresponse3answer_6        | <b>Br/bromine</b>                                |
       | id_subqmultiresponse3generalfeedback | Your choice of elements is not entirely correct. |
 
     # Selectmenu part.
     Then I follow "'selectmenu' input '4'"
     And I set the following fields to these values:
-      | id_subqselectmenu4defaultmark        | 25%           |
+      | id_subqselectmenu4defaultmark        | 20%           |
       | id_subqselectmenu4answer_0           | Wine          |
       | id_subqselectmenu4answer_1           | Vinagrette    |
       | id_subqselectmenu4answer_2           | Paint Thinner |
       | id_subqselectmenu4answer_3           | Mayonnaise    |
       | id_subqselectmenu4generalfeedback    |Your name for the mixture is incorrect. |
+
+    # Single choice part.
+    Then I follow "'singlechoice' input '5'"
+    And I set the following fields to these values:
+      | id_subqsinglechoice5defaultmark     | 20%                                         |
+      | id_subqsinglechoice5answer_0        | C carbon                                    |
+      | id_subqsinglechoice5fraction_0      | 0.0                                         |
+      | id_subqsinglechoice5feedback_0      | Carbon is conventionally black              |
+      | id_subqsinglechoice5answer_1        | H hydrogen                                  |
+      | id_subqsinglechoice5fraction_1      | 1.0                                         |
+      | id_subqsinglechoice5feedback_1      | That is correct                             |
+      | id_subqsinglechoice5answer_2        | <b>O oxygen</b>                             |
+      | id_subqsinglechoice5fraction_2      | 0.0                                         |
+      | id_subqsinglechoice5feedback_2      | Oxygen is conventionally red                |
+      | id_subqsinglechoice5generalfeedback | Your name for the white atoms is incorrect. |
 
     # Set hints for Multiple tries
     And I follow "Multiple tries"
@@ -98,16 +113,18 @@ Feature: Test all the basic functionality of combined question type
     # Attempt the question
     # Test html editor for answer field in Combined MultiResponse.
     And "//label/b[contains(text(), 'bromine')]" "xpath_element" should be visible
+    And "//label/b[contains(text(), 'O oxygen')]" "xpath_element" should be visible
     And I set the field "Answer 1" to "2.88"
     And I set the field "Answer 2" to "ethanoic acid"
     And I set the field "Answer 4" to "Vinagrette"
+    And I set the field "H hydrogen" to "1"
     And I press "Check"
     Then I should see "Part of your answer requires attention :"
     And I should see "Input 3 (check box group) - Please select at least one answer."
 
     And I set the following fields to these values:
-      | carbon            | 1             |
-      | oxygen            | 1             |
+      | C/carbon | 1 |
+      | O/oxygen | 1 |
     And I press "Check"
     Then I should see "Your answer is partially correct."
     And I should see "Your choice of elements is not entirely correct."
@@ -115,7 +132,7 @@ Feature: Test all the basic functionality of combined question type
 
     When I press "Try again"
     And I set the following fields to these values:
-      | hydrogen | 1 |
+      | H/hydrogen | 1 |
     Then I press "Check"
     And I should see "Your answer is correct."
     And I should see "The molecule is ethanoic acid which is more commonly known as acetic acid or in dilute solution as vinegar. The constituent elements are carbon (grey), hydrogen (white) and oxygen (red). A 0.1M solution has a pH of 2.88 and when a solution is combined with oil the result is a vinaigrette."
@@ -123,6 +140,7 @@ Feature: Test all the basic functionality of combined question type
     When I press "Start again"
     And I press "Fill in correct responses"
     Then the field "Answer 2" matches value "ethanoic acid"
+    Then the field "H hydrogen" matches value "1"
 
     And I switch to the main window
 
@@ -141,37 +159,49 @@ Feature: Test all the basic functionality of combined question type
     When I choose "Edit question" action for "Combined 001" in the question bank
     Then the following fields match these values:
       | Question name   | Combined 001 |
-      | Question text   | What is the pH of a 0.1M solution? [[1:numeric:__10__]]. <br/>What is the IUPAC name of the molecule? [[2:pmatch:__20__]]. <br/>Which elements are shown? [[3:multiresponse]]. <br/>When a solution is combined with oil the result is a [[4:selectmenu:2]] |
+      | Question text   | What is the pH of a 0.1M solution? [[1:numeric:__10__]]<br/>What is the IUPAC name of the molecule? [[2:pmatch:__20__]]<br/>Which elements are shown? [[3:multiresponse]]<br/>Which element is shown as white? [[5:singlechoice]]<br/>When a solution is combined with oil the result is a [[4:selectmenu:2]] |
 
-      | id_subqnumeric1defaultmark     | 25%                                     |
+      | id_subqnumeric1defaultmark     | 20%                                     |
       | id_subqnumeric1answer_0        | 2.88                                    |
       | Scientific notation            | No                                      |
       | id_subqnumeric1generalfeedback | You have the incorrect value for the pH |
 
-      | id_subqpmatch2defaultmark     | 25%                                |
+      | id_subqpmatch2defaultmark     | 20%                                |
       | Spell checking                | Do not check spelling of student   |
       | id_subqpmatch2answer_0        | match_mw (ethanoic acid)           |
       | id_subqpmatch2generalfeedback | You have the incorrect IUPAC name. |
 
-      | id_subqmultiresponse3defaultmark     | 25%                                                                                                                                                                                                                                                         |
-      | id_subqmultiresponse3answer_0        | carbon                                                                                                                                                                                                                                                      |
+      | id_subqmultiresponse3defaultmark     | 20%                                                                                                                                                                                                                                                         |
+      | id_subqmultiresponse3answer_0        | C/carbon                                                                                                                                                                                                                                                    |
       | id_subqmultiresponse3correctanswer_0 | 1                                                                                                                                                                                                                                                           |
-      | id_subqmultiresponse3answer_1        | hydrogen                                                                                                                                                                                                                                                    |
+      | id_subqmultiresponse3answer_1        | H/hydrogen                                                                                                                                                                                                                                                  |
       | id_subqmultiresponse3correctanswer_1 | 1                                                                                                                                                                                                                                                           |
-      | id_subqmultiresponse3answer_2        | oxygen                                                                                                                                                                                                                                                      |
+      | id_subqmultiresponse3answer_2        | O/oxygen                                                                                                                                                                                                                                                    |
       | id_subqmultiresponse3correctanswer_2 | 1                                                                                                                                                                                                                                                           |
-      | id_subqmultiresponse3answer_3        | nitrogen                                                                                                                                                                                                                                                    |
-      | id_subqmultiresponse3answer_4        | fluorine                                                                                                                                                                                                                                                    |
-      | id_subqmultiresponse3answer_5        | chlorine                                                                                                                                                                                                                                                    |
-      | id_subqmultiresponse3answer_6        | <b>bromine</b>                                                                                                                                                                                                                                              |
+      | id_subqmultiresponse3answer_3        | N/nitrogen                                                                                                                                                                                                                                                  |
+      | id_subqmultiresponse3answer_4        | F/fluorine                                                                                                                                                                                                                                                  |
+      | id_subqmultiresponse3answer_5        | Cl/chlorine                                                                                                                                                                                                                                                 |
+      | id_subqmultiresponse3answer_6        | <b>Br/bromine</b>                                                                                                                                                                                                                                           |
       | id_subqmultiresponse3generalfeedback | Your choice of elements is not entirely correct.                                                                                                                                                                                                            |
 
-      | id_subqselectmenu4defaultmark        | 25%           |
+      | id_subqselectmenu4defaultmark        | 20%           |
       | id_subqselectmenu4answer_0           | Wine          |
       | id_subqselectmenu4answer_1           | Vinagrette    |
       | id_subqselectmenu4answer_2           | Paint Thinner |
       | id_subqselectmenu4answer_3           | Mayonnaise    |
       | id_subqselectmenu4generalfeedback    |Your name for the mixture is incorrect. |
+
+      | id_subqsinglechoice5defaultmark     | 20%                                         |
+      | id_subqsinglechoice5answer_0        | C carbon                                    |
+      | id_subqsinglechoice5fraction_0      | 0.0                                         |
+      | id_subqsinglechoice5feedback_0      | Carbon is conventionally black              |
+      | id_subqsinglechoice5answer_1        | H hydrogen                                  |
+      | id_subqsinglechoice5fraction_1      | 1.0                                         |
+      | id_subqsinglechoice5feedback_1      | That is correct                             |
+      | id_subqsinglechoice5answer_2        | <b>O oxygen</b>                             |
+      | id_subqsinglechoice5fraction_2      | 0.0                                         |
+      | id_subqsinglechoice5feedback_2      | Oxygen is conventionally red                |
+      | id_subqsinglechoice5generalfeedback | Your name for the white atoms is incorrect. |
 
       | Hint 1          | First hint                    |
       | Hint 2          | Second hint                   |

@@ -97,6 +97,7 @@ sub questions in the question text.
 
 Depending on which question types you have installed, the student can enter a numeric or short text answer or choose an answer or
 answers using a select box or check boxes.';
+$string['shuffle'] = 'Shuffle';
 $string['subqheader'] = '\'{$a->qtype}\' input \'{$a->qid}\'';
 $string['subqheader_not_in_question_text'] = '\'{$a->qtype}\' input \'{$a->qid}\' (not embedded in question text).';
 $string['subquestiontypes'] = 'Sub-question types';

@@ -622,6 +622,7 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
             $this->get_contains_correct_expectation(),
             $this->get_contains_standard_correct_combined_feedback_expectation());
     }
+
     public function test_interactive_behaviour_for_combined_question_with_ou_mr_and_gapselect_subq() {
         if ($notfound = qtype_combined_test_helper::safe_include_test_helpers('oumultiresponse', 'gapselect')) {
             $this->markTestSkipped($notfound);
@@ -1597,4 +1598,96 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
         );
     }
 
+    protected function get_contains_subq_mc_radio_expectation($subqname, $index, $enabled = null, $checked = null) {
+        return $this->get_contains_radio_expectation(array(
+                'name' => $this->quba->get_field_prefix($this->slot) . $subqname . ':answer',
+                'value' => $index,
+        ), $enabled, $checked);
+    }
+
+    public function test_interactive_behaviour_for_combined_question_with_multichoice_subq() {
+        if ($notfound = qtype_combined_test_helper::safe_include_test_helpers('multichoice')) {
+            $this->markTestSkipped($notfound);
+        }
+        // Create a combined question.
+        $combined = qtype_combined_test_helper::make_a_combined_question_with_multichoice_subquestion();
+
+        $this->start_attempt_at_question($combined, 'interactive', 3);
+
+        // Check the initial state.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_subq_mc_radio_expectation('sr', 0, true, false),
+                $this->get_contains_subq_mc_radio_expectation('sr', 1, true, false),
+                $this->get_contains_subq_mc_radio_expectation('sr', 2, true, false),
+                $this->get_contains_submit_button_expectation(true),
+                $this->get_does_not_contain_feedback_expectation(),
+                $this->get_does_not_contain_num_parts_correct(),
+                $this->get_tries_remaining_expectation(3),
+                $this->get_no_hint_visible_expectation());
+
+        // Save the wrong answer.
+        $this->process_submission(['sr:answer' => '2']);
+
+        // Verify.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_subq_mc_radio_expectation('sr', 0, true, false),
+                $this->get_contains_subq_mc_radio_expectation('sr', 1, true, false),
+                $this->get_contains_subq_mc_radio_expectation('sr', 2, true, true),
+                $this->get_contains_submit_button_expectation(true),
+                $this->get_does_not_contain_feedback_expectation(),
+                $this->get_does_not_contain_num_parts_correct(),
+                $this->get_tries_remaining_expectation(3),
+                $this->get_no_hint_visible_expectation());
+
+        // Submit a different wrong answer.
+        $this->process_submission(['sr:answer' => '1', '-submit' => '1']);
+
+        // Verify.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_subq_mc_radio_expectation('sr', 0, false, false),
+                $this->get_contains_subq_mc_radio_expectation('sr', 1, false, true),
+                $this->get_contains_subq_mc_radio_expectation('sr', 2, false, false),
+                $this->get_contains_try_again_button_expectation(true),
+                $this->get_does_not_contain_correctness_expectation(),
+                $this->get_contains_hint_expectation('Hint 1'),
+                $this->get_contains_num_parts_correct(0),
+                $this->get_contains_standard_incorrect_combined_feedback_expectation());
+
+        // Do try again.
+        $this->process_submission(array('-tryagain' => 1));
+
+        // Verify.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_subq_mc_radio_expectation('sr', 0, true, false),
+                $this->get_contains_subq_mc_radio_expectation('sr', 1, true, true),
+                $this->get_contains_subq_mc_radio_expectation('sr', 2, true, false),
+                $this->get_contains_submit_button_expectation(true),
+                $this->get_does_not_contain_feedback_expectation(),
+                $this->get_does_not_contain_num_parts_correct(),
+                $this->get_tries_remaining_expectation(2),
+                $this->get_no_hint_visible_expectation());
+
+        // Submit a the right answer.
+        $this->process_submission(['sr:answer' => '0', '-submit' => '1']);
+
+        // Verify.
+        $this->check_current_state(question_state::$gradedright);
+        $this->check_current_mark(2);
+        $this->check_current_output(
+                $this->get_contains_subq_mc_radio_expectation('sr', 0, false, true),
+                $this->get_contains_subq_mc_radio_expectation('sr', 1, false, false),
+                $this->get_contains_subq_mc_radio_expectation('sr', 2, false, false),
+                $this->get_does_not_contain_try_again_button_expectation(),
+                $this->get_contains_correct_expectation(),
+                $this->get_contains_standard_correct_combined_feedback_expectation(),
+                $this->get_contains_general_feedback_expectation($combined));
+    }
 }

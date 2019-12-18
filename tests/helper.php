@@ -111,6 +111,17 @@ class qtype_combined_test_helper {
     }
 
     /**
+     * @param string $name
+     * @return qtype_multichoice_single_question
+     */
+    protected static function make_multichoice_question_one_of_four($name) {
+        $mc = test_question_maker::make_a_multichoice_single_question();
+        $mc->name = $name;
+        $mc->shuffleanswers = false;
+        return $mc;
+    }
+
+    /**
      * @return qtype_combined_question
      */
     public static function make_a_combined_question_with_oumr_subquestion() {
@@ -135,6 +146,36 @@ class qtype_combined_test_helper {
         $combined->hints = array(
             new question_hint_with_parts(1, 'Hint 1.', FORMAT_HTML, true, false),
             new question_hint_with_parts(2, 'Hint 2.', FORMAT_HTML, true, true)
+        );
+
+        return $combined;
+    }
+
+    /**
+     * @return qtype_combined_question
+     */
+    public static function make_a_combined_question_with_multichoice_subquestion() {
+        question_bank::load_question_definition_classes('combined');
+        $combined = new qtype_combined_question();
+
+        test_question_maker::initialise_a_question($combined);
+
+        $combined->name = 'Combined with single response subquestion';
+        $combined->questiontext = 'Which of these is how you write 1? [[sr:singlechoice]].';
+        $combined->generalfeedback = 'The answer is "One".';
+        $combined->qtype = question_bank::get_qtype('combined');
+
+        test_question_maker::set_standard_combined_feedback_fields($combined);
+
+        $combined->combiner = new qtype_combined_combiner_for_run_time_question_instance();
+        $combined->combiner->find_included_subqs_in_question_text($combined->questiontext);
+
+        $subq = $combined->combiner->find_or_create_question_instance('singlechoice', 'sr');
+        $subq->question = self::make_multichoice_question_one_of_four('sr');
+
+        $combined->hints = array(
+                new question_hint_with_parts(1, 'Hint 1.', FORMAT_HTML, true, false),
+                new question_hint_with_parts(2, 'Hint 2.', FORMAT_HTML, true, true)
         );
 
         return $combined;
