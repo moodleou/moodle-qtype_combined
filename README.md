@@ -14,14 +14,16 @@ these question types as sub questions:
 
 * Select missing words - which is now part of the standard Moodle release.
 * [Pattern match](https://moodle.org/plugins/qtype_pmatch)
-* [OU multiple response](https://moodle.org/plugins/qtype_oumultiresponse)
+* [OU multiple response](https://moodle.org/plugins/qtype_oumultiresponse) - multiple choice with checkboxes.
+* Standard Moodle multiple-choice with one right choice - multiple choice with radio buttos.
 * [Variable numeric](https://moodle.org/plugins/qtype_varnumericset)
 
 
 ## Acknowledgements
 
 This question type was written by Jamie Pratt (http://jamiep.org/) for the
-Open University (http://www.open.ac.uk/).
+Open University (http://www.open.ac.uk/). Subsequent enhancement have been
+made by OU staff.
 
 
 ## Installation
@@ -31,7 +33,7 @@ Open University (http://www.open.ac.uk/).
 Works as usual starting here
 * https://moodle.org/plugins/qtype_combined
 
-### Installation Using Git 
+### Installation Using Git
 
 To install using git type these commands in the root of your Moodle install:
 

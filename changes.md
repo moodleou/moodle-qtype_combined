@@ -1,4 +1,10 @@
-# Change log for the Variable numeric question type
+# Change log for the Combined question type
+
+
+## Changes in 2.0
+
+* Multiple-choice, single-response sub-questions are now available using the
+  standard Moodle multiple choice question type.
 
 
 ## Changes in 1.9

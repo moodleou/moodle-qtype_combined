@@ -17,9 +17,9 @@
 /**
  * Defines the hooks necessary to make the multichoice question type combinable
  *
- * @package   qtype_multichoice
- * @copyright  2019 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_combined
+ * @copyright 2019 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -52,6 +52,9 @@ class qtype_combined_combinable_type_multichoice extends qtype_combined_combinab
         $data = parent::transform_subq_form_data_to_full($subqdata);
         foreach ($data->answer as $anskey => $answer) {
             $data->answer[$anskey] = array('text' => $answer['text'], 'format' => $answer['format']);
+        }
+        foreach ($data->feedback as $anskey => $feedback) {
+            $data->feedback[$anskey] = array('text' => $feedback['text'], 'format' => $feedback['format']);
         }
         return $this->add_per_answer_properties($data);
     }
@@ -90,17 +93,10 @@ class qtype_combined_combinable_multichoice extends qtype_combined_combinable_ac
             get_string('feedback', 'qtype_multichoice'), ['rows' => 1]);
         $mform->setType($this->form_field_name('feedback'), PARAM_RAW);
 
-        if ($this->questionrec !== null) {
-            $countanswers = count($this->questionrec->options->answers);
+        if (isset($this->questionrec->options)) {
+            $repeatsatstart = count($this->questionrec->options->answers);
         } else {
-            $countanswers = 0;
-        }
-
-        if ($repeatenabled) {
-            $defaultstartnumbers = QUESTION_NUMANS_START;
-            $repeatsatstart = max($defaultstartnumbers, $countanswers);
-        } else {
-            $repeatsatstart = $countanswers;
+            $repeatsatstart = max(5, QUESTION_NUMANS_START);
         }
 
         $combinedform->repeat_elements($answerels,
@@ -111,17 +107,22 @@ class qtype_combined_combinable_multichoice extends qtype_combined_combinable_ac
             QUESTION_NUMANS_ADD,
             get_string('addmorechoiceblanks', 'question'),
             true);
-
     }
 
     public function data_to_form($context, $fileoptions) {
         $mcoptions = array('answer' => [], 'fraction' => [], 'feedback' => []);
         if ($this->questionrec !== null) {
             $mcoptions['single'] = $this->questionrec->options->single;
-            foreach ($this->questionrec->options->answers as $questionrecanswer) {
-                $mcoptions['answer'][]['text'] = $questionrecanswer->answer;
-                $mcoptions['fraction'][] = $questionrecanswer->fraction;
-                $mcoptions['feedback'][]['text'] = $questionrecanswer->feedback;
+            foreach ($this->questionrec->options->answers as $answer) {
+                $mcoptions['answer'][] = [
+                    'text' => $answer->answer,
+                    'format' => $answer->answerformat,
+                ];
+                $mcoptions['fraction'][] = $answer->fraction;
+                $mcoptions['feedback'][] = [
+                    'text' => $answer->feedback,
+                    'format' => $answer->feedbackformat,
+                ];
             }
         }
         return parent::data_to_form($context, $fileoptions) + $mcoptions;
@@ -130,8 +131,9 @@ class qtype_combined_combinable_multichoice extends qtype_combined_combinable_ac
     public function validate() {
         $errors = array();
         $answercount = 0;
-        $totalfraction = 0;
+
         $maxfraction = -1;
+
         foreach ($this->formdata->answer as $key => $answer) {
             // Check no of choices.
             $trimmedanswer = trim($answer['text']);
@@ -140,14 +142,12 @@ class qtype_combined_combinable_multichoice extends qtype_combined_combinable_ac
                 continue;
             }
             if ($trimmedanswer === '' && $fraction > 0) {
-                $errors[$this->form_field_name('shuffle')] = get_string('errgradesetanswerblank', 'qtype_multichoice');
+                $errors[$this->form_field_name("answer[{$key}]")] = get_string('errgradesetanswerblank', 'qtype_multichoice');
             }
+
             $answercount++;
 
             // Check grades.
-            if ($this->formdata->fraction[$key] > 0) {
-                $totalfraction += $this->formdata->fraction[$key];
-            }
             if ($this->formdata->fraction[$key] > $maxfraction) {
                 $maxfraction = $this->formdata->fraction[$key];
             }
@@ -167,8 +167,9 @@ class qtype_combined_combinable_multichoice extends qtype_combined_combinable_ac
     }
 
     public function has_submitted_data() {
-        return $this->submitted_data_array_not_empty('correctanswer') ||
-            $this->html_field_has_submitted_data($this->form_field_name('answer')) ||
+        return $this->submitted_data_array_not_empty('answer') ||
+                $this->submitted_data_array_not_empty('shuffleanswers') ||
+                $this->html_field_has_submitted_data($this->form_field_name('answer')) ||
             parent::has_submitted_data();
     }
 }

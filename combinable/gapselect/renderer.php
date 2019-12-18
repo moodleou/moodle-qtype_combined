@@ -17,10 +17,10 @@
 /**
  * Combined question embedded sub question renderer class.
  *
- * @package    qtype_gapselect
- * @copyright  2013 The Open University
- * @author     Jamie Pratt <me@jamiep.org>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_combined
+ * @copyright 2013 The Open University
+ * @author    Jamie Pratt <me@jamiep.org>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 

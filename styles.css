@@ -58,3 +58,22 @@ body#page-question-type-combined div[id^=fgroup_id_subqnumeric][id*=answergroup]
     font-weight: normal;
     font-size: 1em;
 }
+
+body#page-question-type-combined div[id^=fitem_id_subqsinglechoice][id*=answer_],
+body#page-question-type-combined div[id^=fitem_id_subqsinglechoice][id*=fraction_],
+body#page-question-type-combined div[id^=fitem_id_subqsinglechoice][id*=feedback_] {
+    background: #eee;
+    border-left: 1px solid #bbb;
+    border-right: 1px solid #bbb;
+}
+body#page-question-type-combined div[id^=fitem_id_subqsinglechoice][id*=answer_] {
+    border-top: 1px solid #bbb;
+    margin-bottom: 0;
+    padding-bottom: 10px;
+}
+body#page-question-type-combined div[id^=fitem_id_subqsinglechoice][id*=fraction_] {
+    margin-bottom: 0;
+}
+body#page-question-type-combined div[id^=fitem_id_subqsinglechoice][id*=feedback_] {
+    border-bottom: 1px solid #bbb;
+}

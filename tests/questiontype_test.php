@@ -17,7 +17,7 @@
 /**
  * Unit tests for the select missing words question question definition class.
  *
- * @package   qtype_gapselect
+ * @package   qtype_combined
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -429,6 +429,12 @@ class qtype_combined_test extends question_testcase {
 </subquestions>
   </question>
 ';
+
+        // Hack so the test passes in both 3.5 and 3.6.
+        if (strpos($xml, 'idnumber') === false) {
+            $expectedxml = str_replace("    <idnumber></idnumber>\n", '', $expectedxml);
+        }
+
         $this->assertEquals($expectedxml, $xml);
     }
 }
