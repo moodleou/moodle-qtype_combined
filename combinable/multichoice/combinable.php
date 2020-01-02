@@ -34,7 +34,6 @@ class qtype_combined_combinable_type_multichoice extends qtype_combined_combinab
     protected function extra_question_properties() {
         $properties = $this->combined_feedback_properties();
         $properties['single'] = 1;
-        $properties['answernumbering'] = 'none';
         return $properties;
     }
 
@@ -45,6 +44,7 @@ class qtype_combined_combinable_type_multichoice extends qtype_combined_combinab
     public function subq_form_fragment_question_option_fields() {
         return array(
             'shuffleanswers' => false,
+            'answernumbering' => 'answernumberingnone'
         );
     }
 
@@ -75,6 +75,11 @@ class qtype_combined_combinable_multichoice extends qtype_combined_combinable_ac
         $mform->addElement('advcheckbox', $this->form_field_name('shuffleanswers'),
             get_string('shuffle', 'qtype_combined'));
         $mform->setDefault('shuffleanswers', get_config('qtype_multichoice', 'shuffleanswers'));
+
+        $mform->addElement('select', $this->form_field_name('answernumbering'),
+            get_string('answernumbering', 'qtype_multichoice'),
+            qtype_multichoice::get_numbering_styles());
+        $mform->setDefault('answernumbering', get_config('qtype_multichoice', 'answernumbering'));
 
         $answerels = array();
 
@@ -167,9 +172,9 @@ class qtype_combined_combinable_multichoice extends qtype_combined_combinable_ac
     }
 
     public function has_submitted_data() {
-        return $this->submitted_data_array_not_empty('answer') ||
-                $this->submitted_data_array_not_empty('shuffleanswers') ||
-                $this->html_field_has_submitted_data($this->form_field_name('answer')) ||
+        return $this->submitted_data_array_not_empty('fraction') ||
+            $this->html_field_has_submitted_data($this->form_field_name('answer')) ||
             parent::has_submitted_data();
     }
+
 }

@@ -22,8 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
+require_once($CFG->dirroot . '/question/type/multichoice/renderer.php');
 
 
 class qtype_combined_multichoice_embedded_renderer extends qtype_renderer
@@ -64,12 +64,12 @@ class qtype_combined_multichoice_embedded_renderer extends qtype_renderer
             } else {
                 unset($inputattributes['checked']);
             }
-            $rblabel = $question->make_html_inline($question->format_text(
-                $ans->answer, $ans->answerformat,
-                $qa, 'question', 'answer', $ansid));
 
-            $rblabeltag = html_writer::tag('label', $rblabel, array('for' => $inputattributes['id']));
-            $rbuttons[] = html_writer::empty_tag('input', $inputattributes + $commonattributes) . $rblabeltag;
+            $rbuttons[] = html_writer::empty_tag('input', $inputattributes + $commonattributes) .
+                html_writer::tag('label',
+                    html_writer::span(\qtype_combined\utils::number_in_style($value, $question->answernumbering), 'answernumber') .
+                    $question->make_html_inline($question->format_text(
+                        $ans->answer, $ans->answerformat, $qa, 'question', 'answer', $ansid)));
 
             if ($options->feedback && $isselected && trim($ans->feedback)) {
                 $feedback[] = html_writer::tag('span',
