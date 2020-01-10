@@ -42,10 +42,10 @@ class qtype_combined_combinable_type_multichoice extends qtype_combined_combinab
     }
 
     public function subq_form_fragment_question_option_fields() {
-        return array(
-            'shuffleanswers' => false,
-            'answernumbering' => 'answernumberingnone'
-        );
+        return [
+            'shuffleanswers' => (bool) get_config('qtype_combined', 'shuffleanswers_singlechoice'),
+            'answernumbering' => null,
+        ];
     }
 
     protected function transform_subq_form_data_to_full($subqdata) {
@@ -73,29 +73,30 @@ class qtype_combined_combinable_multichoice extends qtype_combined_combinable_ac
      */
     public function add_form_fragment(moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
         $mform->addElement('advcheckbox', $this->form_field_name('shuffleanswers'),
-            get_string('shuffle', 'qtype_combined'));
-        $mform->setDefault('shuffleanswers', get_config('qtype_multichoice', 'shuffleanswers'));
+                get_string('shuffle', 'qtype_combined'));
+        $mform->setDefault($this->form_field_name('shuffleanswers'),
+                get_config('qtype_combined', 'shuffleanswers_singlechoice'));
 
         $mform->addElement('select', $this->form_field_name('answernumbering'),
-            get_string('answernumbering', 'qtype_multichoice'),
-            qtype_multichoice::get_numbering_styles());
-        $mform->setDefault('answernumbering', get_config('qtype_multichoice', 'answernumbering'));
+                get_string('answernumbering', 'qtype_multichoice'), qtype_multichoice::get_numbering_styles());
+        $mform->setDefault($this->form_field_name('answernumbering'),
+                get_config('qtype_combined', 'answernumbering_singlechoice'));
 
         $answerels = array();
 
         // Answer text.
         $answerels[] = $mform->createElement('editor', $this->form_field_name('answer'),
-            get_string('choiceno', 'qtype_multichoice', '{no}'), ['rows' => 1]);
+                get_string('choiceno', 'qtype_multichoice', '{no}'), ['rows' => 1]);
         $mform->setType($this->form_field_name('answer'), PARAM_RAW);
 
         // Answer grade.
         $answerels[] = $mform->createElement('select', $this->form_field_name('fraction'),
-            get_string('grade'), question_bank::fraction_options_full());
+                get_string('grade'), question_bank::fraction_options_full());
         $mform->setDefault($this->form_field_name('fraction'), 0);
 
         // Answer feedback.
         $answerels[] = $mform->createElement('editor', $this->form_field_name('feedback'),
-            get_string('feedback', 'qtype_multichoice'), ['rows' => 1]);
+                get_string('feedback', 'qtype_multichoice'), ['rows' => 1]);
         $mform->setType($this->form_field_name('feedback'), PARAM_RAW);
 
         if (isset($this->questionrec->options)) {

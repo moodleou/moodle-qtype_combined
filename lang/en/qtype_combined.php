@@ -70,6 +70,7 @@ $string['err_weightingsdonotaddup'] = 'Weightings for sub questions do not add u
 $string['err_you_must_provide_third_param'] = 'You must provide a third param for question type {$a}.';
 $string['err_youneedmorechoices'] = 'You need to enter two or more choices.';
 $string['incorrectfeedback'] = 'Feedback for any incorrect response';
+$string['multiresponse'] = 'Default options for multiresponse sub questions';
 $string['noembeddedquestions'] = 'You have deleted all embedded sub question elements from the question text!';
 $string['nosubquestiontypesinstalled'] = 'This question type allows for the combination of the functionality of other question
 types. You need to install at least one of these other question types which will be used as sub questions.
@@ -97,7 +98,9 @@ sub questions in the question text.
 
 Depending on which question types you have installed, the student can enter a numeric or short text answer or choose an answer or
 answers using a select box or check boxes.';
+$string['privacy:metadata'] = 'The Combined plugin does not store any personal data.';
 $string['shuffle'] = 'Shuffle';
+$string['singlechoice'] = 'Default options for singlechoice sub questions';
 $string['subqheader'] = '\'{$a->qtype}\' input \'{$a->qid}\'';
 $string['subqheader_not_in_question_text'] = '\'{$a->qtype}\' input \'{$a->qid}\' (not embedded in question text).';
 $string['subquestiontypes'] = 'Sub-question types';
@@ -115,4 +118,3 @@ $string['weighting'] = 'Weighting';
 $string['widthspecifier_embed_code'] = '[[{$a->qid}:{$a->qtype}:{width specifier}]] or just [[{$a->qid}:{$a->qtype}]]';
 $string['yougotnright'] = '{$a->num} of your answers are correct.';
 $string['yougot1right'] = '1 of your answers is correct.';
-$string['privacy:metadata'] = 'The Combined plugin does not store any personal data.';
