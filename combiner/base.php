@@ -196,6 +196,10 @@ abstract class qtype_combined_combiner_base {
      * @param $questiondata stdClass submitted question data
      */
     protected function get_subq_data_from_form_data($questiondata) {
+        if (!isset($questiondata->subqfragment_id)) {
+            // No subfragments yet. This will trigger form validation.
+            return;
+        }
         foreach ($questiondata->subqfragment_id as $subqkey => $qid) {
             $subq = $this->find_or_create_question_instance($questiondata->subqfragment_type[$subqkey], $qid);
             $subq->get_this_form_data_from($questiondata);

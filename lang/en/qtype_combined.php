@@ -71,7 +71,7 @@ $string['err_you_must_provide_third_param'] = 'You must provide a third param fo
 $string['err_youneedmorechoices'] = 'You need to enter two or more choices.';
 $string['incorrectfeedback'] = 'Feedback for any incorrect response';
 $string['multiresponse'] = 'Default options for multiresponse sub questions';
-$string['noembeddedquestions'] = 'You have deleted all embedded sub question elements from the question text!';
+$string['noembeddedquestions'] = 'There must be at least one embedded sub question.';
 $string['nosubquestiontypesinstalled'] = 'This question type allows for the combination of the functionality of other question
 types. You need to install at least one of these other question types which will be used as sub questions.
 
