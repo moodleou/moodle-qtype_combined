@@ -69,7 +69,8 @@ class qtype_combined_multichoice_embedded_renderer extends qtype_renderer
                 html_writer::tag('label',
                     html_writer::span(\qtype_combined\utils::number_in_style($value, $question->answernumbering), 'answernumber') .
                     $question->make_html_inline($question->format_text(
-                        $ans->answer, $ans->answerformat, $qa, 'question', 'answer', $ansid)));
+                        $ans->answer, $ans->answerformat, $qa, 'question', 'answer', $ansid)),
+                    ['for' => $inputattributes['id']]);
 
             if ($options->feedback && $isselected && trim($ans->feedback)) {
                 $feedback[] = html_writer::tag('span',
