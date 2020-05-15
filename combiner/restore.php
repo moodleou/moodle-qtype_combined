@@ -54,7 +54,7 @@ class qtype_combined_combiner_for_restore extends qtype_combined_combiner_base {
 
     /**
      * @param $subqno integer
-     * @return integer sub question id field from db
+     * @return integer sub-question id field from db
      */
     public function get_subq_id($subqno) {
         return $this->subqs[$subqno]->get_id();

@@ -3,7 +3,7 @@ Making other question types work with combined question type
 
 The combined question type features a plug in system to allow you to write code to allow other question types to be embeddedable in
  a combined question. In order to make another question type 'combinable' you have to write some hook classes to tell the combined
- question type how to use the question types as sub questions.
+ question type how to use the question types as sub-questions.
 
 Where we look for hook classes
 ==============================

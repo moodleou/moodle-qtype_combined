@@ -36,13 +36,13 @@ require_once($CFG->dirroot.'/question/type/combined/combinable/combinabletypebas
  * Class qtype_combined_combiner_base
  * This is a base class which holds common code used by combiner classes that are used to produce forms,
  * save and produce run time questions.
- * An instance of this class stores everything to do with the sub questions for one combined question.
+ * An instance of this class stores everything to do with the sub-questions for one combined question.
  *
  */
 abstract class qtype_combined_combiner_base {
 
     /**
-     * @var qtype_combined_combinable_base[] array of sub questions, in question text, in form and in db. One instance for each
+     * @var qtype_combined_combinable_base[] array of sub-questions, in question text, in form and in db. One instance for each
      *                                          question instance.
      */
     protected $subqs = array();
@@ -60,7 +60,7 @@ abstract class qtype_combined_combiner_base {
     const VALID_QUESTION_IDENTIFIER_PATTTERN = '[a-zA-Z0-9]+';
 
     /**
-     * Prefix both for field names in sub question form fragments and also for collecting student responses in run-time question.
+     * Prefix both for field names in sub-question form fragments and also for collecting student responses in run-time question.
      */
     const FIELD_NAME_PREFIX = 'subq:{qtype}:{qid}:';
 

@@ -16,7 +16,7 @@
 
 /**
  * Base classes for 'combinable' class that is used to make instances of another question type 'combinable' ie. to work as an
- * embeddable sub question in this 'combined' question type.
+ * embeddable sub-question in this 'combined' question type.
  *
  * Classes, any of which you might override to make your question type combinable :
  *
@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class qtype_combined_combinable_base
- * Defines a sub question instance.
+ * Defines a sub-question instance.
  */
 abstract class qtype_combined_combinable_base {
 
@@ -63,7 +63,7 @@ abstract class qtype_combined_combinable_base {
     protected $questionidentifier;
 
     /**
-     * @var object form data from form fragment for this sub question
+     * @var object form data from form fragment for this sub-question
      */
     protected $formdata = null;
 
@@ -73,7 +73,7 @@ abstract class qtype_combined_combinable_base {
     public $type;
 
     /**
-     * @var array the control nos that this sub question is responsible for. Controls are numbered from 1 onwards in the order they
+     * @var array the control nos that this sub-question is responsible for. Controls are numbered from 1 onwards in the order they
      *              are found in the question text. Many questions will only have one control embedded in text but some can have
      *              more than one, eg. gapselect.
      */
@@ -210,7 +210,7 @@ abstract class qtype_combined_combinable_base {
     }
 
     /**
-     * This sub question has been found in question text. Store third param, third param is null if no third param.
+     * This sub-question has been found in question text. Store third param, third param is null if no third param.
      * @param $thirdparam null|mixed the third param in the embedded code, null if only two params in embedded code.
      * @param $controlno integer the control no, each subq can be responsible for more than one control in the question text.
      * @return null|string null if OK, string returned if there is an error.
@@ -254,7 +254,7 @@ abstract class qtype_combined_combinable_base {
     abstract public function validate();
 
     /**
-     * Extracts the data for this sub question from the full form data.
+     * Extracts the data for this sub-question from the full form data.
      * @param stdClass $allformdata
      */
     public function get_this_form_data_from($allformdata) {
@@ -273,7 +273,7 @@ abstract class qtype_combined_combinable_base {
     }
 
     /**
-     * @return bool has this sub question been found in question text.
+     * @return bool has this sub-question been found in question text.
      */
     public function is_in_question_text() {
         return $this->foundinquestiontext;
@@ -317,7 +317,7 @@ abstract class qtype_combined_combinable_base {
 
     /**
      * Overridden by child classes, but they should also call this parent class.
-     * @return bool Has the user entered data in this sub question form fragment?
+     * @return bool Has the user entered data in this sub-question form fragment?
      */
     public function has_submitted_data() {
         if ($this->has_submitted_question_option_data()) {

@@ -1,7 +1,7 @@
 # Combined question type [![Build Status](https://travis-ci.org/moodleou/moodle-qtype_combined.svg?branch=master)](https://travis-ci.org/moodleou/moodle-qtype_combined)
 
 A combined question type which allows the embedding of the response fields for
-various available sub questions in the question text.
+various available sub-questions in the question text.
 
 So the student can enter a numeric or short text answer or choose an answer or
 answer(s) from  using a select box, check boxes or radio boxes.
@@ -9,8 +9,8 @@ answer(s) from  using a select box, check boxes or radio boxes.
 
 ## Requirements
 
-You will need to install at least one question type that can be used as a sub question, you can use any of the latest versions of
-these question types as sub questions:
+You will need to install at least one question type that can be used as a sub-question, you can use any of the latest versions of
+these question types as sub-questions:
 
 * Select missing words - which is now part of the standard Moodle release.
 * [Pattern match](https://moodle.org/plugins/qtype_pmatch)

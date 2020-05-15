@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class qtype_combined_combinable_type_base
- * Collects methods common to a sub question type.
+ * Collects methods common to a sub-question type.
  */
 abstract class qtype_combined_combinable_type_base {
 
@@ -85,10 +85,10 @@ abstract class qtype_combined_combinable_type_base {
     }
 
     /**
-     * Get a student readable description of the part of the sub question to be used in validation message.
+     * Get a student readable description of the part of the sub-question to be used in validation message.
      * The name of the thing embedded in the text that the student sees, they should need to have no knowledge of the underlying
-     * sub question type to understand the message eg. numeric input, text input, drop down boxes.
-     * There is no need to define a plural lang string if the sub question cannot have more than one control in the question.
+     * sub-question type to understand the message eg. numeric input, text input, drop down boxes.
+     * There is no need to define a plural lang string if the sub-question cannot have more than one control in the question.
      * @param bool $plural
      * @return string the name of the control or if plural is true the controls.
      */

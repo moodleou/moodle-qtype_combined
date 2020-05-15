@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Combined question embedded sub question renderer class.
+ * Combined question embedded sub-question renderer class.
  *
  * @package   qtype_combined
  * @copyright 2013 The Open University

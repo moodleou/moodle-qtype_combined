@@ -28,7 +28,7 @@ Feature: Test all the basic functionality of combined question type
     Then I set the field "General feedback" to "The molecule is ethanoic acid which is more commonly known as acetic acid or in dilute solution as vinegar. The constituent elements are carbon (grey), hydrogen (white) and oxygen (red). A 0.1M solution has a pH of 2.88 and when a solution is combined with oil the result is a vinaigrette."
     And I press "Verify the question text and update the form"
 
-    # Follow sub questions (The order of sub questions comes from the question text).
+    # Follow sub-questions (The order of sub-questions comes from the question text).
     # Numeric part.
     Then I follow "'numeric' input '1'"
     And I set the following fields to these values:

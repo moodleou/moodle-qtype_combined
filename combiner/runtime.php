@@ -85,7 +85,7 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
     }
 
     /**
-     * Call a method on question_definition object for all sub questions.
+     * Call a method on question_definition object for all sub-questions.
      * @param string $methodname
      * @param qtype_combined_param_to_pass_through_to_subq_base|mixed  $params,.... a variable number of arguments (or none)
      * @return array of return values returned from method call on all subqs.
@@ -102,8 +102,8 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
     }
 
     /**
-     * Call a method on question_definition object for all sub questions.
-     * @param integer $i the index no of the sub question
+     * Call a method on question_definition object for all sub-questions.
+     * @param integer $i the index no of the sub-question
      * @param string $methodname the method to call
      * @param qtype_combined_param_to_pass_through_to_subq_base|mixed $params parameters to pass to the call
      * @return array of return values returned from method call on all subqs.
@@ -157,7 +157,7 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
     }
 
     /**
-     * Used for computing final grade for sub question. Find first identical response to final response for a question and remove
+     * Used for computing final grade for sub-question. Find first identical response to final response for a question and remove
      * all responses  after that response.
      * @param $question question_automatically_gradable
      * @param $subqresponses

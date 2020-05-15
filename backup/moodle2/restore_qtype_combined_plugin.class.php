@@ -104,7 +104,7 @@ class restore_qtype_combined_plugin extends restore_qtype_plugin {
         }
         $subqresponsesrecoded = $combiner->aggregate_response_arrays($recodedresponses);
 
-        // Remove responses recoded by sub questions to leave just
+        // Remove responses recoded by sub-questions to leave just
         // parts of response array for the main question e.g. '-finish' => 1.
         // I don't want to assume that the response recoding will not change the keys,
         // just in case.

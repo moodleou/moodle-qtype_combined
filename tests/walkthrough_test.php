@@ -1096,7 +1096,7 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
 
         // Submit a partially right answer.
         // Multichoice half right, gapselect wrong, pmatch is right. This is the second try, so 33% penalty applied.
-        // Sub question weighting is gs 0.5, pm 0.25 and mc 0.25.
+        // sub-question weighting is gs 0.5, pm 0.25 and mc 0.25.
         // Total grade = 6 * (0.5 * 0.25 + 0.25) * 66% = 1.5.
         $this->process_submission(array('mc:choice0' => '1', 'mc:choice3' => '1',
                                         'gs:p1' => '2', 'gs:p2' => '2', 'gs:p3' => '2',
@@ -1310,7 +1310,7 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
 
         // Submit a partially right answer.
         // Multichoice half right, gapselect wrong, numeric and pmatch is right. This is the second try, so 33% penalty applied.
-        // Sub question weighting is gs 0.5, pm 0.25 and mc 0.25.
+        // sub-question weighting is gs 0.5, pm 0.25 and mc 0.25.
         // Total grade = 6 * (0.5 * 0.25 + 0.25 + 0.25) * 66% = 2.5.
         $this->process_submission(array('mc:choice0' => '1', 'mc:choice3' => '1',
                                         'gs:p1' => '2', 'gs:p2' => '2', 'gs:p3' => '2',
@@ -1534,7 +1534,7 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
         $combined->combiner = new qtype_combined_combiner_for_run_time_question_instance();
         $combined->combiner->find_included_subqs_in_question_text($combined->questiontext);
 
-        // Pattern match sub question.
+        // Pattern match sub-question.
         question_bank::load_question_definition_classes('pmatch');
         $subq = $combined->combiner->find_or_create_question_instance('pmatch', 1);
 

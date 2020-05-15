@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Code that deals with constructing, loading data into form and validating question editing form for sub questions.
+ * Code that deals with constructing, loading data into form and validating question editing form for sub-questions.
  *
  * @package    qtype_combined
  * @copyright  2013 The Open University
