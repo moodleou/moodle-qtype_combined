@@ -5,6 +5,13 @@
 
 * Multiple-choice, single-response sub-questions are now available using the
   standard Moodle multiple choice question type.
+* Multiple-choice (single or multiple) sub-questions now have an option for
+  whether the choices should be numbered.
+* Admins can control some default settings. The defaults start as:
+  multiple-choice options should be shuffled and should not be numbered.
+* The wording was changed to consistently use 'sub-question', not 'sub question'.
+* Fixed a minor bug that happened when you tried to save an invalid question.
+* Fixed the automated tests to pass on the latest Moodle version.
 
 
 ## Changes in 1.9
