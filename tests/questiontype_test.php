@@ -126,6 +126,7 @@ class qtype_combined_test extends question_testcase {
                                         'incorrectfeedback' => '',
                                         'incorrectfeedbackformat' => '1',
                                         'answernumbering' => 'none',
+                                        'showstandardinstruction' => true,
                                         'shownumcorrect' => '1',
                                         'answers' =>
                                             array(
@@ -213,6 +214,7 @@ class qtype_combined_test extends question_testcase {
                                         'incorrectfeedback' => '',
                                         'incorrectfeedbackformat' => '1',
                                         'answernumbering' => 'none',
+                                        'showstandardinstruction' => true,
                                         'shownumcorrect' => '1',
                                         'answers' =>
                                             array(
@@ -350,6 +352,7 @@ class qtype_combined_test extends question_testcase {
     <single>true</single>
     <shuffleanswers>true</shuffleanswers>
     <answernumbering>none</answernumbering>
+    <showstandardinstruction>1</showstandardinstruction>
     <correctfeedback format="html">
       <text></text>
     </correctfeedback>
@@ -397,6 +400,7 @@ class qtype_combined_test extends question_testcase {
     <single>true</single>
     <shuffleanswers>true</shuffleanswers>
     <answernumbering>none</answernumbering>
+    <showstandardinstruction>1</showstandardinstruction>
     <correctfeedback format="html">
       <text></text>
     </correctfeedback>
@@ -433,6 +437,11 @@ class qtype_combined_test extends question_testcase {
         // Hack so the test passes in both 3.5 and 3.6.
         if (strpos($xml, 'idnumber') === false) {
             $expectedxml = str_replace("    <idnumber></idnumber>\n", '', $expectedxml);
+        }
+
+        // Hack so the test passes in both 3.8 and 3.9.
+        if (strpos($xml, 'showstandardinstruction') === false) {
+            $expectedxml = str_replace("    <showstandardinstruction>1</showstandardinstruction>\n", '', $expectedxml);
         }
 
         $this->assertEquals($expectedxml, $xml);

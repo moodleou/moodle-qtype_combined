@@ -60,7 +60,12 @@ class qtype_combined_test_helper {
      * @return qtype_gapselect_question
      */
     protected static function make_a_gapselect_question($name) {
-        $gapselect = qtype_gapselect_test_helper::make_a_gapselect_question();
+        // Once Moodle 3.8.4 is the oldest supported version, this can be claned up to just the if code.
+        if (method_exists('qtype_gapselect_test_helper', 'get_test_questions')) {
+            $gapselect = test_question_maker::make_question('gapselect');
+        } else {
+            $gapselect = qtype_gapselect_test_helper::make_a_gapselect_question();
+        }
         $gapselect->name = $name;
         $gapselect->questiontext = '[[1]][[2]][[3]]';
         $gapselect->generalfeedback = 'You made at least one incorrect choice.';
