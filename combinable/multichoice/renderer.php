@@ -66,11 +66,11 @@ class qtype_combined_multichoice_embedded_renderer extends qtype_renderer
             }
 
             $rbuttons[] = html_writer::empty_tag('input', $inputattributes + $commonattributes) .
-                html_writer::tag('label',
-                    html_writer::span(\qtype_combined\utils::number_in_style($value, $question->answernumbering), 'answernumber') .
-                    $question->make_html_inline($question->format_text(
-                        $ans->answer, $ans->answerformat, $qa, 'question', 'answer', $ansid)),
-                    ['for' => $inputattributes['id']]);
+                    html_writer::tag('label',
+                            html_writer::span(\qtype_combined\utils::number_in_style($value, $question->answernumbering),
+                                    'answernumber') .
+                            $question->format_text($ans->answer, $ans->answerformat, $qa, 'question', 'answer', $ansid),
+                            ['for' => $inputattributes['id']]);
 
             if ($options->feedback && $isselected && trim($ans->feedback)) {
                 $feedback[] = html_writer::tag('span',
@@ -94,17 +94,21 @@ class qtype_combined_multichoice_embedded_renderer extends qtype_renderer
 
         if ('h' === $subq->get_layout()) {
             $inputwraptag = 'span';
+            $classname = 'horizontal';
         } else {
             $inputwraptag = 'div';
         }
 
         $rbhtml = '';
         foreach ($rbuttons as $key => $rb) {
-            $rbhtml .= html_writer::tag($inputwraptag, $rb . ' ' . $feedbackimg[$key] . $feedback[$key],
+            $feedbackcontent = html_writer::div($feedback[$key], 'feedback');
+            $rbhtml .= html_writer::tag($inputwraptag, $rb . ' ' . $feedbackimg[$key] . $feedbackcontent,
                     array('class' => $classes[$key])) . "\n";
         }
 
         $result = html_writer::tag($inputwraptag, $rbhtml, array('class' => 'answer'));
+        $result = html_writer::div($result, $classname);
+
         return $result;
     }
 }

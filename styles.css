@@ -22,6 +22,97 @@
     background: #fff8eb;
     border: 1px solid #fff8eb;
     padding: 3px;
+    display: inline-block;
+    width: 98%;
+}
+
+.que.combined .qtext .answer div.r0,
+.que.combined .qtext .answer div.r1 {
+    padding: 0;
+    text-indent: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+}
+
+.que.combined .qtext .horizontal {
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+}
+
+.que.combined .qtext span.answer span.r0,
+.que.combined .qtext span.answer span.r1 {
+    display: inline-flex;
+    align-items: baseline;
+}
+
+.que.combined .qtext span.answer span.r0 label,
+.que.combined .qtext span.answer span.r1 label {
+    display: inline-flex;
+    align-items: baseline;
+    margin-left: 5px;
+    margin-right: 5px;
+    flex: 1 1 auto;
+}
+
+.que.combined .qtext .horizontal span.answer span.r0 div.feedback,
+.que.combined .qtext .horizontal span.answer span.r1 div.feedback {
+    margin: 0;
+}
+
+.que.combined .qtext span.answer span.r0 label p,
+.que.combined .qtext span.answer span.r1 label p {
+    margin: 0;
+    flex: 1 1;
+}
+
+/* Hack specific style for IE */
+body.ie .que.combined .qtext .horizontal span.answer {
+    width: 100%;
+}
+
+body.ie .que.combined .qtext span.answer span.r0 label p,
+body.ie .que.combined .qtext span.answer span.r1 label p {
+    flex-basis: auto;
+}
+
+body.ie .que.combined .qtext span.answer span.r0.incorrect img.icon,
+body.ie .que.combined .qtext span.answer span.r1.incorrect img.icon,
+body.ie .que.combined .qtext span.answer span.r0.correct img.icon,
+body.ie .que.combined .qtext span.answer span.r1.correct img.icon {
+    flex: 1 0 auto;
+}
+
+.que.combined .qtext .horizontal span.answer span.r0 div.feedback span.subqspecificfeedback,
+.que.combined .qtext .horizontal span.answer span.r1 div.feedback span.subqspecificfeedback {
+    width: auto;
+}
+
+.que.combined .qtext .horizontal span.answer span.r0 div.feedback span.subqspecificfeedback p,
+.que.combined .qtext .horizontal span.answer span.r1 div.feedback span.subqspecificfeedback p {
+    margin: 0;
+}
+
+/* Hack specific style for Safari. */
+body.safari .que.combined .qtext .horizontal span.answer span.r0 input,
+body.safari .que.combined .qtext .horizontal span.answer span.r1 input {
+    flex: 1 0 auto;
+}
+
+.que.combined .qtext .answer div.r0 span.answernumber,
+.que.combined .qtext .answer div.r1 span.answernumber {
+    float: left;
+    margin-right: 2px;
+}
+
+.que.combined .qtext .answer label {
+    display: inline-block;
+    flex: 1 1;
+}
+
+.que.combined .qtext .answer div.r0 div.feedback,
+.que.combined .qtext .answer div.r1 div.feedback {
+    flex: 1 1 100%;
 }
 
 body#page-question-type-combined .qtype_combined-sample-placeholder {
