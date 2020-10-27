@@ -97,11 +97,15 @@ class qtype_combined_multichoice_embedded_renderer extends qtype_renderer
             $classname = 'horizontal';
         } else {
             $inputwraptag = 'div';
+            $classname = 'vertical';
         }
 
         $rbhtml = '';
         foreach ($rbuttons as $key => $rb) {
-            $feedbackcontent = html_writer::div($feedback[$key], 'feedback');
+            $feedbackcontent = '';
+            if (!empty($feedback[$key])) {
+                $feedbackcontent = html_writer::div($feedback[$key], 'feedback');
+            }
             $rbhtml .= html_writer::tag($inputwraptag, $rb . ' ' . $feedbackimg[$key] . $feedbackcontent,
                     array('class' => $classes[$key])) . "\n";
         }
