@@ -1,5 +1,9 @@
 # Change log for the Combined question type
 
+## Changes in 2.1
+
+* Fix layout issue for multiple choice choices.
+
 
 ## Changes in 2.0
 
