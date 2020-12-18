@@ -36,7 +36,6 @@
 }
 
 .que.combined .qtext .horizontal {
-    display: -ms-inline-flexbox;
     display: inline-flex;
 }
 
