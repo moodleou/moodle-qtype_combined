@@ -1,4 +1,4 @@
-# Combined question type [![Build Status](https://travis-ci.com/moodleou/moodle-qtype_combined.svg?branch=master)](https://travis-ci.com/moodleou/moodle-qtype_combined)
+# Combined question type
 
 A combined question type which allows the embedding of the response fields for
 various available sub-questions in the question text.
