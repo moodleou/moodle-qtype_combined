@@ -91,7 +91,7 @@ class qtype_combined_combinable_multichoice extends qtype_combined_combinable_ac
 
         // Answer grade.
         $answerels[] = $mform->createElement('select', $this->form_field_name('fraction'),
-                get_string('grade'), question_bank::fraction_options_full());
+                get_string('gradenoun'), question_bank::fraction_options_full());
         $mform->setDefault($this->form_field_name('fraction'), 0);
 
         // Answer feedback.
