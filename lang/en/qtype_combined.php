@@ -104,10 +104,10 @@ $string['shuffle'] = 'Shuffle';
 $string['singlechoice'] = 'Default options for singlechoice sub-questions';
 $string['subqheader'] = '\'{$a->qtype}\' input \'{$a->qid}\'';
 $string['subqheader_not_in_question_text'] = '\'{$a->qtype}\' input \'{$a->qid}\' (not embedded in question text).';
-$string['subquestiontypes'] = 'sub-question types';
+$string['subquestiontypes'] = 'Sub-question placeholders';
 $string['subquestiontypenotinstalled'] = 'You are attempting to use a combined question with a sub-question type \'{$a}\' that
 is not installed.';
-$string['updateform'] = 'Verify the question text and update the form';
+$string['updateform'] = 'Update the form';
 $string['validationerror_multiplecontrols'] = 'Inputs {$a->controlnos} ({$a->controlname}) - {$a->error}';
 $string['validationerror_singlecontrol'] = 'Input {$a->controlno} ({$a->controlname}) - {$a->error}';
 $string['validationerror'] = 'Part of your answer requires attention : {$a}';

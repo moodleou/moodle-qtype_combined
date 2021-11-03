@@ -378,9 +378,9 @@ class qtype_combined_type_manager {
     /**
      * Get examples of a placeholder for each possible type of sub-question.
      *
-     * @return string example placeholders.
+     * @return array example placeholders.
      */
-    public static function get_example_placeholders() {
+    public static function get_example_placeholders(): array {
         $i = 1;
         $codes = array();
         self::find_and_load_all_combinable_qtype_hook_classes();
@@ -388,10 +388,10 @@ class qtype_combined_type_manager {
         sort($identifiers);
         foreach ($identifiers as $identifier) {
             $type = self::$combinableplugins[$identifier];
-            $codes[] = html_writer::span($type->embedded_code_for_default_question_text($i), 'qtype_combined-sample-placeholder');
+            $codes[] = $type->embedded_code_for_default_question_text($i);
             $i++;
         }
-        return implode(" ", $codes);
+        return $codes;
     }
 
     /**

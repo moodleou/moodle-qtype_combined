@@ -114,9 +114,6 @@ body.safari .que.combined .qtext .horizontal span.answer span.r1 input {
     flex: 1 1 100%;
 }
 
-body#page-question-type-combined .qtype_combined-sample-placeholder {
-    padding: 0 10px;
-}
 body#page-question-type-combined div[id^=fgroup_id_subqpmatch][id*=susubels] label[for*='allowsubscript'] {
     position: absolute;
     left: -10000px;

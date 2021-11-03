@@ -67,8 +67,13 @@ class qtype_combined_edit_form extends question_edit_form {
                 $mform,
                 $this->question->formoptions->repeatelements);
 
+        $placeholders = array_map(function($placehodler) {
+                return html_writer::empty_tag('input', ['type' => 'text', 'readonly' => 'readonly', 'size' => '16',
+                        'value' => $placehodler, 'onfocus' => 'this.select()',
+                        'class' => 'form-control-plaintext w-auto d-inline-block']);
+            }, qtype_combined_type_manager::get_example_placeholders());
         $subq = $mform->createElement('static', 'subq', get_string('subquestiontypes', 'qtype_combined'),
-                qtype_combined_type_manager::get_example_placeholders());
+                implode('&nbsp &nbsp', $placeholders));
         $mform->insertElementBefore($subq, 'defaultmark');
 
         $verify = $mform->createElement('submit', 'updateform', get_string('updateform', 'qtype_combined'));
