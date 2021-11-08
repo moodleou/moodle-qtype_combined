@@ -26,7 +26,7 @@ Feature: Test all the basic functionality of combined question type
     And I set the field "Question name" to "Combined 001"
     And I set the field "Question text" to "What is the pH of a 0.1M solution? [[1:numeric:__10__]]<br/>What is the IUPAC name of the molecule? [[2:pmatch:__20__]]<br/>Which elements are shown? [[3:multiresponse]]<br/>Which element is shown as white? [[5:singlechoice]]<br/>When a solution is combined with oil the result is a [[4:selectmenu:2]]"
     Then I set the field "General feedback" to "The molecule is ethanoic acid which is more commonly known as acetic acid or in dilute solution as vinegar. The constituent elements are carbon (grey), hydrogen (white) and oxygen (red). A 0.1M solution has a pH of 2.88 and when a solution is combined with oil the result is a vinaigrette."
-    And I press "Verify the question text and update the form"
+    And I press "Update the form"
 
     # Follow sub-questions (The order of sub-questions comes from the question text).
     # Numeric part.
@@ -222,7 +222,7 @@ Feature: Test all the basic functionality of combined question type
     And I should see "Adding a combined question"
     And I set the field "Question name" to "Combined 001"
     And I set the field "Question text" to "[[1:pmatch]]"
-    And I press "Verify the question text and update the form"
+    And I press "Update the form"
     And I follow "'pmatch' input '1'"
     And I set the following fields to these values:
       | Weighting                           | 100%                             |
@@ -267,7 +267,7 @@ Feature: Test all the basic functionality of combined question type
     And I should see "Adding a combined question"
     And I set the field "Question name" to "Duplication test"
     And I set the field "Question text" to "Cat: [[1:selectmenu:1]], Dog: [[2:selectmenu:1]]"
-    And I press "Verify the question text and update the form"
+    And I press "Update the form"
     And I expand all fieldsets
     And I set the following fields to these values:
       | id_subqselectmenu1defaultmark | 50%     |
