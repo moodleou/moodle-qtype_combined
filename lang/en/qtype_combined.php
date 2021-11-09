@@ -29,8 +29,8 @@ $string['controlnamegapselectplural'] = 'drop down boxes';
 $string['controlnamemultichoice'] = 'radio group';
 $string['correct_choice_embed_code'] = '[[{$a->qid}:{$a->qtype}:{correct choice}]]';
 $string['embeddedquestionremovedfromform'] = 'One or more embedded questions have been removed from the question text. The
-question data for these questions is still shown below, but it will be permanently removed when you either press the \'Verify the
-question text ..\' or \'Save changes\' button, unless you put the embed codes back in the question text again.';
+question data for these questions is still shown below, but it will be permanently removed when you either press the
+\'Update the form\' or \'Save changes\' button, unless you put the embed codes back in the question text again.';
 $string['err_accepts_vertical_or_horizontal_layout_param'] = '<p>The \'{$a}\' question type allows you to specify the layout
 of your question
 type as follows :<ul>
@@ -89,7 +89,7 @@ When you create a new question all the codes to embed available sub-question typ
 as examples of codes you can use. And at the same time the appropriate form fragments to specify the options for each question
 appear below the question text entry field. Edit the
 question text and change the codes in the question text to change which types of sub-questions to include in the question text and
-then press the "Verify the question text and update the form" button to have the correct parts of the form displayed to edit
+then press the "Update the form" button to have the correct parts of the form displayed to edit
 your sub-question settings.';
 $string['pluginname_link'] = 'question/type/combined';
 $string['pluginnameadding'] = 'Adding a combined question';
