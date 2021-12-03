@@ -31,8 +31,7 @@
     padding: 0;
     text-indent: 0;
     display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
+    align-items: flex-start;
 }
 
 .que.combined .qtext .horizontal {
@@ -98,15 +97,11 @@ body.safari .que.combined .qtext .horizontal span.answer span.r1 input {
     flex: 1 0 auto;
 }
 
-.que.combined .qtext .answer div.r0 span.answernumber,
-.que.combined .qtext .answer div.r1 span.answernumber {
-    float: left;
-    margin-right: 2px;
-}
-
-.que.combined .qtext .answer label {
-    display: inline-block;
-    flex: 1 1;
+.que.combined .answer div.r0 input,
+.que.combined .answer div.r1 input {
+    margin: .3rem .5rem;
+    width: 15px;
+    flex-shrink: 0;
 }
 
 .que.combined .qtext .answer div.r0 div.feedback,

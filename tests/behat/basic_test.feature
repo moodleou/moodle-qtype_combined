@@ -112,27 +112,25 @@ Feature: Test all the basic functionality of combined question type
 
     # Attempt the question
     # Test html editor for answer field in Combined MultiResponse.
-    And "//label/b[contains(text(), 'bromine')]" "xpath_element" should be visible
-    And "//label/b[contains(text(), 'O oxygen')]" "xpath_element" should be visible
+    And "bromine" "qtype_multichoice > Answer" should be visible
+    And "O oxygen" "qtype_multichoice > Answer" should be visible
     And I set the field "Answer 1" to "2.88"
     And I set the field "Answer 2" to "ethanoic acid"
     And I set the field "Answer 4" to "Vinagrette"
-    And I set the field "H hydrogen" to "1"
+    And I click on "H hydrogen" "qtype_multichoice > Answer"
     And I press "Check"
     Then I should see "Part of your answer requires attention :"
     And I should see "Input 3 (check box group) - Please select at least one answer."
 
-    And I set the following fields to these values:
-      | C/carbon | 1 |
-      | O/oxygen | 1 |
+    And I click on "C/carbon" "qtype_multichoice > Answer"
+    And I click on "O/oxygen" "qtype_multichoice > Answer"
     And I press "Check"
     Then I should see "Your answer is partially correct."
     And I should see "Your choice of elements is not entirely correct."
     And I should see "First hint"
 
     When I press "Try again"
-    And I set the following fields to these values:
-      | H/hydrogen | 1 |
+    And I click on "H/hydrogen" "qtype_multichoice > Answer"
     Then I press "Check"
     And I should see "Your answer is correct."
     And I should see "The molecule is ethanoic acid which is more commonly known as acetic acid or in dilute solution as vinegar. The constituent elements are carbon (grey), hydrogen (white) and oxygen (red). A 0.1M solution has a pH of 2.88 and when a solution is combined with oil the result is a vinaigrette."
@@ -140,7 +138,7 @@ Feature: Test all the basic functionality of combined question type
     When I press "Start again"
     And I press "Fill in correct responses"
     Then the field "Answer 2" matches value "ethanoic acid"
-    Then the field "H hydrogen" matches value "1"
+    And "//div[@data-region='answer-label']//div[contains(text(), 'H hydrogen')]/ancestor::div/input[@checked='checked']" "xpath_element" should be visible
 
     And I switch to the main window
 
