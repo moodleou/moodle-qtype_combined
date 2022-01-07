@@ -42,7 +42,7 @@ class qtype_combined_test extends question_testcase {
     protected $qtype;
 
     protected function setUp(): void {
-        $this->qtype = question_bank::get_qtype('combined');;
+        $this->qtype = question_bank::get_qtype('combined');
     }
 
     public function test_export_to_xml() {
@@ -81,8 +81,24 @@ class qtype_combined_test extends question_testcase {
                         'incorrectfeedbackformat' => '1',
                         'shownumcorrect' => '1',
                     ),
-                'hints' =>
-                    array(),
+                'hints' => [
+                    (object)[
+                        'id' => 1,
+                        'questionid' => 8862,
+                        'hint' => 'Hint 1',
+                        'hintformat' => FORMAT_HTML,
+                        'shownumcorrect' => 0,
+                        'clearwrong' => 0
+                    ],
+                    (object)[
+                        'id' => 2,
+                        'questionid' => 8862,
+                        'hint' => 'Hint 2',
+                        'hintformat' => FORMAT_HTML,
+                        'shownumcorrect' => 1,
+                        'clearwrong' => 1
+                    ],
+                ],
                 'subquestions' =>
                     array(
                         8864 =>
@@ -300,7 +316,7 @@ class qtype_combined_test extends question_testcase {
                 'inpopup' => 0
             );
 
-        $exporter = new qformat_xml();
+        $exporter = new \qformat_xml();
         $xml = $exporter->writequestion($qdata);
         $expectedxml =
             '<!-- question: 8862  -->
@@ -427,6 +443,14 @@ class qtype_combined_test extends question_testcase {
     </answer>
   </question>
 </subquestions>
+    <hint format="html">
+      <text>Hint 1</text>
+    </hint>
+    <hint format="html">
+      <text>Hint 2</text>
+      <shownumcorrect/>
+      <clearwrong/>
+    </hint>
   </question>
 ';
 

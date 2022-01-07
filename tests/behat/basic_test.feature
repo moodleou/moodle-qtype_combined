@@ -90,10 +90,10 @@ Feature: Test all the basic functionality of combined question type
       | id_subqsinglechoice5generalfeedback | Your name for the white atoms is incorrect. |
 
     # Set hints for Multiple tries
-    And I follow "Multiple tries"
     And I set the field "Hint 1" to "First hint"
+    And I set the field "id_hintclearwrong_0" to "1"
     And I set the field "Hint 2" to "Second hint"
-
+    And I set the field "id_hintclearwrong_1" to "1"
     And I press "id_submitbutton"
     Then I should see "Combined 001"
 
@@ -134,6 +134,26 @@ Feature: Test all the basic functionality of combined question type
     Then I press "Check"
     And I should see "Your answer is correct."
     And I should see "The molecule is ethanoic acid which is more commonly known as acetic acid or in dilute solution as vinegar. The constituent elements are carbon (grey), hydrogen (white) and oxygen (red). A 0.1M solution has a pH of 2.88 and when a solution is combined with oil the result is a vinaigrette."
+
+    # Check the Clear incorrect responses option.
+    And I press "Start again"
+    And I set the field "Answer 1" to "2.7"
+    And I set the field "Answer 2" to "formic acid"
+    And I set the field "Answer 4" to "Wine"
+    And I click on "C carbon" "qtype_multichoice > Answer"
+    And I click on "Br/bromine" "qtype_multichoice > Answer"
+    And I click on "C/carbon" "qtype_multichoice > Answer"
+    And I press "Check"
+    And I should see "Your answer is partially correct."
+    And I should see "First hint"
+
+    And I press "Try again"
+    And the field "Answer 1" matches value ""
+    And the field "Answer 2" matches value ""
+    And the field "Answer 4" matches value ""
+    And "//div[@data-region='answer-label']//div[contains(text(), 'C carbon')]/ancestor::div/input[@checked='checked']" "xpath_element" should not be visible
+    And "//div[@data-region='answer-label']//div[contains(text(), 'Br/bromine')]/ancestor::div/input[@checked='checked']" "xpath_element" should not be visible
+    And "//div[@data-region='answer-label']//div[contains(text(), 'C/carbon')]/ancestor::div/input[@checked='checked']" "xpath_element" should be visible
 
     When I press "Start again"
     And I press "Fill in correct responses"
@@ -201,8 +221,10 @@ Feature: Test all the basic functionality of combined question type
       | id_subqsinglechoice5feedback_2      | Oxygen is conventionally red                |
       | id_subqsinglechoice5generalfeedback | Your name for the white atoms is incorrect. |
 
-      | Hint 1          | First hint                    |
-      | Hint 2          | Second hint                   |
+      | Hint 1                               | First hint                                 |
+      | Hint 2                               | Second hint                                |
+      | id_hintclearwrong_0                  | 1                                          |
+      | id_hintclearwrong_1                  | 1                                          |
 
     And I set the following fields to these values:
       | Question name | Edited question name |

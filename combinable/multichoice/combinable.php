@@ -62,6 +62,11 @@ class qtype_combined_combinable_type_multichoice extends qtype_combined_combinab
     protected function third_param_for_default_question_text() {
         return 'v';
     }
+
+    public function get_clear_wrong_response_value() {
+        // For single choice question, we set the hidden field to -1 to clear the wrong response.
+        return -1;
+    }
 }
 
 class qtype_combined_combinable_multichoice extends qtype_combined_combinable_accepts_vertical_or_horizontal_layout_param {

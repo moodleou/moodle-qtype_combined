@@ -121,6 +121,22 @@ class qtype_combined_renderer extends qtype_with_combined_feedback_renderer {
             return get_string('yougotnright', 'qtype_combined', $a);
         }
     }
+
+    public function clear_wrong(question_attempt $qa) {
+        $question = $qa->get_question();
+        $cleanresponses = $question->combiner->clear_wrong_from_response_for_all_subqs($qa->get_last_qt_data());
+
+        $output = '';
+        foreach ($cleanresponses as $name => $value) {
+            $attr = array(
+                'type' => 'hidden',
+                'name' => $qa->get_qt_field_name($name),
+                'value' => $value,
+            );
+            $output .= html_writer::empty_tag('input', $attr);
+        }
+        return $output;
+    }
 }
 
 /**

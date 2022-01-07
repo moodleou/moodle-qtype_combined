@@ -258,4 +258,12 @@ abstract class qtype_combined_combinable_type_base {
         return null;
     }
 
+    /**
+     * Get the value to use to clear wrong response.
+     *
+     * @return mixed The value to use to clear wrong response.
+     */
+    public function get_clear_wrong_response_value() {
+        return '';
+    }
 }

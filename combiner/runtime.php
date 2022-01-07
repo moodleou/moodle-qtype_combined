@@ -239,6 +239,37 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
         }
     }
 
+    /**
+     * Clear wrong answers from response for all sub questions.
+     *
+     * @param array $responses Response from the last attempt.
+     * @return array Clean responses.
+     */
+    public function clear_wrong_from_response_for_all_subqs($responses) {
+        $subqresponses = new qtype_combined_response_array_param($responses);
+        $cleanresponses = [];
+        foreach ($this->subqs as $subqno => $subq) {
+            $cleanresponse = $this->call_subq($subqno, 'clear_wrong_from_response', $subqresponses);
+
+            // If subquestion do not have clear_wrong_from_response method, clear response if it is not right.
+            if (empty($cleanresponse)) {
+                $cleanresponse = $subqresponses->for_subq($subq);
+                list($unusedmark, $state) = $this->call_subq($subqno, 'grade_response', $subqresponses);
+                if ($state !== question_state::$gradedright) {
+                    foreach ($cleanresponse as $key => $unused) {
+                        $cleanresponse[$key] = $subq->type->get_clear_wrong_response_value();
+                    }
+                }
+            }
+
+            foreach ($cleanresponse as $name => $value) {
+                $newname = $subq->step_data_name($name);
+                $cleanresponses[$newname] = $value;
+            }
+        }
+
+        return $cleanresponses;
+    }
 }
 
 /**

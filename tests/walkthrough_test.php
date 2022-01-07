@@ -249,12 +249,42 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 $this->get_tries_remaining_expectation(2),
                 $this->get_no_hint_visible_expectation());
 
+        // Check a partially right answer again with clearwrong option.
+        $this->process_submission(array('gs:p1' => $mammal, 'gs:p2' => $insect, '-submit' => 1));
+
+        // Verify.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+            $this->get_contains_select_expectation('gs:p1', $selectoptions, $mammal, true),
+            $this->get_contains_select_expectation('gs:p2', $selectoptions, $insect, true),
+            $this->get_contains_try_again_button_expectation(true),
+            $this->get_does_not_contain_correctness_expectation(),
+            $this->get_contains_hint_expectation('This is the second hint'),
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'gs:p1', $mammal),
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'gs:p2', 0));
+
+        // Do try again.
+        $this->process_submission(array('-tryagain' => 1));
+
+        // Verify.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+            $this->get_contains_select_expectation('gs:p1', $selectoptions, $mammal, true),
+            $this->get_contains_select_expectation('gs:p2', $selectoptions, $insect, true),
+            $this->get_contains_submit_button_expectation(true),
+            $this->get_does_not_contain_correctness_expectation(),
+            $this->get_does_not_contain_feedback_expectation(),
+            $this->get_tries_remaining_expectation(1),
+            $this->get_no_hint_visible_expectation());
+
         // Submit the right answer.
         $this->process_submission(array('gs:p1' => $mammal, 'gs:p2' => $mammal, '-submit' => 1));
 
         // Verify.
         $this->check_current_state(question_state::$gradedright);
-        $this->check_current_mark(5);
+        $this->check_current_mark(4);
         $this->check_current_output(
                 $this->get_contains_select_expectation('gs:p1', $selectoptions, $mammal, false),
                 $this->get_contains_select_expectation('gs:p2', $selectoptions, $mammal, false),
@@ -585,10 +615,10 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
             $this->get_contains_hint_expectation('Hint 2'),
             $this->get_contains_num_parts_correct(1),
             $this->get_contains_standard_partiallycorrect_combined_feedback_expectation(),
-            $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice0'),
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice0', 1),
             $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice1'),
             $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice2'),
-            $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice3'));
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice3', 0));
 
         // Do try again.
         $this->process_submission(array('mc:choice0' => '1', '-tryagain' => 1));
@@ -706,7 +736,11 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
             $this->get_does_not_contain_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'mc:choice2'),
             $this->get_does_not_contain_hidden_expectation(
-                $this->quba->get_field_prefix($this->slot) . 'mc:choice3'));
+                $this->quba->get_field_prefix($this->slot) . 'mc:choice3'),
+            $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'gs:p1'),
+            $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'gs:p2'),
+            $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'gs:p3'),
+        );
 
         // Do try again.
         $this->process_submission(array('-tryagain' => 1));
@@ -755,10 +789,14 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
             $this->get_contains_hint_expectation('Hint 2'),
             $this->get_contains_num_parts_correct(1),
             $this->get_contains_standard_partiallycorrect_combined_feedback_expectation(),
-            $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice0'),
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice0', 1),
             $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice1'),
             $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice2'),
-            $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice3'));
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice3', 0),
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'gs:p1', 0),
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'gs:p2', 0),
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'gs:p3', 0),
+        );
 
         // Do try again.
         $this->process_submission(array('-tryagain' => 1));
@@ -1068,7 +1106,12 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
             $this->get_does_not_contain_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'mc:choice2'),
             $this->get_does_not_contain_hidden_expectation(
-                $this->quba->get_field_prefix($this->slot) . 'mc:choice3'));
+                $this->quba->get_field_prefix($this->slot) . 'mc:choice3'),
+            $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'gs:p1'),
+            $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'gs:p2'),
+            $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'gs:p3'),
+            $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'pm:answer')
+        );
 
         // Do try again.
         $this->process_submission(array('-tryagain' => 1));
@@ -1123,10 +1166,15 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
             $this->get_contains_hint_expectation('Hint 2'),
             $this->get_contains_num_parts_correct(2),
             $this->get_contains_standard_partiallycorrect_combined_feedback_expectation(),
-            $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice0'),
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice0', 1),
             $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice1'),
             $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice2'),
-            $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice3'));
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice3', 0),
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'gs:p1', 0),
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'gs:p2', 0),
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'gs:p3', 0),
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'pm:answer', 'Tom')
+        );
 
         // Do try again.
         $this->process_submission(array('-tryagain' => 1));
@@ -1281,7 +1329,13 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
             $this->get_does_not_contain_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'mc:choice2'),
             $this->get_does_not_contain_hidden_expectation(
-                $this->quba->get_field_prefix($this->slot) . 'mc:choice3'));
+                $this->quba->get_field_prefix($this->slot) . 'mc:choice3'),
+            $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'gs:p1'),
+            $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'gs:p2'),
+            $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'gs:p3'),
+            $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'pm:answer'),
+            $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'vn:answer'),
+        );
 
         // Do try again.
         $this->process_submission(array('-tryagain' => 1));
@@ -1339,10 +1393,16 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
             $this->get_contains_hint_expectation('Hint 2'),
             $this->get_contains_num_parts_correct(3),
             $this->get_contains_standard_partiallycorrect_combined_feedback_expectation(),
-            $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice0'),
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice0', 1),
             $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice1'),
             $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice2'),
-            $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice3'));
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'mc:choice3', 0),
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'gs:p1', 0),
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'gs:p2', 0),
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'gs:p3', 0),
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'pm:answer', 'Tom'),
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'vn:answer', '-4.2'),
+        );
 
         // Do try again.
         $this->process_submission(array('-tryagain' => 1));
@@ -1673,14 +1733,51 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 $this->get_does_not_contain_feedback_expectation(),
                 $this->get_does_not_contain_num_parts_correct(),
                 $this->get_tries_remaining_expectation(2),
-                $this->get_no_hint_visible_expectation());
+                $this->get_no_hint_visible_expectation(),
+                $this->get_does_not_contain_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'sr:answer'),
+        );
+
+        // Submit a different wrong answer with clearwrong option.
+        $this->process_submission(['sr:answer' => '1', '-submit' => '1']);
+
+        // Verify.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+            $this->get_contains_subq_mc_radio_expectation('sr', 0, false, false),
+            $this->get_contains_subq_mc_radio_expectation('sr', 1, false, true),
+            $this->get_contains_subq_mc_radio_expectation('sr', 2, false, false),
+            $this->get_contains_try_again_button_expectation(true),
+            $this->get_does_not_contain_correctness_expectation(),
+            $this->get_contains_hint_expectation('Hint 2'),
+            $this->get_contains_num_parts_correct(0),
+            $this->get_contains_standard_incorrect_combined_feedback_expectation(),
+            $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'sr:answer', '-1'),
+        );
+
+        // Do try again.
+        $this->process_submission(array('-tryagain' => 1));
+
+        // Verify.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+            $this->get_contains_subq_mc_radio_expectation('sr', 0, true, false),
+            $this->get_contains_subq_mc_radio_expectation('sr', 1, true, true),
+            $this->get_contains_subq_mc_radio_expectation('sr', 2, true, false),
+            $this->get_contains_submit_button_expectation(true),
+            $this->get_does_not_contain_feedback_expectation(),
+            $this->get_does_not_contain_num_parts_correct(),
+            $this->get_tries_remaining_expectation(1),
+            $this->get_no_hint_visible_expectation()
+        );
 
         // Submit a the right answer.
         $this->process_submission(['sr:answer' => '0', '-submit' => '1']);
 
         // Verify.
         $this->check_current_state(question_state::$gradedright);
-        $this->check_current_mark(2);
+        $this->check_current_mark(1);
         $this->check_current_output(
                 $this->get_contains_subq_mc_radio_expectation('sr', 0, false, true),
                 $this->get_contains_subq_mc_radio_expectation('sr', 1, false, false),
