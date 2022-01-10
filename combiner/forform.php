@@ -50,15 +50,19 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
 
         $this->load_subq_data_from_db($questionid, true);
 
+        $realsubqcount = 0;
         foreach ($this->subqs as $i => $subq) {
             if (!$subq->is_in_question_text() && !$subq->preserve_submitted_data()) {
                 unset($this->subqs[$i]);
             }
+
+            if ($subq->is_real_subquestion()) {
+                $realsubqcount += 1;
+            }
         }
         foreach ($this->subqs as $subq) {
 
-            $weightingdefault = round(1 / count($this->subqs), 7);
-            $weightingdefault = "$weightingdefault";
+            $weightingdefault = '' . round(1 / $realsubqcount, 7);
 
             $a = new stdClass();
             $qtypeid = $a->qtype = $subq->type->get_identifier();
@@ -71,26 +75,28 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
                 $headerlegend = '<span class="not_in_question_text">' . $headerlegend . '</span>';
             }
 
-            $mform->addElement('header', $subq->form_field_name('subqheader'), $headerlegend);
+            if ($subq->is_real_subquestion()) {
+                $mform->addElement('header', $subq->form_field_name('subqheader'), $headerlegend);
 
-            if (!$subq->is_in_question_text()) {
-                $mform->addElement('hidden', $subq->form_field_name('notincludedinquestiontextwilldelete'), true);
-                $mform->setType($subq->form_field_name('notincludedinquestiontextwilldelete'), PARAM_BOOL);
+                $gradeoptions = question_bank::fraction_options();
+                $mform->addElement('select', $subq->form_field_name('defaultmark'), get_string('weighting', 'qtype_combined'),
+                    $gradeoptions);
+                $mform->setDefault($subq->form_field_name('defaultmark'), $weightingdefault);
+                $subq->add_form_fragment($combinedform, $mform, $repeatenabled);
+                $mform->addElement('editor', $subq->form_field_name('generalfeedback'),
+                    get_string('incorrectfeedback', 'qtype_combined'),
+                    array('rows' => 5), $combinedform->editoroptions);
+                $mform->setType($subq->form_field_name('generalfeedback'), PARAM_RAW);
             }
 
-            $gradeoptions = question_bank::fraction_options();
-            $mform->addElement('select', $subq->form_field_name('defaultmark'), get_string('weighting', 'qtype_combined'),
-                               $gradeoptions);
-            $mform->setDefault($subq->form_field_name('defaultmark'), $weightingdefault);
-            $subq->add_form_fragment($combinedform, $mform, $repeatenabled);
-            $mform->addElement('editor', $subq->form_field_name('generalfeedback'),
-                               get_string('incorrectfeedback', 'qtype_combined'),
-                               array('rows' => 5), $combinedform->editoroptions);
-            $mform->setType($subq->form_field_name('generalfeedback'), PARAM_RAW);
             // Array key is ignored but we need to make sure that submitted values do not override new element values, so we want
             // the key to be unique for every subq in a question.
             $mform->addElement('hidden', "subqfragment_id[{$qtypeid}_{$qid}]", $qid);
             $mform->addElement('hidden', "subqfragment_type[{$qtypeid}_{$qid}]", $qtypeid);
+            if (!$subq->is_in_question_text()) {
+                $mform->addElement('hidden', $subq->form_field_name('notincludedinquestiontextwilldelete'), true);
+                $mform->setType($subq->form_field_name('notincludedinquestiontextwilldelete'), PARAM_BOOL);
+            }
         }
         $mform->setType("subqfragment_id", PARAM_ALPHANUM);
         $mform->setType("subqfragment_type", PARAM_ALPHANUMEXT);
@@ -134,6 +140,9 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
         $fractionsum = 0;
 
         foreach ($this->subqs as $subq) {
+            if (!$subq->is_real_subquestion()) {
+                continue;
+            }
             if ($subq->is_in_form() && $subq->has_submitted_data()) {
                 $errors += $subq->validate();
             } else {

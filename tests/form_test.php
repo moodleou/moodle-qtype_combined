@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
+require_once($CFG->dirroot .'/question/type/combined/combiner/forform.php');
 
 
 /**
@@ -74,7 +75,7 @@ class qtype_combined_form_test extends advanced_testcase {
             'name' => 'Test combined with varnumeric',
             'questiontext' => array(
                     'text' => 'Choose a answer? [[1:multiresponse:v]]<br>What is 1 - 1? [[2:numeric:__10__]]
-                        <br>Pmatch question [[3:pmatch]]',
+                        <br>Pmatch question [[3:pmatch]]<br>Showworking [[5:showworking:__80x5__]]',
                     'format' => 1
             ),
             'defaultmark' => 1,
@@ -131,6 +132,8 @@ class qtype_combined_form_test extends advanced_testcase {
                     'text' => 'Your answer is correct.',
                     'format' => 1
             ),
+            'subq:showworking:5:defaultmark' => 0,
+            'subq:showworking:5:answer' => ['text' => 'test showworking'],
             'partiallycorrectfeedback' => array(
                     'text' => 'Your answer is partially correct.',
                     'format' => 1
@@ -159,7 +162,7 @@ class qtype_combined_form_test extends advanced_testcase {
 
         // Try a form that has all options for validation.
         $errors = $mform->validation($fromform, array());
-        $this->assertEmpty($errors);
+        $this->assertEquals([], $errors);
 
         // Try an empty numeric answer (should not validate).
         $fromform['subq:numeric:2:answer'] = array('');
@@ -421,5 +424,100 @@ class qtype_combined_form_test extends advanced_testcase {
         $subq2 = $combiner->find_or_create_question_instance('selectmenu', 2);
         $this->assertTrue($subq1->is_in_db());
         $this->assertFalse($subq2->is_in_db());
+    }
+
+    /**
+     * Test validate_question_text.
+     *
+     * @dataProvider get_validate_question_text_provider
+     * @param string $questiontext The question text to validate.
+     * @param string $expectederrors The expected error messages.
+     */
+    public function test_validate_question_text(string $questiontext, array $expectederrors) {
+        $this->resetAfterTest();
+        $combiner = new qtype_combined_combiner_for_form();
+        $method = new ReflectionMethod(\qtype_combined_combiner_for_form::class, 'validate_question_text');
+        $method->setAccessible(true);
+        $result = $method->invoke($combiner, $questiontext);
+        $this->assertEquals($expectederrors, $result);
+    }
+
+    /**
+     * Data provider for {@link test_validate_question_text()}.
+     * @return array
+     */
+    public function get_validate_question_text_provider(): array {
+
+        return [
+            'valid' => [
+                'Question combined [[1:numeric:__10__]]<br>Showworking [[2:showworking:__80x5__]]
+                <br>[[3:pmatch:__20__]]<br>[[4:multiresponse]]<br>[[5:singlechoice]]<br>[[6:selectmenu:2]]',
+                []
+            ],
+            'missing_close_brackets_showworking' => [
+                'Question combined [[1:numeric:__10__]]<br>1 [[2:showworking:____<br>2 [[3:showworking:__80x5__]]',
+                ['questiontext' => get_string('err_invalid_width_specifier_postfix_showworking', 'qtype_combined', 'showworking')]
+            ],
+            'invalid_showworking' => [
+                'Question combined [[1:numeric:__10__]]<br>1 [[2:showworking:__A__]]',
+                ['questiontext' => get_string('err_invalid_width_specifier_postfix_showworking', 'qtype_combined', 'showworking')]
+            ],
+            'needed_sub-question' => [
+                'Question combined [[2:showworking:__80x5__]]',
+                ['questiontext' => get_string('noembeddedquestions', 'qtype_combined')]
+            ],
+            'upper_case' => [
+                'Question combined [[1:Numeric:__10__]]',
+                ['questiontext' => get_string('err_unrecognisedqtype', 'qtype_combined',
+                    ['qtype' => 'Numeric', 'fullcode' => '[[1:Numeric:__10__]]'])]
+            ],
+            'whitespace' => [
+                'Question combined [[1:n umeric:__10__]]',
+                ['questiontext' => get_string('err_unrecognisedqtype', 'qtype_combined',
+                    ['qtype' => 'n umeric', 'fullcode' => '[[1:n umeric:__10__]]'])]
+            ],
+            'duplicate' => [
+                'Question combined [[1:numeric:__10__]]<br>[[1:numeric:__10__]]',
+                ['questiontext' => get_string('err_thisqtypecannothavemorethanonecontrol', 'qtype_combined',
+                    ['qtype' => 'numeric', 'qid' => '1'])]
+            ],
+            'invalid_numeric' => [
+                'Question combined [[1:numeric:__A__]]',
+                ['questiontext' => get_string('err_invalid_width_specifier_postfix', 'qtype_combined', 'numeric')]
+            ],
+            'valid_multiresponse' => [
+                'Question combined [[1:multiresponse:v]]',
+                []
+            ],
+            'invalid_multiresponse' => [
+                'Question combined [[1:multiresponse:T]]',
+                ['questiontext' => get_string('err_accepts_vertical_or_horizontal_layout_param',
+                    'qtype_combined', 'multiresponse')]
+            ],
+            'valid_selectmenu' => [
+                'Question combined [[4:selectmenu:1]]',
+                []
+            ],
+            'invalid_selectmenu' => [
+                'Question combined [[4:selectmenu:T]]',
+                ['questiontext' => get_string('err_invalid_number', 'qtype_combined', 'selectmenu')]
+            ],
+            'valid_singlechoice' => [
+                'Question combined [[1:singlechoice:v]]',
+                []
+            ],
+            'invalid_singlechoice' => [
+                'Question combined [[1:singlechoice:T]]',
+                ['questiontext' => get_string('err_accepts_vertical_or_horizontal_layout_param', 'qtype_combined', 'singlechoice')]
+            ],
+            'valid_pmatch' => [
+                'Question combined [[3:pmatch]]]',
+                []
+            ],
+            'invalid_pmatch' => [
+                'Question combined [[3:pmatch:__s__]]',
+                ['questiontext' => get_string('err_invalid_width_specifier_postfix', 'qtype_combined', 'pmatch')]
+            ],
+        ];
     }
 }

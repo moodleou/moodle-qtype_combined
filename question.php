@@ -151,6 +151,9 @@ class qtype_combined_question extends question_graded_automatically_with_countba
      */
     protected function overall_state($subqstates) {
         $subqstates = array_unique($subqstates);
+        $subqstates = array_filter($subqstates, function($value) {
+            return !is_null($value);
+        });
 
         if (count($subqstates) === 1) {
             // All subqs in same state.

@@ -72,15 +72,24 @@ abstract class qtype_combined_combiner_base {
      */
     public function find_included_subqs_in_question_text($questiontext) {
         $this->subqs = array();
-        $pattern = '!'.
-                    preg_quote(static::EMBEDDED_CODE_PREFIX, '!') .
+        $pattern = '~'.
+                    preg_quote(static::EMBEDDED_CODE_PREFIX, '~') .
                     '(.*?)'.
-                    preg_quote(static::EMBEDDED_CODE_POSTFIX, '!')
-                    .'!';
+                    preg_quote(static::EMBEDDED_CODE_POSTFIX, '~')
+                    .'~';
 
         $matches = array();
-        if (0 === preg_match_all($pattern, $questiontext, $matches)) {
-            return  get_string('noembeddedquestions', 'qtype_combined');
+        $result = preg_match_all($pattern, $questiontext, $matches);
+        $realsubqfound = false;
+        foreach ($matches[1] as $codeinsideprepostfix) {
+            // TODO this should be using qtype_combined_combinable_type_base::is_real_subquestion,
+            // but that is too hard right now. Just hard-code it.
+            if (strpos($codeinsideprepostfix, 'showworking') === false) {
+                $realsubqfound = true;
+            }
+        }
+        if (0 === $result || !$realsubqfound) {
+            return get_string('noembeddedquestions', 'qtype_combined');
         }
 
         $controlno = 1;
@@ -264,7 +273,6 @@ abstract class qtype_combined_combiner_base {
         return $aggregated;
     }
 
-
     /**
      * Take a response array from a subq and add prefixes.
      * @param question_attempt_step_subquestion_adapter|null $substep
@@ -281,7 +289,6 @@ abstract class qtype_combined_combiner_base {
         }
         return $keysadded;
     }
-
 }
 
 /**

@@ -26,6 +26,7 @@
 $string['controlnamegapselect'] = 'drop down box';
 $string['controlnamegapselectplural'] = 'drop down boxes';
 $string['controlnamemultichoice'] = 'radio group';
+$string['controlnameshowworking'] = 'text input';
 $string['correct_choice_embed_code'] = '[[{$a->qid}:{$a->qtype}:{correct choice}]]';
 $string['embeddedquestionremovedfromform'] = 'One or more embedded questions have been removed from the question text. The question data for these questions is still shown below, but it will be permanently removed when you either press the \'Update the form\' or \'Save changes\' button, unless you put the embed codes back in the question text again.';
 $string['err_accepts_vertical_or_horizontal_layout_param'] = '<p>The \'{$a}\' question type allows you to specify the layout of your question type as follows:<ul>
@@ -41,6 +42,16 @@ $string['err_invalid_number'] = 'The \'{$a}\' question type expects a number aft
 $string['err_invalid_width_specifier_postfix'] = '<p>The \'{$a}\' question type allows you to specify the width of your question type as follows:<ul>
 <li>[[{question identifier}:{$a}:____]] where the width of the input box will depend on the number of underscores or</li>
 <li>[[{question identifier}:{$a}:__10__]] where the width of the input box will depend on the number.</li></ul>
+<p>You should not enter anything else after the second colon.</p>';
+$string['err_invalid_width_specifier_postfix_showworking'] = '<p>The \'{$a}\' question type allows you to specify the width of your question type as follows:
+<ul>
+ <li>[[{question identifier}:{$a}:____]] where the width of the input box will depend on
+  the number of underscores or</li>
+  <li>[[{question identifier}:{$a}:__10__]] where the width of the input box will depend on
+  the number.</li>
+  <li>[[{question identifier}:{$a}:__80x5__]] where the width and height of the input box will depend on
+  the number.</li>
+</ul>
 <p>You should not enter anything else after the second colon.</p>';
 $string['err_invalidquestionidentifier'] = 'Your question identifier code consist of one or more alphanumeric characters.';
 $string['err_subq_not_included_in_question_text'] = 'It seems you have removed this question from the question text. Embed this question in the form with the code {$a} or it will be removed when you submit this form again.';

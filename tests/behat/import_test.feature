@@ -27,6 +27,7 @@ Feature: Import and export combined questions
     Then I should see "Parsing questions from import file."
     And I should see "Importing 1 questions from file"
     And I should see "What is the pH of a 0.1M solution? [[1:numeric:__10__]]."
+    And I should see "Showworking [[5:showworking:__80x5__]]"
     And I press "Continue"
     And I should see "Imported Combined 001"
 

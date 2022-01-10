@@ -56,7 +56,6 @@ abstract class qtype_combined_combinable_base {
      */
     public $question = null;
 
-
     /**
      * @var string question identifier found in question text for this instance
      */
@@ -95,6 +94,13 @@ abstract class qtype_combined_combinable_base {
      */
     public function can_be_more_than_one_of_same_instance() {
         return false;
+    }
+
+    /**
+     * @return bool Is sub-question just additional information?
+     */
+    public function is_real_subquestion(): bool {
+        return true;
     }
 
     /**
@@ -469,7 +475,7 @@ abstract class qtype_combined_combinable_accepts_third_param_validated_with_patt
     extends qtype_combined_combinable_base {
 
     /** Needs to be overridden in child class. */
-    const THIRD_PARAM_PATTERN = '!undefined!';
+    const THIRD_PARAM_PATTERN = '~^undefined~';
 
     /**
      * @param string $thirdparam
@@ -524,7 +530,7 @@ abstract class qtype_combined_combinable_text_entry
      */
     protected $widthparam = null;
 
-    const THIRD_PARAM_PATTERN = '!_+[0-9]*_+$!A';
+    const THIRD_PARAM_PATTERN = '~^_+[0-9]*_+$~';
 
     /**
      * @param $thirdparam
@@ -564,7 +570,7 @@ abstract class qtype_combined_combinable_text_entry
         $matches = array();
         if (null === $this->widthparam) {
             return 20;
-        } else if (1 === preg_match('![0-9]+!', $this->widthparam, $matches)) {
+        } else if (1 === preg_match('~[0-9]+~', $this->widthparam, $matches)) {
             $length = $matches[0];
         } else {
             $length = strlen($this->widthparam);
@@ -589,7 +595,7 @@ abstract class qtype_combined_combinable_accepts_vertical_or_horizontal_layout_p
      */
     protected $layoutparam = null;
 
-    const THIRD_PARAM_PATTERN = '![vh]$!A';
+    const THIRD_PARAM_PATTERN = '~^[vh]$~';
 
     /**
      * @param $thirdparam
@@ -636,7 +642,7 @@ abstract class qtype_combined_combinable_accepts_vertical_or_horizontal_layout_p
 abstract class qtype_combined_combinable_accepts_numerical_param
     extends qtype_combined_combinable_accepts_third_param_validated_with_pattern {
 
-    const THIRD_PARAM_PATTERN = '![0-9]+$!A';
+    const THIRD_PARAM_PATTERN = '~^[0-9]+$~';
 
     /**
      * @param $thirdparam

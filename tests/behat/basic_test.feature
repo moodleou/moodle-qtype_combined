@@ -24,7 +24,7 @@ Feature: Test all the basic functionality of combined question type
     And I click on "Add" "button" in the "Choose a question type to add" "dialogue"
     Then I should see "Adding a combined question"
     And I set the field "Question name" to "Combined 001"
-    And I set the field "Question text" to "What is the pH of a 0.1M solution? [[1:numeric:__10__]]<br/>What is the IUPAC name of the molecule? [[2:pmatch:__20__]]<br/>Which elements are shown? [[3:multiresponse]]<br/>Which element is shown as white? [[5:singlechoice]]<br/>When a solution is combined with oil the result is a [[4:selectmenu:2]]"
+    And I set the field "Question text" to "What is the pH of a 0.1M solution? [[1:numeric:__10__]]<br/>What is the IUPAC name of the molecule? [[2:pmatch:__20__]]<br/>Which elements are shown? [[3:multiresponse]]<br/>Which element is shown as white? [[6:singlechoice]]<br/>When a solution is combined with oil the result is a [[4:selectmenu:2]]<br/>Showworking [[5:showworking:__80x5__]]"
     Then I set the field "General feedback" to "The molecule is ethanoic acid which is more commonly known as acetic acid or in dilute solution as vinegar. The constituent elements are carbon (grey), hydrogen (white) and oxygen (red). A 0.1M solution has a pH of 2.88 and when a solution is combined with oil the result is a vinaigrette."
     And I press "Update the form"
 
@@ -75,19 +75,19 @@ Feature: Test all the basic functionality of combined question type
       | id_subqselectmenu4generalfeedback    |Your name for the mixture is incorrect. |
 
     # Single choice part.
-    Then I follow "'singlechoice' input '5'"
+    Then I follow "'singlechoice' input '6'"
     And I set the following fields to these values:
-      | id_subqsinglechoice5defaultmark     | 20%                                         |
-      | id_subqsinglechoice5answer_0        | C carbon                                    |
-      | id_subqsinglechoice5fraction_0      | 0.0                                         |
-      | id_subqsinglechoice5feedback_0      | Carbon is conventionally black              |
-      | id_subqsinglechoice5answer_1        | H hydrogen                                  |
-      | id_subqsinglechoice5fraction_1      | 1.0                                         |
-      | id_subqsinglechoice5feedback_1      | That is correct                             |
-      | id_subqsinglechoice5answer_2        | <b>O oxygen</b>                             |
-      | id_subqsinglechoice5fraction_2      | 0.0                                         |
-      | id_subqsinglechoice5feedback_2      | Oxygen is conventionally red                |
-      | id_subqsinglechoice5generalfeedback | Your name for the white atoms is incorrect. |
+      | id_subqsinglechoice6defaultmark     | 20%                                         |
+      | id_subqsinglechoice6answer_0        | C carbon                                    |
+      | id_subqsinglechoice6fraction_0      | 0.0                                         |
+      | id_subqsinglechoice6feedback_0      | Carbon is conventionally black              |
+      | id_subqsinglechoice6answer_1        | H hydrogen                                  |
+      | id_subqsinglechoice6fraction_1      | 1.0                                         |
+      | id_subqsinglechoice6feedback_1      | That is correct                             |
+      | id_subqsinglechoice6answer_2        | <b>O oxygen</b>                             |
+      | id_subqsinglechoice6fraction_2      | 0.0                                         |
+      | id_subqsinglechoice6feedback_2      | Oxygen is conventionally red                |
+      | id_subqsinglechoice6generalfeedback | Your name for the white atoms is incorrect. |
 
     # Set hints for Multiple tries
     And I set the field "Hint 1" to "First hint"
@@ -177,7 +177,7 @@ Feature: Test all the basic functionality of combined question type
     When I choose "Edit question" action for "Combined 001" in the question bank
     Then the following fields match these values:
       | Question name   | Combined 001 |
-      | Question text   | What is the pH of a 0.1M solution? [[1:numeric:__10__]]<br/>What is the IUPAC name of the molecule? [[2:pmatch:__20__]]<br/>Which elements are shown? [[3:multiresponse]]<br/>Which element is shown as white? [[5:singlechoice]]<br/>When a solution is combined with oil the result is a [[4:selectmenu:2]] |
+      | Question text   | What is the pH of a 0.1M solution? [[1:numeric:__10__]]<br/>What is the IUPAC name of the molecule? [[2:pmatch:__20__]]<br/>Which elements are shown? [[3:multiresponse]]<br/>Which element is shown as white? [[6:singlechoice]]<br/>When a solution is combined with oil the result is a [[4:selectmenu:2]]<br/>Showworking [[5:showworking:__80x5__]] |
 
       | id_subqnumeric1defaultmark     | 20%                                     |
       | id_subqnumeric1answer_0        | 2.88                                    |
@@ -209,17 +209,17 @@ Feature: Test all the basic functionality of combined question type
       | id_subqselectmenu4answer_3           | Mayonnaise    |
       | id_subqselectmenu4generalfeedback    |Your name for the mixture is incorrect. |
 
-      | id_subqsinglechoice5defaultmark     | 20%                                         |
-      | id_subqsinglechoice5answer_0        | C carbon                                    |
-      | id_subqsinglechoice5fraction_0      | 0.0                                         |
-      | id_subqsinglechoice5feedback_0      | Carbon is conventionally black              |
-      | id_subqsinglechoice5answer_1        | H hydrogen                                  |
-      | id_subqsinglechoice5fraction_1      | 1.0                                         |
-      | id_subqsinglechoice5feedback_1      | That is correct                             |
-      | id_subqsinglechoice5answer_2        | <b>O oxygen</b>                             |
-      | id_subqsinglechoice5fraction_2      | 0.0                                         |
-      | id_subqsinglechoice5feedback_2      | Oxygen is conventionally red                |
-      | id_subqsinglechoice5generalfeedback | Your name for the white atoms is incorrect. |
+      | id_subqsinglechoice6defaultmark     | 20%                                         |
+      | id_subqsinglechoice6answer_0        | C carbon                                    |
+      | id_subqsinglechoice6fraction_0      | 0.0                                         |
+      | id_subqsinglechoice6feedback_0      | Carbon is conventionally black              |
+      | id_subqsinglechoice6answer_1        | H hydrogen                                  |
+      | id_subqsinglechoice6fraction_1      | 1.0                                         |
+      | id_subqsinglechoice6feedback_1      | That is correct                             |
+      | id_subqsinglechoice6answer_2        | <b>O oxygen</b>                             |
+      | id_subqsinglechoice6fraction_2      | 0.0                                         |
+      | id_subqsinglechoice6feedback_2      | Oxygen is conventionally red                |
+      | id_subqsinglechoice6generalfeedback | Your name for the white atoms is incorrect. |
 
       | Hint 1                               | First hint                                 |
       | Hint 2                               | Second hint                                |
