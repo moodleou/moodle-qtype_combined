@@ -216,18 +216,11 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
         foreach ($this->subqs as $subqno => $subq) {
             if (!$this->call_subq($subqno, 'is_complete_response', $response)) {
                 $questionerror = $this->call_subq($subqno, 'get_validation_error', $response);
-                $controlnos = $subq->get_control_nos();
+                $identifier = $subq->get_identifier();
                 $a = new stdClass();
                 $a->error = $questionerror;
-                if (count($controlnos) > 1) {
-                    $a->controlname = $subq->type->get_control_name(true);
-                    $a->controlnos = join(', ', $controlnos);
-                    $errors[] = get_string('validationerror_multiplecontrols', 'qtype_combined', $a);
-                } else {
-                    $a->controlname = $subq->type->get_control_name(false);
-                    $a->controlno = array_pop($controlnos);
-                    $errors[] = get_string('validationerror_singlecontrol', 'qtype_combined', $a);
-                }
+                $a->identifier = $identifier;
+                $errors[] = get_string('validationerror_singlecontrol', 'qtype_combined', $a);
             }
         }
         $errorliststring = html_writer::alist($errors);

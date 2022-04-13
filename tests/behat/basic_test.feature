@@ -120,7 +120,7 @@ Feature: Test all the basic functionality of combined question type
     And I click on "H hydrogen" "qtype_multichoice > Answer"
     And I press "Check"
     Then I should see "Part of your answer requires attention :"
-    And I should see "Input 3 (check box group) - Please select at least one answer."
+    And I should see "Sub-question 3 - Please select at least one answer."
 
     And I click on "C/carbon" "qtype_multichoice > Answer"
     And I click on "O/oxygen" "qtype_multichoice > Answer"
@@ -326,3 +326,105 @@ Feature: Test all the basic functionality of combined question type
     And I press "Submit and finish"
     And I should see "Your answer is correct."
     And I switch to the main window
+
+  @javascript
+  Scenario: Test showing the warning message if the sub-question answer is empty.
+    Given I am on the "C1" "Course" page logged in as "teacher1"
+    When I navigate to "Question bank" in current page administration
+    And I press "Create a new question ..."
+    And I set the field "Combined" to "1"
+    And I click on "Add" "button" in the "Choose a question type to add" "dialogue"
+    And I set the field "Question name" to "Combined 001"
+    And I set the field "Question text" to "What is the pH of a 0.1M solution? [[1:numeric:__10__]]<br/>What is the IUPAC name of the molecule? [[2:pmatch:__20__]]<br/>Which elements are shown? [[3:multiresponse]]<br/>Which element is shown as white? [[5:singlechoice]]<br/>When a solution is combined with oil the result is a [[4:selectmenu:2]]"
+    And I press "Update the form"
+    And I set the following fields to these values:
+      | id_subqnumeric1defaultmark           | 20%                                              |
+      | id_subqnumeric1answer_0              | 2.88                                             |
+      | Scientific notation                  | No                                               |
+      | id_subqnumeric1generalfeedback       | You have the incorrect value for the pH          |
+
+      | id_subqpmatch2defaultmark            | 20%                                              |
+      | Spell checking                       | Do not check spelling of student                 |
+      | id_subqpmatch2answer_0               | match_mw (ethanoic acid)                         |
+      | id_subqpmatch2generalfeedback        | You have the incorrect IUPAC name.               |
+
+      | id_subqmultiresponse3defaultmark     | 20%                                              |
+      | id_subqmultiresponse3answer_0        | C/carbon                                         |
+      | id_subqmultiresponse3correctanswer_0 | 1                                                |
+      | id_subqmultiresponse3answer_1        | H/hydrogen                                       |
+      | id_subqmultiresponse3correctanswer_1 | 1                                                |
+      | id_subqmultiresponse3answer_2        | O/oxygen                                         |
+      | id_subqmultiresponse3correctanswer_2 | 1                                                |
+      | id_subqmultiresponse3answer_3        | N/nitrogen                                       |
+      | id_subqmultiresponse3answer_4        | F/fluorine                                       |
+      | id_subqmultiresponse3generalfeedback | Your choice of elements is not entirely correct. |
+
+      | id_subqselectmenu4defaultmark        | 20%                                              |
+      | id_subqselectmenu4answer_0           | Wine                                             |
+      | id_subqselectmenu4answer_1           | Vinagrette                                       |
+      | id_subqselectmenu4answer_2           | Paint Thinner                                    |
+      | id_subqselectmenu4answer_3           | Mayonnaise                                       |
+      | id_subqselectmenu4generalfeedback    | Your name for the mixture is incorrect.          |
+
+      | id_subqsinglechoice5defaultmark      | 20%                                              |
+      | id_subqsinglechoice5answer_0         | C carbon                                         |
+      | id_subqsinglechoice5fraction_0       | 0.0                                              |
+      | id_subqsinglechoice5feedback_0       | Carbon is conventionally black                   |
+      | id_subqsinglechoice5answer_1         | H hydrogen                                       |
+      | id_subqsinglechoice5fraction_1       | 1.0                                              |
+      | id_subqsinglechoice5feedback_1       | That is correct                                  |
+      | id_subqsinglechoice5answer_2         | <b>O oxygen</b>                                  |
+      | id_subqsinglechoice5fraction_2       | 0.0                                              |
+      | id_subqsinglechoice5feedback_2       | Oxygen is conventionally red                     |
+      | id_subqsinglechoice5generalfeedback  | Your name for the white atoms is incorrect.      |
+      | Hint 1                               | First hint                                       |
+      | Hint 2                               | Second hint                                      |
+      | id_hintclearwrong_0                  | 1                                                |
+      | id_hintclearwrong_1                  | 1                                                |
+    And I press "Save changes and continue editing"
+    And I follow "Preview"
+    And I switch to "questionpreview" window
+    And I follow "Attempt options"
+    And I set the following fields to these values:
+      | How questions behave | Immediate feedback |
+    And I press "Start again with these options"
+    And I press "Check"
+    Then I should see "Parts of your answer require attention :"
+    And I should see "Sub-question 1 - Please enter an answer."
+    And I should see "Sub-question 2 - Please enter an answer."
+    And I should see "Sub-question 3 - Please select at least one answer."
+    And I should see "Sub-question 5 - Please select an answer."
+    And I should see "Sub-question 4 - Please put an answer in each box."
+
+  @javascript
+  Scenario: Test showing the warning message if the sub-question answer is malformed.
+    Given I am on the "C1" "Course" page logged in as "teacher1"
+    When I navigate to "Question bank" in current page administration
+    And I press "Create a new question ..."
+    And I set the field "Combined" to "1"
+    And I click on "Add" "button" in the "Choose a question type to add" "dialogue"
+    And I set the field "Question name" to "Combined 002"
+    And I set the field "Question text" to "What 1.5 + 5 ? [[no1:numeric:__10__]] <br/> What 10 + 1 ? [[no2:numeric:__10__]]"
+    And I press "Update the form"
+    And I set the following fields to these values:
+      | id_subqnumericno1defaultmark     | 50%                                         |
+      | id_subqnumericno1answer_0        | 6.5                                         |
+      | Scientific notation              | No                                          |
+      | id_subqnumericno1generalfeedback | You have the incorrect value for the match. |
+      | id_subqnumericno2defaultmark     | 50%                                         |
+      | id_subqnumericno2answer_0        | 11                                          |
+      | id_subqnumericno2generalfeedback | You have the incorrect value for the match. |
+    And I press "Save changes and continue editing"
+    And I follow "Preview"
+    And I switch to "questionpreview" window
+    And I follow "Attempt options"
+    And I set the following fields to these values:
+      | How questions behave | Immediate feedback |
+    And I press "Start again with these options"
+    And I set the following fields to these values:
+      | Answer no1 | 6,5 |
+      | Answer no2 | eleven |
+    And I press "Check"
+    Then I should see "Parts of your answer require attention :"
+    And I should see "Sub-question no1 - You have used an illegal thousands separator \",\" in your answer. We only accept answers with a decimal separator \".\"."
+    And I should see "Sub-question no2 - You have not entered a number in a recognised format."

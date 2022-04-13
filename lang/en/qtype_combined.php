@@ -108,8 +108,7 @@ $string['subquestiontypes'] = 'Sub-question placeholders';
 $string['subquestiontypenotinstalled'] = 'You are attempting to use a combined question with a sub-question type \'{$a}\' that
 is not installed.';
 $string['updateform'] = 'Update the form';
-$string['validationerror_multiplecontrols'] = 'Inputs {$a->controlnos} ({$a->controlname}) - {$a->error}';
-$string['validationerror_singlecontrol'] = 'Input {$a->controlno} ({$a->controlname}) - {$a->error}';
+$string['validationerror_singlecontrol'] = 'Sub-question {$a->identifier} - {$a->error}';
 $string['validationerror'] = 'Part of your answer requires attention : {$a}';
 $string['validationerrors'] = 'Parts of your answer require attention : {$a}';
 $string['vertical_or_horizontal_embed_code'] = '[[{$a->qid}:{$a->qtype}:v]] or [[{$a->qid}:{$a->qtype}:h]] depending on if you
