@@ -119,8 +119,8 @@ Feature: Test all the basic functionality of combined question type
     And I set the field "Answer 4" to "Vinagrette"
     And I click on "H hydrogen" "qtype_multichoice > Answer"
     And I press "Check"
-    Then I should see "Part of your answer requires attention :"
-    And I should see "Sub-question 3 - Please select at least one answer."
+    Then I should see "Part of your answer requires attention:"
+    And I should see "Part 3 - Please select at least one answer."
 
     And I click on "C/carbon" "qtype_multichoice > Answer"
     And I click on "O/oxygen" "qtype_multichoice > Answer"
@@ -328,7 +328,7 @@ Feature: Test all the basic functionality of combined question type
     And I switch to the main window
 
   @javascript
-  Scenario: Test showing the warning message if the sub-question answer is empty.
+  Scenario: Test showing the warning message if the Part answer is empty.
     Given I am on the "C1" "Course" page logged in as "teacher1"
     When I navigate to "Question bank" in current page administration
     And I press "Create a new question ..."
@@ -389,15 +389,15 @@ Feature: Test all the basic functionality of combined question type
       | How questions behave | Immediate feedback |
     And I press "Start again with these options"
     And I press "Check"
-    Then I should see "Parts of your answer require attention :"
-    And I should see "Sub-question 1 - Please enter an answer."
-    And I should see "Sub-question 2 - Please enter an answer."
-    And I should see "Sub-question 3 - Please select at least one answer."
-    And I should see "Sub-question 5 - Please select an answer."
-    And I should see "Sub-question 4 - Please put an answer in each box."
+    Then I should see "Parts of your answer require attention:"
+    And I should see "Part 1 - Please enter an answer."
+    And I should see "Part 2 - Please enter an answer."
+    And I should see "Part 3 - Please select at least one answer."
+    And I should see "Part 5 - Please select an answer."
+    And I should see "Part 4 - Please put an answer in each box."
 
   @javascript
-  Scenario: Test showing the warning message if the sub-question answer is malformed.
+  Scenario: Test showing the warning message if the Part answer is malformed.
     Given I am on the "C1" "Course" page logged in as "teacher1"
     When I navigate to "Question bank" in current page administration
     And I press "Create a new question ..."
@@ -425,6 +425,6 @@ Feature: Test all the basic functionality of combined question type
       | Answer no1 | 6,5 |
       | Answer no2 | eleven |
     And I press "Check"
-    Then I should see "Parts of your answer require attention :"
-    And I should see "Sub-question no1 - You have used an illegal thousands separator \",\" in your answer. We only accept answers with a decimal separator \".\"."
-    And I should see "Sub-question no2 - You have not entered a number in a recognised format."
+    Then I should see "Parts of your answer require attention:"
+    And I should see "Part no1 - You have used an illegal thousands separator \",\" in your answer. We only accept answers with a decimal separator \".\"."
+    And I should see "Part no2 - You have not entered a number in a recognised format."

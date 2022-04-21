@@ -220,7 +220,7 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
                 $a = new stdClass();
                 $a->error = $questionerror;
                 $a->identifier = $identifier;
-                $errors[] = get_string('validationerror_singlecontrol', 'qtype_combined', $a);
+                $errors[] = get_string('validationerror_part', 'qtype_combined', $a);
             }
         }
         $errorliststring = html_writer::alist($errors);
