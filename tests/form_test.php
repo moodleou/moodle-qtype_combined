@@ -14,15 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
-/**
- * Unit tests for the combined question editing form.
- *
- * @package    qtype_combined
- * @copyright  2016 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
+namespace qtype_combined;
+use context_course;
+use core_question\local\bank\question_edit_contexts;
+use qtype_combined_combiner_for_form;
+use qtype_combined_combiner_for_question_type;
+use question_bank;
+use ReflectionMethod;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,14 +29,17 @@ global $CFG;
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 require_once($CFG->dirroot .'/question/type/combined/combiner/forform.php');
 
-
 /**
  * Unit tests for qtype_combined editing form.
  *
+ * @package    qtype_combined
  * @copyright  2016 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \qtype_combined_edit_form
+ * @covers \qtype_combined_combiner_for_form
+ * @covers \qtype_combined_combiner_base
  */
-class qtype_combined_form_test extends advanced_testcase {
+class form_test extends \advanced_testcase {
 
     /**
      * Test editing form validation, particularly with the numeric subquestion.
@@ -431,12 +433,12 @@ class qtype_combined_form_test extends advanced_testcase {
      *
      * @dataProvider get_validate_question_text_provider
      * @param string $questiontext The question text to validate.
-     * @param string $expectederrors The expected error messages.
+     * @param array $expectederrors The expected error messages.
      */
     public function test_validate_question_text(string $questiontext, array $expectederrors) {
         $this->resetAfterTest();
         $combiner = new qtype_combined_combiner_for_form();
-        $method = new ReflectionMethod(\qtype_combined_combiner_for_form::class, 'validate_question_text');
+        $method = new ReflectionMethod(qtype_combined_combiner_for_form::class, 'validate_question_text');
         $method->setAccessible(true);
         $result = $method->invoke($combiner, $questiontext);
         $this->assertEquals($expectederrors, $result);

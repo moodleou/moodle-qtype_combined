@@ -14,63 +14,56 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace qtype_combined;
 
-/**
- * Unit tests for the combined question utils.
- *
- * @package    qtype_combined
- * @copyright  2020 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-
-defined('MOODLE_INTERNAL') || die();
 /**
  * Unit tests for qtype_combined utills.
  *
- * @copyright  2020 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_combined
+ * @copyright 2020 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \qtype_combined\utils;
  */
-class qtype_combined_utils_test extends advanced_testcase {
+class utils_test extends \advanced_testcase {
 
     public function test_number_in_style() {
         $numbers = [0, 1, 2, 3, 4];
 
         $expected = ['a. ', 'b. ', 'c. ', 'd. ', 'e. '];
         foreach ($numbers as $num) {
-            $actual = \qtype_combined\utils::number_in_style($num, 'abc');
+            $actual = utils::number_in_style($num, 'abc');
             $this->assertEquals($expected[$num], $actual);
         }
 
         $expected = ['A. ', 'B. ', 'C. ', 'D. ', 'E. '];
         foreach ($numbers as $num) {
-            $actual = \qtype_combined\utils::number_in_style($num, 'ABCD');
+            $actual = utils::number_in_style($num, 'ABCD');
             $this->assertEquals($expected[$num], $actual);
         }
 
         $expected = ['1. ', '2. ', '3. ', '4. ', '5. '];
         foreach ($numbers as $num) {
-            $actual = \qtype_combined\utils::number_in_style($num, '123');
+            $actual = utils::number_in_style($num, '123');
             $this->assertEquals($expected[$num], $actual);
         }
         $expected = ['i. ', 'ii. ', 'iii. ', 'iv. ', 'v. '];
         foreach ($numbers as $num) {
-            $actual = \qtype_combined\utils::number_in_style($num, 'iii');
+            $actual = utils::number_in_style($num, 'iii');
             $this->assertEquals($expected[$num], $actual);
         }
 
         $expected = ['I. ', 'II. ', 'III. ', 'IV. ', 'V. '];
         foreach ($numbers as $num) {
-            $actual = \qtype_combined\utils::number_in_style($num, 'IIII');
+            $actual = utils::number_in_style($num, 'IIII');
             $this->assertEquals($expected[$num], $actual);
         }
 
         // Wrong strings as numbering style.
-        $actual = \qtype_combined\utils::number_in_style($num, 'III');
+        $actual = utils::number_in_style($num, 'III');
         $this->assertEquals('ERR', $actual);
 
         // Wrong strings as numbering style.
-        $actual = \qtype_combined\utils::number_in_style($num, 'ABC');
+        $actual = utils::number_in_style($num, 'ABC');
         $this->assertEquals('ERR', $actual);
     }
 }

@@ -14,30 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the select missing words question question definition class.
- *
- * @package   qtype_combined
- * @copyright 2012 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace qtype_combined;
 
+use qtype_combined;
+use question_bank;
 
 defined('MOODLE_INTERNAL') || die();
-global $CFG;
 
+global $CFG;
 require_once($CFG->dirroot . '/question/format/xml/format.php');
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 require_once($CFG->dirroot . '/question/type/combined/tests/helper.php');
 
-
 /**
  * Unit tests for the combined question definition class.
  *
+ * @package   qtype_combined
  * @copyright 2019 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \qtype_combined
  */
-class qtype_combined_test extends question_testcase {
+class questiontype_test extends \question_testcase {
     /** @var qtype_combined instance of the question type class to test. */
     protected $qtype;
 

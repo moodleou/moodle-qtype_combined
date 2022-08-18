@@ -14,31 +14,45 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace qtype_combined;
+use context_system;
+use pmatch_options;
+use qtype_combined_combiner_for_run_time_question_instance;
+use qtype_combined_question;
+use qtype_combined_test_helper;
+use qtype_gapselect_choice;
+use qtype_gapselect_question;
+use qtype_pmatch\local\spell\qtype_pmatch_spell_checker;
+use qtype_pmatch_question;
+use question_answer;
+use question_bank;
+use question_contains_tag_with_attributes;
+use question_hint_with_parts;
+use question_pattern_expectation;
+use question_state;
+use stdClass;
+use test_question_maker;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
+require_once($CFG->dirroot . '/question/type/combined/tests/helper.php');
+
 /**
- * This file contains tests that walks a question through simulated student attempts.
+ * This file contains tests that walk combined questions through simulated student attempts.
  *
  * @package   qtype_combined
  * @copyright 2013 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \qtype_combined_question
+ * @covers \qtype_combined_combiner_base
+ * @covers \qtype_combined_combiner_for_run_time_question_instance
+ * @covers \qtype_combined_combiner_for_question_type
+ * @covers \qtype_combined_combinable_base
+ * @covers \qtype_combined_combinable_type_base
  */
-
-use qtype_pmatch\local\spell\qtype_pmatch_spell_checker;
-
-defined('MOODLE_INTERNAL') || die();
-global $CFG;
-
-require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
-require_once($CFG->dirroot . '/question/type/combined/tests/helper.php');
-
-
-/**
- * Unit tests for the combined question type.
- *
- * @copyright 2013 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @group qtype_combined
- */
-class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
+class walkthrough_test extends \qbehaviour_walkthrough_test_base {
     public function test_interactive_behaviour_for_combined_question_with_gapselect_subquestion() {
         if ($notfound = qtype_combined_test_helper::safe_include_test_helpers('gapselect')) {
             $this->markTestSkipped($notfound);
@@ -365,8 +379,8 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
         $this->check_current_output(
-                $this->get_contains_text_expectation('1:answer', '', true),
-                $this->get_contains_text_expectation('2:answer', '', true),
+                $this->get_contains_text_expectation('1:answer', ''),
+                $this->get_contains_text_expectation('2:answer', ''),
                 $this->get_contains_submit_button_expectation(true),
                 $this->get_does_not_contain_feedback_expectation(),
                 $this->get_tries_remaining_expectation(3),
@@ -471,12 +485,10 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
         if ($selectoptions[1] == 'insect') {
             $this->assertEquals('mammal', $selectoptions[2]);
             $mammal = 2;
-            $insect = 1;
         } else {
             $this->assertEquals('mammal', $selectoptions[1]);
             $this->assertEquals('insect', $selectoptions[2]);
             $mammal = 1;
-            $insect = 2;
         }
 
         // Check the initial state.
@@ -484,7 +496,7 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
         $this->check_current_mark(null);
         $this->check_current_output(
                 $this->get_contains_select_expectation('1:p1', $selectoptions, null, true),
-                $this->get_contains_text_expectation('2:answer', '', true),
+                $this->get_contains_text_expectation('2:answer', ''),
                 $this->get_contains_select_expectation('1:p2', $selectoptions, null, true),
                 $this->get_contains_submit_button_expectation(true),
                 $this->get_does_not_contain_feedback_expectation(),
@@ -505,7 +517,7 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 $this->get_no_hint_visible_expectation());
     }
 
-    protected function get_contains_num_parts_correct($num) {
+    protected function get_contains_num_parts_correct($num): question_pattern_expectation {
         $a = new stdClass();
         $a->num = $num;
         if ($a->num == 1) {
@@ -1002,7 +1014,7 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
 
     }
 
-    protected function get_contains_text_expectation($name, $value = null, $enabled = true) {
+    protected function get_contains_text_expectation($name, $value = null, $enabled = true): question_contains_tag_with_attributes {
         $expectedattributes = array('type' => 'text', 'name' => $this->quba->get_field_prefix($this->slot) . s($name));
         $forbiddenattributes = array();
         if (!is_null($value)) {
@@ -1040,7 +1052,7 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                                            array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), null, true),
             $this->get_contains_select_expectation('gs:p3',
                                            array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), null, true),
-            $this->get_contains_text_expectation('pm:answer', '', true),
+            $this->get_contains_text_expectation('pm:answer', ''),
             $this->get_contains_submit_button_expectation(true),
             $this->get_does_not_contain_feedback_expectation(),
             $this->get_does_not_contain_num_parts_correct(),
@@ -1066,7 +1078,7 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                                                array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), 2, true),
             $this->get_contains_select_expectation('gs:p3',
                                                array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 2, true),
-            $this->get_contains_text_expectation('pm:answer', 'Sarah', true),
+            $this->get_contains_text_expectation('pm:answer', 'Sarah'),
             $this->get_contains_submit_button_expectation(true),
             $this->get_does_not_contain_feedback_expectation(),
             $this->get_does_not_contain_num_parts_correct(),
@@ -1130,7 +1142,7 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                                                array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), 2, true),
             $this->get_contains_select_expectation('gs:p3',
                                                array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 2, true),
-            $this->get_contains_text_expectation('pm:answer', 'Sarah', true),
+            $this->get_contains_text_expectation('pm:answer', 'Sarah'),
             $this->get_contains_submit_button_expectation(true),
             $this->get_does_not_contain_feedback_expectation(),
             $this->get_does_not_contain_num_parts_correct(),
@@ -1193,7 +1205,7 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                                                array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), 2, true),
             $this->get_contains_select_expectation('gs:p3',
                                                array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 2, true),
-            $this->get_contains_text_expectation('pm:answer', 'Tom', true),
+            $this->get_contains_text_expectation('pm:answer', 'Tom'),
             $this->get_contains_submit_button_expectation(true),
             $this->get_does_not_contain_feedback_expectation(),
             $this->get_does_not_contain_num_parts_correct(),
@@ -1258,8 +1270,8 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                                            array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), null, true),
             $this->get_contains_select_expectation('gs:p3',
                                            array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), null, true),
-            $this->get_contains_text_expectation('pm:answer', '', true),
-            $this->get_contains_text_expectation('vn:answer', '', true),
+            $this->get_contains_text_expectation('pm:answer', ''),
+            $this->get_contains_text_expectation('vn:answer', ''),
             $this->get_contains_submit_button_expectation(true),
             $this->get_does_not_contain_feedback_expectation(),
             $this->get_does_not_contain_num_parts_correct(),
@@ -1286,8 +1298,8 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                                            array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), 2, true),
             $this->get_contains_select_expectation('gs:p3',
                                            array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 2, true),
-            $this->get_contains_text_expectation('pm:answer', 'Sarah', true),
-            $this->get_contains_text_expectation('vn:answer', '-4', true),
+            $this->get_contains_text_expectation('pm:answer', 'Sarah'),
+            $this->get_contains_text_expectation('vn:answer', '-4'),
             $this->get_contains_submit_button_expectation(true),
             $this->get_does_not_contain_feedback_expectation(),
             $this->get_does_not_contain_num_parts_correct(),
@@ -1354,8 +1366,8 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                                                array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), 2, true),
             $this->get_contains_select_expectation('gs:p3',
                                                array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 2, true),
-            $this->get_contains_text_expectation('pm:answer', 'Sarah', true),
-            $this->get_contains_text_expectation('vn:answer', '-4', true),
+            $this->get_contains_text_expectation('pm:answer', 'Sarah'),
+            $this->get_contains_text_expectation('vn:answer', '-4'),
             $this->get_contains_submit_button_expectation(true),
             $this->get_does_not_contain_feedback_expectation(),
             $this->get_does_not_contain_num_parts_correct(),
@@ -1421,8 +1433,8 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                                                array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), 2, true),
             $this->get_contains_select_expectation('gs:p3',
                                                array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 2, true),
-            $this->get_contains_text_expectation('pm:answer', 'Tom', true),
-            $this->get_contains_text_expectation('vn:answer', '-4.2', true),
+            $this->get_contains_text_expectation('pm:answer', 'Tom'),
+            $this->get_contains_text_expectation('vn:answer', '-4.2'),
             $this->get_contains_submit_button_expectation(true),
             $this->get_does_not_contain_feedback_expectation(),
             $this->get_does_not_contain_num_parts_correct(),
@@ -1490,8 +1502,8 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                                        array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), null, true),
             $this->get_contains_select_expectation('gs:p3',
                                        array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), null, true),
-            $this->get_contains_text_expectation('pm:answer', '', true),
-            $this->get_contains_text_expectation('vn:answer', '', true),
+            $this->get_contains_text_expectation('pm:answer', ''),
+            $this->get_contains_text_expectation('vn:answer', ''),
             $this->get_does_not_contain_feedback_expectation(),
             $this->get_does_not_contain_num_parts_correct(),
             $this->get_no_hint_visible_expectation());
@@ -1516,8 +1528,8 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                                                array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), 2, true),
             $this->get_contains_select_expectation('gs:p3',
                                                array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 2, true),
-            $this->get_contains_text_expectation('pm:answer', '', true),
-            $this->get_contains_text_expectation('vn:answer', '-4', true),
+            $this->get_contains_text_expectation('pm:answer', ''),
+            $this->get_contains_text_expectation('vn:answer', '-4'),
             $this->get_does_not_contain_feedback_expectation(),
             $this->get_does_not_contain_num_parts_correct(),
             $this->get_no_hint_visible_expectation(),
@@ -1543,8 +1555,8 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
                                                array('' => get_string('choosedots'), '1' => 'fox', '2' => 'dog'), 1, true),
             $this->get_contains_select_expectation('gs:p3',
                                                array('' => get_string('choosedots'), '1' => 'lazy', '2' => 'assiduous'), 1, true),
-            $this->get_contains_text_expectation('pm:answer', 'Tom', true),
-            $this->get_contains_text_expectation('vn:answer', '-4.2', true),
+            $this->get_contains_text_expectation('pm:answer', 'Tom'),
+            $this->get_contains_text_expectation('vn:answer', '-4.2'),
             $this->get_does_not_contain_feedback_expectation(),
             $this->get_does_not_contain_num_parts_correct(),
             $this->get_no_hint_visible_expectation(),
@@ -1608,7 +1620,6 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
         $pmatch->answers = array(
                 1 => new question_answer(1, 'match(Number ten)', 1, '', FORMAT_HTML),
         );
-        $pmatch->generalfeedback = '';
         $pmatch->applydictionarycheck = qtype_pmatch_spell_checker::DO_NOT_CHECK_OPTION;
         $pmatch->pmatchoptions->converttospace = ':';
         $pmatch->pmatchoptions->set_synonyms(array((object)array('word' => 'ten', 'synonyms' => '10')));
@@ -1642,7 +1653,6 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
         $pmatch2->answers = array(
                 2 => new question_answer(2, 'match(Number nine)', 1, '', FORMAT_HTML),
         );
-        $pmatch2->generalfeedback = '';
         $pmatch->applydictionarycheck = qtype_pmatch_spell_checker::DO_NOT_CHECK_OPTION;
         $pmatch2->pmatchoptions->ignorecase = false;
         $subq2->question = $pmatch2;
@@ -1658,7 +1668,8 @@ class qtype_combined_walkthrough_test extends qbehaviour_walkthrough_test_base {
         );
     }
 
-    protected function get_contains_subq_mc_radio_expectation($subqname, $index, $enabled = null, $checked = null) {
+    protected function get_contains_subq_mc_radio_expectation(
+            $subqname, $index, $enabled = null, $checked = null): question_contains_tag_with_attributes {
         return $this->get_contains_radio_expectation(array(
                 'name' => $this->quba->get_field_prefix($this->slot) . $subqname . ':answer',
                 'value' => $index,
