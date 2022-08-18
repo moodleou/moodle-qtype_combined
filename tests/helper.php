@@ -15,20 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains the helper class for the combined question type tests.
- *
- * @package   qtype_combined
- * @copyright 2013 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-
-defined('MOODLE_INTERNAL') || die();
-
-
-/**
  * Test helper class for the combined question type.
  *
+ * @package   qtype_combined
  * @copyright 2013 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -40,17 +29,17 @@ class qtype_combined_test_helper {
      */
     public static function safe_include_test_helpers(...$qtypes) {
         global $CFG;
-        $notfound = array();
+        $notfound = [];
         foreach ($qtypes as $qtype) {
-            if (!is_readable($CFG->dirroot.'/question/type/'.$qtype.'/tests/helper.php')) {
+            if (!is_readable($CFG->dirroot . '/question/type/' . $qtype . '/tests/helper.php')) {
                 $notfound[] = $qtype;
             }
         }
         if (count($notfound)) {
-            return "Test skipped some required question types are not installed ".join(', ', $notfound).".";
+            return "Test skipped some required question types are not installed " . join(', ', $notfound) . ".";
         }
-        foreach (func_get_args() as $qtype) {
-            require_once($CFG->dirroot.'/question/type/'.$qtype.'/tests/helper.php');
+        foreach ($qtypes as $qtype) {
+            require_once($CFG->dirroot . '/question/type/' . $qtype . '/tests/helper.php');
         }
         return false;
     }

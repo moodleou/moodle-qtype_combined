@@ -37,13 +37,12 @@ require_once($CFG->dirroot.'/question/type/combined/combinable/combinabletypebas
  * This is a base class which holds common code used by combiner classes that are used to produce forms,
  * save and produce run time questions.
  * An instance of this class stores everything to do with the sub-questions for one combined question.
- *
  */
 abstract class qtype_combined_combiner_base {
 
     /**
-     * @var qtype_combined_combinable_base[] array of sub-questions, in question text, in form and in db. One instance for each
-     *                                          question instance.
+     * @var qtype_combined_combinable_base[] array of sub-questions, in question text,
+     * in form and in db. One instance for each question instance.
      */
     protected $subqs = array();
 
@@ -331,7 +330,7 @@ class qtype_combined_type_manager {
             }
         }
         if (count(self::$combinableplugins) === 0) {
-            print_error('nosubquestiontypesinstalled', 'qtype_combined');
+            throw new moodle_exception('nosubquestiontypesinstalled', 'qtype_combined');
         }
     }
 
@@ -376,10 +375,7 @@ class qtype_combined_type_manager {
                 return $type->get_identifier();
             }
         }
-        if (!isset(self::$combinableplugins[$qtypename])) {
-            print_error('subquestiontypenotinstalled', 'qtype_combined', '', $qtypename);
-        }
-
+        throw new moodle_exception('subquestiontypenotinstalled', 'qtype_combined', '', $qtypename);
     }
 
     /**

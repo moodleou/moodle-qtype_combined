@@ -22,11 +22,6 @@
  * @author    Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-
-defined('MOODLE_INTERNAL') || die();
-
-
 class qtype_combined_gapselect_embedded_renderer extends qtype_renderer
     implements qtype_combined_subquestion_renderer_interface {
 

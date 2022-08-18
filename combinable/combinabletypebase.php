@@ -23,14 +23,6 @@
  * @author     James Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-
-/**
- * Class qtype_combined_combinable_type_base
- * Collects methods common to a sub-question type.
- */
 abstract class qtype_combined_combinable_type_base {
 
     /**

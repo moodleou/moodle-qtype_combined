@@ -14,22 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace qtype_combined;
+use question_utils;
+
 /**
  * Helper functions for qtype_combined.
  *
  * @package   qtype_combined
- * @copyright 2020 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-namespace qtype_combined;
-use question_utils;
-use html_writer;
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Helper functions for qtype_combined.
- *
  * @copyright 2020 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
