@@ -27,6 +27,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use qtype_combined\utils;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/question/type/combined/combinable/combinablebase.php');
@@ -224,27 +226,44 @@ abstract class qtype_combined_combiner_base {
     }
 
     /**
-     * The db operation to fetch all sub-question data from the db. For run time question instances this is run before
-     * question instance data caching as it seems more straight forward to have Moodle MUC cache stdClass rather than other
-     * classes.
-     * @param integer  $questionid The question id
-     * @param bool     $getoptions Whether to also fetch the question options for each subq.
+     * The db operation to fetch all sub-question data from the db.
+     *
+     * For run time question instances this is run before
+     * question instance data caching as it seems more straight forward to have
+     * Moodle MUC cache stdClass rather than other classes.
+     *
+     * @param integer $questionid The question id
+     * @param bool $getoptions Whether to also fetch the question options for each subq.
      * @return stdClass[]
      */
-    public static function get_subq_data_from_db($questionid, $getoptions = false) {
+    public static function get_subq_data_from_db($questionid, $getoptions = false): array {
         global $DB;
-        $sql = 'SELECT q.*, qc.contextid FROM {question} q '.
-            'JOIN {question_categories} qc ON q.category = qc.id ' .
-            'WHERE q.parent = $1';
 
         // Load the questions.
-        if (!$subqrecs = $DB->get_records_sql($sql, array($questionid))) {
-            return array();
+        if (utils::has_question_versioning()) {
+            // Moodle 4.0+.
+            $subquestiondata = $DB->get_records_sql("
+                    SELECT q.*, qbe.questioncategoryid AS category, qc.contextid
+                      FROM {question} q
+                      JOIN {question_versions} qv ON qv.questionid = q.id
+                      JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                      JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+                     WHERE q.parent = ?", [$questionid]);
+        } else {
+            // Moodle 3.x.
+            $subquestiondata = $DB->get_records_sql("
+                    SELECT q.*, qc.contextid
+                      FROM {question} q
+                      JOIN {question_categories} qc ON q.category = qc.id
+                     WHERE q.parent = ?", [$questionid]);
+
         }
+
         if ($getoptions) {
-            get_question_options($subqrecs);
+            get_question_options($subquestiondata);
         }
-        return $subqrecs;
+
+        return $subquestiondata;
     }
 
     /**

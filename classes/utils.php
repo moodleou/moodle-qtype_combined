@@ -55,4 +55,17 @@ class utils {
         return $number . '. ';
     }
 
+    /**
+     * Are we running in a Moodle version with question versioning.
+     *
+     * @return bool true if the question versions exist.
+     */
+    public static function has_question_versioning(): bool {
+        global $DB;
+        static $hasversionning = null;
+        if ($hasversionning === null) {
+            $hasversionning = $DB->get_manager()->table_exists('question_bank_entries');
+        }
+        return $hasversionning;
+    }
 }

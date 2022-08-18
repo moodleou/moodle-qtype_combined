@@ -55,6 +55,11 @@ class qtype_combined_edit_form extends question_edit_form {
         }
     }
 
+    /**
+     * @param MoodleQuickForm $mform
+     * @return void
+     * @throws coding_exception
+     */
     protected function definition_inner($mform) {
         if (isset($this->question->id)) {
             $qid = $this->question->id;
@@ -67,6 +72,12 @@ class qtype_combined_edit_form extends question_edit_form {
                 $mform,
                 $this->question->formoptions->repeatelements);
 
+        if ($mform->elementExists('status')) {
+            $insertbefore = 'status'; // Moodle 4.x.
+        } else {
+            $insertbefore = 'defaultmark'; // Moodle 3.x.
+        }
+
         $placeholders = array_map(
                 function($placeholder) {
                     return html_writer::empty_tag('input', ['type' => 'text', 'readonly' => 'readonly', 'size' => '22',
@@ -75,10 +86,10 @@ class qtype_combined_edit_form extends question_edit_form {
                 }, qtype_combined_type_manager::get_example_placeholders());
         $subq = $mform->createElement('static', 'subq', get_string('subquestiontypes', 'qtype_combined'),
                 implode("\n", $placeholders));
-        $mform->insertElementBefore($subq, 'defaultmark');
+        $mform->insertElementBefore($subq, $insertbefore);
 
         $verify = $mform->createElement('submit', 'updateform', get_string('updateform', 'qtype_combined'));
-        $mform->insertElementBefore($verify, 'defaultmark');
+        $mform->insertElementBefore($verify, $insertbefore);
         $mform->registerNoSubmitButton('updateform');
 
         $this->add_combined_feedback_fields(true);

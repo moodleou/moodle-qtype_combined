@@ -30,7 +30,7 @@ Feature: Test all the basic functionality of combined question type
 
     # Follow sub-questions (The order of sub-questions comes from the question text).
     # Numeric part.
-    Then I follow "'numeric' input '1'"
+    And I expand all fieldsets
     And I set the following fields to these values:
       | id_subqnumeric1defaultmark     | 20%                                     |
       | id_subqnumeric1answer_0        | 2.88                                    |
@@ -38,7 +38,6 @@ Feature: Test all the basic functionality of combined question type
       | id_subqnumeric1generalfeedback | You have the incorrect value for the pH |
 
     # Pmatch part.
-    Then I follow "'pmatch' input '2'"
     And I set the following fields to these values:
       | id_subqpmatch2defaultmark     | 20%                                |
       | Spell checking                | Do not check spelling of student   |
@@ -47,8 +46,6 @@ Feature: Test all the basic functionality of combined question type
       | Model answer                  | ethanoic acid                      |
 
     # Multiresponse part.
-    Then I follow "'multiresponse' input '3'"
-    And I click on "Expand all" "link"
     And I press "Blanks for 3 more choices"
     And I set the following fields to these values:
       | id_subqmultiresponse3defaultmark     | 20%                                              |
@@ -65,7 +62,6 @@ Feature: Test all the basic functionality of combined question type
       | id_subqmultiresponse3generalfeedback | Your choice of elements is not entirely correct. |
 
     # Selectmenu part.
-    Then I follow "'selectmenu' input '4'"
     And I set the following fields to these values:
       | id_subqselectmenu4defaultmark        | 20%           |
       | id_subqselectmenu4answer_0           | Wine          |
@@ -75,7 +71,6 @@ Feature: Test all the basic functionality of combined question type
       | id_subqselectmenu4generalfeedback    |Your name for the mixture is incorrect. |
 
     # Single choice part.
-    Then I follow "'singlechoice' input '6'"
     And I set the following fields to these values:
       | id_subqsinglechoice6defaultmark     | 20%                                         |
       | id_subqsinglechoice6answer_0        | C carbon                                    |
@@ -98,8 +93,7 @@ Feature: Test all the basic functionality of combined question type
     Then I should see "Combined 001"
 
     # Preview it.
-    When I choose "Preview" action for "Combined 001" in the question bank
-    And I switch to "questionpreview" window
+    When I am on the "Combined 001" "core_question > preview" page
 
     # Set display and behaviour options
     And I set the following fields to these values:
@@ -160,18 +154,16 @@ Feature: Test all the basic functionality of combined question type
     Then the field "Answer 2" matches value "ethanoic acid"
     And "//div[@data-region='answer-label']//div[contains(text(), 'H hydrogen')]/ancestor::div/input[@checked='checked']" "xpath_element" should be visible
 
-    And I switch to the main window
-
     # Backup the course and restore it.
     When I log out
-    And I log in as "admin"
-    When I backup "Course 1" course using this options:
+    And I am on the "Course 1" "course" page logged in as "admin"
+    And I backup "Course 1" course using this options:
       | Confirmation | Filename | test_backup.mbz |
-    When I restore "test_backup.mbz" backup into a new course using this options:
+    And I restore "test_backup.mbz" backup into a new course using this options:
       | Schema | Course name | Course 2 |
     Then I should see "Course 2"
-    When I navigate to "Question bank" in current page administration
-    Then I should see "Combined 001"
+    And I navigate to "Question bank" in current page administration
+    And I should see "Combined 001"
 
     # Edit the copy and verify the form field contents.
     When I choose "Edit question" action for "Combined 001" in the question bank
@@ -311,21 +303,18 @@ Feature: Test all the basic functionality of combined question type
     And I press "id_submitbutton"
     Then I should see "One or more embedded questions have been removed from the question text"
     And I press "id_submitbutton"
-    And I choose "Preview" action for "Duplication test" in the question bank
-    # Check entering the correct answer for original question.
-    And I switch to "questionpreview" window
+    And I am on the "Duplication test" "core_question > preview" page
+    # Check entering the correct answer for duplicated question.
     And I set the field "Answer 1" to "Kitten"
     And I set the field "Answer 2" to "Puppy"
     And I press "Submit and finish"
     And I should see "Your answer is correct."
-    And I switch to the main window
-    And I choose "Preview" action for "The new question" in the question bank
+
+    And I am on the "The new question" "core_question > preview" page
     # Check entering the correct answer for original question.
-    And I switch to "questionpreview" window
     And I set the field "Answer 1" to "Kitten"
     And I press "Submit and finish"
     And I should see "Your answer is correct."
-    And I switch to the main window
 
   @javascript
   Scenario: Test showing the warning message if the Part answer is empty.
@@ -384,7 +373,7 @@ Feature: Test all the basic functionality of combined question type
     And I press "Save changes and continue editing"
     And I follow "Preview"
     And I switch to "questionpreview" window
-    And I follow "Attempt options"
+    And I expand all fieldsets
     And I set the following fields to these values:
       | How questions behave | Immediate feedback |
     And I press "Start again with these options"
@@ -417,7 +406,7 @@ Feature: Test all the basic functionality of combined question type
     And I press "Save changes and continue editing"
     And I follow "Preview"
     And I switch to "questionpreview" window
-    And I follow "Attempt options"
+    And I expand all fieldsets
     And I set the following fields to these values:
       | How questions behave | Immediate feedback |
     And I press "Start again with these options"

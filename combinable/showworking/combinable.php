@@ -49,7 +49,7 @@ class qtype_combined_combinable_type_showworking extends qtype_combined_combinab
         return '__80x5__';
     }
 
-    public function save($oldsubq, $subqdata) {
+    public function save($oldsubq, $subqdata, int $oldsubqid) {
     }
 }
 

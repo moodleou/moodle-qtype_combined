@@ -14,14 +14,11 @@ Feature: Import and export combined questions
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
 
   @javascript @_file_upload
   Scenario: Import and export combined questions
     # Import sample file.
-    When I navigate to "Question bank" in current page administration
-    And I select "Import" from the "Question bank tertiary navigation" singleselect
+    When I am on the "Course 1" "core_question > course question import" page logged in as teacher1
     And I set the field "id_format_xml" to "1"
     And I upload "question/type/combined/tests/fixtures/testquestion.moodle.xml" file to "Import" filemanager
     And I press "id_submitbutton"
@@ -33,9 +30,7 @@ Feature: Import and export combined questions
     And I should see "Imported Combined 001"
 
     # Now export again.
-    When I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
-    And I select "Export" from the "Question bank tertiary navigation" singleselect
+    When I am on the "Course 1" "core_question > course question export" page logged in as teacher1
     And I set the field "id_format_xml" to "1"
     And I press "Export questions to file"
     Then following "click here" should download between "6000" and "7000" bytes

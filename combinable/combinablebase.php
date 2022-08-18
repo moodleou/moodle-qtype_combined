@@ -383,7 +383,7 @@ abstract class qtype_combined_combinable_base {
      */
     public function save($contextid) {
         $this->formdata->name = $this->get_identifier();
-        $this->type->save($this->questionrec, $this->formdata);
+        $this->type->save($this->questionrec, $this->formdata, $this->questionrec->id ?? 0);
     }
 
     public function delete() {

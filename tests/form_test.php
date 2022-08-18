@@ -15,8 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace qtype_combined;
+
 use context_course;
-use core_question\local\bank\question_edit_contexts;
 use qtype_combined_combiner_for_form;
 use qtype_combined_combiner_for_question_type;
 use question_bank;
@@ -27,7 +27,8 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
-require_once($CFG->dirroot .'/question/type/combined/combiner/forform.php');
+require_once($CFG->dirroot . '/question/type/combined/combiner/forform.php');
+require_once($CFG->dirroot . '/question/type/combined/combiner/forquestiontype.php');
 
 /**
  * Unit tests for qtype_combined editing form.
@@ -42,6 +43,25 @@ require_once($CFG->dirroot .'/question/type/combined/combiner/forform.php');
 class form_test extends \advanced_testcase {
 
     /**
+     * Deal with the different location of question_edit_contexts in 3.x and 4.x.
+     *
+     * @param \context $context A context.
+     * @return \question_edit_contexts|\core_question\local\bank\question_edit_contexts The one for that context.
+     */
+    protected function get_question_edit_contexts(\context $context) {
+        global $CFG;
+
+        if (class_exists('\core_question\local\bank\question_edit_contexts')) {
+            // Moodle 4.x.
+            return new \core_question\local\bank\question_edit_contexts($context);
+        } else {
+            // Moodle 3.x.
+            require_once($CFG->libdir . '/questionlib.php');
+            return new \question_edit_contexts($context);
+        }
+    }
+
+    /**
      * Test editing form validation, particularly with the numeric subquestion.
      */
     public function test_form_validation() {
@@ -52,7 +72,7 @@ class form_test extends \advanced_testcase {
         $gen = $this->getDataGenerator();
         $course = $gen->create_course();
         $context = context_course::instance($course->id);
-        $contexts = new question_edit_contexts($context);
+        $contexts = $this->get_question_edit_contexts($context);
         $category = question_make_default_categories($contexts->all());
 
         $question = new stdClass();
@@ -181,251 +201,6 @@ class form_test extends \advanced_testcase {
         $fromform['subq:pmatch:3:modelanswer'] = 'frog';
         $errors = $mform->validation($fromform, array());
         $this->assertNotEmpty($errors);
-    }
-
-    /**
-     * Test form submit.
-     */
-    public function test_form_submit_delete() {
-        $this->resetAfterTest(true);
-
-        $gen = $this->getDataGenerator();
-        $course = $gen->create_course();
-        $context = context_course::instance($course->id);
-        $contexts = new question_edit_contexts($context);
-        $category = question_make_default_categories($contexts->all());
-
-        $fromform = [
-                'category' => $category->id,
-                'name' => 'Test combined with varnumeric',
-                'questiontext' => '<pre>Cat : [[1:selectmenu:1]], Dog: [[2:selectmenu:1]]</pre>',
-                'defaultmark' => 1,
-                'generalfeedback' => [
-                        'text' => '',
-                        'format' => 1
-                ],
-                'subq:selectmenu:1:defaultmark' => 0.5000000,
-                'subq:selectmenu:1:shuffleanswers' => 0,
-                'subq:selectmenu:1:noofchoices' => 6,
-                'subq:selectmenu:1:answer' => ['Kitten', 'Tadpole'],
-                'subq:selectmenu:1:generalfeedback' => [
-                        'text' => 'OK',
-                        'format' => '1'
-                ],
-                'subq:selectmenu:1:notincludedinquestiontextwilldelete' => true,
-                'subqfragment_id' => [
-                        'selectmenu_1' => '1',
-                        'selectmenu_2' => '2',
-                ],
-                'subqfragment_type' => [
-                        'selectmenu_1' => 'selectmenu',
-                        'selectmenu_2' => 'selectmenu',
-                ],
-                'subq:selectmenu:2:defaultmark' => 0.5,
-                'subq:selectmenu:2:shuffleanswers' => 0,
-                'subq:selectmenu:2:noofchoices' => 6,
-                'subq:selectmenu:2:answer' => ['Puppy', 'Foal'],
-                'subq:selectmenu:2:generalfeedback' => [
-                        'text' => 'OK',
-                        'format' => '1'
-                ],
-                'subq:selectmenu:2:notincludedinquestiontextwilldelete' => true,
-                'correctfeedback' => [
-                        'text' => 'Your answer is correct.',
-                        'format' => 1
-                ],
-                'partiallycorrectfeedback' => [
-                        'text' => 'Your answer is partially correct.',
-                        'format' => 1
-                ],
-                'shownumcorrect' => 1,
-                'incorrectfeedback' => [
-                        'text' => 'Your answer is incorrect.',
-                        'format' => 1
-                ],
-                'penalty' => 0.3333333,
-                'numhints' => 0,
-                'hints' => [],
-                'hintshownumcorrect' => [],
-                'tags' => 0,
-                'id' => 1,
-                'inpopup' => 0,
-                'cmid' => 0,
-                'courseid' => $course->id,
-                'returnurl' => '/mod/quiz/edit.php?cmid=0',
-                'scrollpos' => 0,
-                'appendqnumstring' => '',
-                'qtype' => 'combined',
-                'makecopy' => 0,
-                'updatebutton' => 'Save changes and continue editing',
-        ];
-        $fromformojb = (object) $fromform;
-        $combiner = new qtype_combined_combiner_for_question_type();
-        $combiner->save_subqs($fromformojb, $context->id);
-        $combiner->load_subq_data_from_db(1);
-        $subq1 = $combiner->find_or_create_question_instance('selectmenu', 1);
-        $subq2 = $combiner->find_or_create_question_instance('selectmenu', 2);
-        $this->assertTrue($subq1->is_in_db());
-        $this->assertTrue($subq2->is_in_db());
-        // We created a combine question with false data case 1 is_in_db = false .
-        $fromform2 = [
-                'category' => $category->id,
-                'name' => 'Test combined with varnumeric',
-                'questiontext' => '<pre>Cat : [[1:selectmenu:1]], Dog: [[2:selectmenu:1]]</pre>',
-                'defaultmark' => 1,
-                'generalfeedback' => [
-                        'text' => '',
-                        'format' => 1
-                ],
-                'subq:selectmenu:1:defaultmark' => 0.5000000,
-                'subq:selectmenu:1:shuffleanswers' => 0,
-                'subq:selectmenu:1:noofchoices' => 6,
-                'subq:selectmenu:1:answer' => ['Kitten', 'Tadpole'],
-                'subq:selectmenu:1:generalfeedback' => [
-                        'text' => 'OK',
-                        'format' => '1'
-                ],
-                'subq:selectmenu:1:notincludedinquestiontextwilldelete' => true,
-                'subqfragment_id' => [
-                        'selectmenu_1' => '1',
-                        'selectmenu_2' => '2',
-                ],
-                'subqfragment_type' => [
-                        'selectmenu_1' => 'selectmenu',
-                        'selectmenu_2' => 'selectmenu',
-                ],
-                'subq:selectmenu:2:defaultmark' => 0.5,
-                'subq:selectmenu:2:shuffleanswers' => 0,
-                'subq:selectmenu:2:noofchoices' => 6,
-                'subq:selectmenu:2:answer' => ['Puppy', 'Foal'],
-                'subq:selectmenu:2:generalfeedback' => [
-                        'text' => 'OK',
-                        'format' => '1'
-                ],
-                'subq:selectmenu:2:notincludedinquestiontextwilldelete' => true,
-                'subq:selectmenu:3:defaultmark' => 0.5,
-                'subq:selectmenu:3:shuffleanswers' => 0,
-                'subq:selectmenu:3:noofchoices' => 6,
-                'subq:selectmenu:3:answer' => ['Puppy', 'Foal'],
-                'subq:selectmenu:3:generalfeedback' => [
-                        'text' => 'OK',
-                        'format' => '1'
-                ],
-                'subq:selectmenu:3:notincludedinquestiontextwilldelete' => true,
-                'correctfeedback' => [
-                        'text' => 'Your answer is correct.',
-                        'format' => 1
-                ],
-                'partiallycorrectfeedback' => [
-                        'text' => 'Your answer is partially correct.',
-                        'format' => 1
-                ],
-                'shownumcorrect' => 1,
-                'incorrectfeedback' => [
-                        'text' => 'Your answer is incorrect.',
-                        'format' => 1
-                ],
-                'penalty' => 0.3333333,
-                'numhints' => 0,
-                'hints' => [],
-                'hintshownumcorrect' => [],
-                'tags' => 0,
-                'id' => 1,
-                'inpopup' => 0,
-                'cmid' => 0,
-                'courseid' => $course->id,
-                'returnurl' => '/mod/quiz/edit.php?cmid=0',
-                'scrollpos' => 0,
-                'appendqnumstring' => '',
-                'qtype' => 'combined',
-                'makecopy' => 0,
-                'updatebutton' => 'Save changes and continue editing',
-        ];
-
-        $fromformojb2 = (object) $fromform2;
-        $combiner->save_subqs($fromformojb2, $context->id);
-        $combiner = new qtype_combined_combiner_for_question_type();
-        $combiner->load_subq_data_from_db(1);
-        $subq1 = $combiner->find_or_create_question_instance('selectmenu', 1);
-        $subq2 = $combiner->find_or_create_question_instance('selectmenu', 2);
-        $subq3 = $combiner->find_or_create_question_instance('selectmenu', 3);
-
-        $this->assertTrue($subq1->is_in_db());
-        $this->assertTrue($subq2->is_in_db());
-        $this->assertFalse($subq3->is_in_db());
-
-        // We created a combine quesstion with false data case 2 is_in_db = true.
-        $fromform3 = [
-                'category' => $category->id,
-                'name' => 'Test combined with varnumeric',
-                'questiontext' => '<pre>Cat : [[1:selectmenu:1]]</pre>',
-                'defaultmark' => 1,
-                'generalfeedback' => [
-                        'text' => '',
-                        'format' => 1
-                ],
-                'subq:selectmenu:1:defaultmark' => 1,
-                'subq:selectmenu:1:shuffleanswers' => 0,
-                'subq:selectmenu:1:noofchoices' => 6,
-                'subq:selectmenu:1:answer' => ['Kitten', 'Tadpole'],
-                'subq:selectmenu:1:generalfeedback' => [
-                        'text' => 'OK',
-                        'format' => '1'
-                ],
-                'subq:selectmenu:1:notincludedinquestiontextwilldelete' => true,
-                'subqfragment_id' => [
-                        'selectmenu_1' => '1',
-                ],
-                'subqfragment_type' => [
-                        'selectmenu_1' => 'selectmenu',
-                ],
-                'subq:selectmenu:2:defaultmark' => 0.5,
-                'subq:selectmenu:2:shuffleanswers' => 0,
-                'subq:selectmenu:2:noofchoices' => 6,
-                'subq:selectmenu:2:answer' => ['Puppy', 'Foal'],
-                'subq:selectmenu:2:generalfeedback' => [
-                        'text' => 'OK',
-                        'format' => '1'
-                ],
-                'subq:selectmenu:2:notincludedinquestiontextwilldelete' => true,
-                'correctfeedback' => [
-                        'text' => 'Your answer is correct.',
-                        'format' => 1
-                ],
-                'partiallycorrectfeedback' => [
-                        'text' => 'Your answer is partially correct.',
-                        'format' => 1
-                ],
-                'shownumcorrect' => 1,
-                'incorrectfeedback' => [
-                        'text' => 'Your answer is incorrect.',
-                        'format' => 1
-                ],
-                'penalty' => 0.3333333,
-                'numhints' => 0,
-                'hints' => [],
-                'hintshownumcorrect' => [],
-                'tags' => 0,
-                'id' => 1,
-                'inpopup' => 0,
-                'cmid' => 0,
-                'courseid' => $course->id,
-                'returnurl' => '/mod/quiz/edit.php?cmid=0',
-                'scrollpos' => 0,
-                'appendqnumstring' => '',
-                'qtype' => 'combined',
-                'makecopy' => 0,
-                'updatebutton' => 'Save changes and continue editing',
-        ];
-
-        $fromformojb3 = (object) $fromform3;
-        $combiner->save_subqs($fromformojb3, $context->id);
-        $combiner = new qtype_combined_combiner_for_question_type();
-        $combiner->load_subq_data_from_db(1);
-        $subq1 = $combiner->find_or_create_question_instance('selectmenu', 1);
-        $subq2 = $combiner->find_or_create_question_instance('selectmenu', 2);
-        $this->assertTrue($subq1->is_in_db());
-        $this->assertFalse($subq2->is_in_db());
     }
 
     /**

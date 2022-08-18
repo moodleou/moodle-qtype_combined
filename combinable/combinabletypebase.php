@@ -207,12 +207,14 @@ abstract class qtype_combined_combinable_type_base {
     /**
      * @param stdClass $oldsubq
      * @param stdClass $subqdata
+     * @param int $oldsubqid previous id of this subquestion.
      */
-    public function save($oldsubq, $subqdata) {
+    public function save($oldsubq, $subqdata, int $oldsubqid) {
         if ($oldsubq === null) {
             $oldsubq = new stdClass();
         }
         $oldsubq->qtype = $this->get_qtype_name();
+        $oldsubq->oldid = $oldsubqid;
         $subqdata = $this->transform_subq_form_data_to_full($subqdata);
         $this->get_qtype_obj()->save_question($oldsubq, $subqdata);
     }
