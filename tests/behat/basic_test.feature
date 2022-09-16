@@ -206,6 +206,7 @@ Feature: Test all the basic functionality of combined question type
       | Hint 1          | First hint                    |
       | Hint 2          | Second hint                   |
 
+    And I should not see "Choice [[5]]"
     And I set the following fields to these values:
       | Question name | Edited question name |
     And I press "id_submitbutton"
