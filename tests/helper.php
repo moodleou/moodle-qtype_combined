@@ -339,9 +339,11 @@ class qtype_combined_test_helper extends question_test_helper {
      * @return qtype_oumultiresponse_question
      */
     protected static function make_oumultiresponse_question_two_of_four($name) {
+        /** @var qtype_oumultiresponse_question $mr */
         $mr = test_question_maker::make_question('oumultiresponse', 'two_of_four');
         $mr->name = $name;
         $mr->shuffleanswers = false;
+        $mr->hints = [];
         return $mr;
     }
 
@@ -459,7 +461,7 @@ class qtype_combined_test_helper extends question_test_helper {
      * @return qtype_pmatch_question
      */
     protected static function make_a_pmatch_question($name) {
-        $pm = qtype_pmatch_test_helper::make_a_pmatch_question(false);
+        $pm = qtype_pmatch_test_helper::make_a_pmatch_question();
         $pm->name = $name;
         unset($pm->answers[14]);
         unset($pm->answers[15]);

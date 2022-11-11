@@ -861,6 +861,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         if ($notfound = qtype_combined_test_helper::safe_include_test_helpers('oumultiresponse', 'gapselect')) {
             $this->markTestSkipped($notfound);
         }
+
         // Create a combined question.
         $combined = qtype_combined_test_helper::make_a_combined_question_with_oumr_and_gapselect_subquestion();
 

@@ -29,13 +29,29 @@ class qtype_combined_question extends question_graded_automatically_with_countba
      */
     public $combiner;
 
-
     public function start_attempt(question_attempt_step $step, $variant) {
         $this->combiner->call_all_subqs('start_attempt', new qtype_combined_step_param($step), $variant);
     }
 
     public function apply_attempt_state(question_attempt_step $step) {
         $this->combiner->call_all_subqs('apply_attempt_state', new qtype_combined_step_param($step));
+    }
+
+    public function validate_can_regrade_with_other_version(question_definition $otherversion): ?string {
+        $basemessage = parent::validate_can_regrade_with_other_version($otherversion);
+        if ($basemessage) {
+            return $basemessage;
+        }
+
+        return $this->combiner->validate_can_regrade_with_other_version($otherversion->combiner);
+    }
+
+    public function update_attempt_state_data_for_new_version(
+            question_attempt_step $oldstep, question_definition $otherversion) {
+        parent::update_attempt_state_data_for_new_version($oldstep, $otherversion);
+
+        return $this->combiner->update_attempt_state_data_for_new_version(
+                $oldstep, $otherversion->combiner);
     }
 
     public function get_expected_data() {
@@ -85,7 +101,6 @@ class qtype_combined_question extends question_graded_automatically_with_countba
         // All sub-question responses are same if none of the method calls returned false.
         return (false === array_search(false, $subqssame));
     }
-
 
     public function check_file_access($qa, $options, $component, $filearea,
             $args, $forcedownload) {
@@ -179,7 +194,6 @@ class qtype_combined_question extends question_graded_automatically_with_countba
         }
         return array($totalpartscorrect, $totalparts);
     }
-
 
     public function classify_response(array $response) {
         $aggregatedresponses = array();

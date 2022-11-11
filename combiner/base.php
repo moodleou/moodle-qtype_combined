@@ -65,7 +65,6 @@ abstract class qtype_combined_combiner_base {
      */
     const FIELD_NAME_PREFIX = 'subq:{qtype}:{qid}:';
 
-
     /**
      * Creates array of subq objects from the embedded codes in the question text.
      * @param $questiontext string the question text

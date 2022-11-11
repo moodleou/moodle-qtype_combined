@@ -95,8 +95,8 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
 
         foreach ($this->subqs as $i => $unused) {
             // Call $this->call_subq($i, then same arguments as used to call this method).
-            $returned[$i] = call_user_func_array(array($this, 'call_subq'),
-                    array_merge(array($i, $methodname), $params));
+            $returned[$i] = call_user_func_array([$this, 'call_subq'],
+                    array_merge([$i, $methodname], $params));
         }
         return $returned;
     }
@@ -110,7 +110,7 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
      */
     public function call_subq($i, $methodname, ...$params) {
         $subq = $this->subqs[$i];
-        $paramsarrayfiltered = array();
+        $paramsarrayfiltered = [];
         foreach ($params as $paramno => $param) {
             if (is_a($param, 'qtype_combined_param_to_pass_through_to_subq_base')) {
                 $paramsarrayfiltered[$paramno] = $param->for_subq($subq);
@@ -118,7 +118,7 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
                 $paramsarrayfiltered[$paramno] = $param;
             }
         }
-        return call_user_func_array(array($subq->question, $methodname), $paramsarrayfiltered);
+        return call_user_func_array([$subq->question, $methodname], $paramsarrayfiltered);
     }
 
     /**
@@ -206,7 +206,6 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
         return null;
     }
 
-
     /**
      * @param $response qtype_combined_response_array_param
      * @return string errors
@@ -263,7 +262,54 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
 
         return $cleanresponses;
     }
+
+    /**
+     * Implements the logic required by {@see qtype_combined_question::validate_can_regrade_with_other_version()}.
+     *
+     * @param qtype_combined_combiner_for_run_time_question_instance $othercombiner
+     * @return string|null null if the regrade can proceed, else a reason why not.
+     */
+    public function validate_can_regrade_with_other_version(
+            qtype_combined_combiner_for_run_time_question_instance $othercombiner) {
+        if (count($this->subqs) != count($othercombiner->subqs)) {
+            return get_string('regradeissuenumsubquestionschanged', 'qtype_combined');
+        }
+
+        foreach ($this->subqs as $subqno => $subq) {
+            $subqmessage = $subq->question->validate_can_regrade_with_other_version(
+                    $othercombiner->subqs[$subqno]->question);
+            if ($subqmessage) {
+                return $subqmessage;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Implements the logic required by {@see qtype_combined_question::update_attempt_state_data_for_new_version()}.
+     *
+     * @param question_attempt_step $oldstep the first step of a {@see question_attempt} at $oldquestion.
+     * @param qtype_combined_combiner_for_run_time_question_instance $othercombiner the previous version of the question,
+     *      which $oldstate comes from.
+     * @return array the submit data which can be passed to {@see apply_attempt_state} to start
+     *     an attempt at this version of this question, corresponding to the attempt at the old question.
+     */
+    public function update_attempt_state_data_for_new_version(
+            question_attempt_step $oldstep, qtype_combined_combiner_for_run_time_question_instance $othercombiner): array {
+
+        $oldsteparam = new qtype_combined_step_param($oldstep);
+
+        $startdata = [];
+        foreach ($this->subqs as $subqno => $subq) {
+            $startdata[$subqno] = $this->call_subq($subqno, 'update_attempt_state_data_for_new_version',
+                    $oldsteparam, $othercombiner->subqs[$subqno]->question);
+        }
+
+        return $this->aggregate_response_arrays($startdata);
+    }
 }
+
 
 /**
  * Class qtype_combined_param_to_pass_through_to_subq_base

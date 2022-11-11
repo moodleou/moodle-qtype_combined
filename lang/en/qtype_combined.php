@@ -91,6 +91,7 @@ sub-questions in the question text.
 Depending on which question types you have installed, the student can enter a numeric or short text answer or choose an answer or
 answers using a select box or check boxes.';
 $string['privacy:metadata'] = 'The Combined plugin does not store any personal data.';
+$string['regradeissuenumsubquestionschanged'] = 'The number of embedded sub-questions in the question has changed.';
 $string['shuffle'] = 'Shuffle';
 $string['singlechoice'] = 'Default options for singlechoice sub-questions';
 $string['subqheader'] = '\'{$a->qtype}\' input \'{$a->qid}\'';

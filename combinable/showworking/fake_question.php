@@ -183,6 +183,37 @@ class qtype_combined_showworking_fake_question {
     public function clear_wrong_from_response(array $response): array {
         return [];
     }
+
+    /**
+     * Provide validate_can_regrade_with_other_version from question_definition.
+     *
+     * @param question_definition $otherversion
+     * @return string|null
+     */
+    public function validate_can_regrade_with_other_version(question_definition $otherversion): ?string {
+        if (get_class($otherversion) !== get_class($this)) {
+            return get_string('cannotregradedifferentqtype', 'question');
+        }
+
+        return null;
+    }
+
+    /**
+     * Provide update_attempt_state_data_for_new_version from question_definition.
+     *
+     * @param question_attempt_step $oldstep
+     * @param question_definition $oldquestion
+     * @return array
+     */
+    public function update_attempt_state_data_for_new_version(
+            question_attempt_step $oldstep, question_definition $oldquestion) {
+        $message = $this->validate_can_regrade_with_other_version($oldquestion);
+        if ($message) {
+            throw new coding_exception($message);
+        }
+
+        return $oldstep->get_qt_data();
+    }
 }
 
 
