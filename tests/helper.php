@@ -21,7 +21,252 @@
  * @copyright 2013 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_combined_test_helper {
+class qtype_combined_test_helper extends question_test_helper {
+
+    public function get_test_questions() {
+        return ['allsubparts', 'pmatchsynonyms', 'numerical'];
+    }
+
+    /**
+     * Get the data you would get by saving the editing form for question with one subpart of each type.
+     *
+     * @return stdClass simulated form data.
+     */
+    public function get_combined_question_form_data_allsubparts(): stdClass {
+        $fromform = new stdClass();
+
+        $fromform->name = 'New combined question';
+        $fromform->questiontext = ['text' => 'What is the pH of a 0.1M solution? [[1:numeric:__10__]]<br/>' .
+                'What is the IUPAC name of the molecule? [[2:pmatch:__20__]]<br/>' .
+                'Which elements are shown? [[3:multiresponse]]<br/>' .
+                'Which element is shown as white? [[6:singlechoice]]<br/>' .
+                'When a solution is combined with oil the result is a [[4:selectmenu:2]]<br/>' .
+                'Showworking [[5:showworking:__80x5__]]', 'format' => FORMAT_HTML];
+        $fromform->defaultmark = 1.0;
+        if (class_exists('\core_question\local\bank\question_version_status')) {
+            $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+        }
+        $fromform->generalfeedback = ['text' => 'The molecule is ethanoic acid which is more commonly known' .
+                ' as acetic acid or in dilute solution as vinegar. The constituent elements are carbon (grey),' .
+                ' hydrogen (white) and oxygen (red). A 0.1M solution has a pH of 2.88 and when a solution ' .
+                'is combined with oil the result is a vinaigrette.', 'format' => FORMAT_HTML];
+
+        $fromform->subqfragment_id = [
+            'numeric_1' => '1',
+            'pmatch_2' => '2',
+            'multiresponse_3' => '3',
+            'singlechoice_6' => '6',
+            'selectmenu_4' => '4',
+            'showworking_5' => '5',
+        ];
+        $fromform->subqfragment_type = [
+            'numeric_1' => 'numeric',
+            'pmatch_2' => 'pmatch',
+            'multiresponse_3' => 'multiresponse',
+            'singlechoice_6' => 'singlechoice',
+            'selectmenu_4' => 'selectmenu',
+            'showworking_5' => 'showworking',
+        ];
+
+        $fromform->{'subq:numeric:1:defaultmark'} = '0.2';
+        $fromform->{'subq:numeric:1:answer'} = ['2.88'];
+        $fromform->{'subq:numeric:1:error'} = [''];
+        $fromform->{'subq:numeric:1:requirescinotation'} = '0';
+        $fromform->{'subq:numeric:1:generalfeedback'} = ['text' => 'You have the incorrect value for the pH',
+                'format' => FORMAT_HTML];
+
+        $fromform->{'subq:pmatch:2:defaultmark'} = '0.2';
+        $fromform->{'subq:pmatch:2:allowsubscript'} = '0';
+        $fromform->{'subq:pmatch:2:allowsuperscript'} = '0';
+        $fromform->{'subq:pmatch:2:usecase'} = '0';
+        $fromform->{'subq:pmatch:2:applydictionarycheck'} = '-';
+        $fromform->{'subq:pmatch:2:extenddictionary'} = '';
+        $fromform->{'subq:pmatch:2:sentencedividers'} = '.?!';
+        $fromform->{'subq:pmatch:2:converttospace'} = ',;:';
+        $fromform->{'subq:pmatch:2:modelanswer'} = 'ethanoic acid';
+        $fromform->{'nosynonymssubq:pmatch:2:synonymsdata'} = 1;
+        $fromform->{'subq:pmatch:2:synonymsdata'} = [['word' => '', 'synonyms' => '']];
+        $fromform->{'subq:pmatch:2:answer'} = ['match_mw (ethanoic acid)'];
+        $fromform->{'subq:pmatch:2:generalfeedback'} = ['text' => 'You have the incorrect IUPAC name.',
+                'format' => FORMAT_HTML];
+
+        $fromform->{'subq:multiresponse:3:defaultmark'} = '0.2';
+        $fromform->{'subq:multiresponse:3:shuffleanswers'} = '1';
+        $fromform->{'subq:multiresponse:3:answernumbering'} = 'none';
+        $fromform->{'subq:multiresponse:3:noofchoices'} = 7;
+        $fromform->{'subq:multiresponse:3:answer'} = [
+                ['text' => 'C/carbon', 'format' => FORMAT_HTML],
+                ['text' => 'H/hydrogen', 'format' => FORMAT_HTML],
+                ['text' => 'O/oxygen', 'format' => FORMAT_HTML],
+                ['text' => 'N/nitrogen', 'format' => FORMAT_HTML],
+                ['text' => 'F/fluorine', 'format' => FORMAT_HTML],
+                ['text' => 'Cl/chlorine', 'format' => FORMAT_HTML],
+                ['text' => '<b>Br/bromine</b>', 'format' => FORMAT_HTML],
+            ];
+        $fromform->{'subq:multiresponse:3:correctanswer'} = [
+                '1',
+                '1',
+                '1',
+                '0',
+                '0',
+                '0',
+                '0',
+            ];
+        $fromform->{'subq:multiresponse:3:generalfeedback'} = [
+                'text' => 'Your choice of elements is not entirely correct.', 'format' => FORMAT_HTML];
+
+        $fromform->{'subq:singlechoice:6:defaultmark'} = '0.2';
+        $fromform->{'subq:singlechoice:6:shuffleanswers'} = '1';
+        $fromform->{'subq:singlechoice:6:answernumbering'} = 'none';
+        $fromform->{'subq:singlechoice:6:noofchoices'} = 3;
+        $fromform->{'subq:singlechoice:6:answer'} = [
+                ['text' => 'C carbon', 'format' => FORMAT_HTML],
+                ['text' => 'H hydrogen', 'format' => FORMAT_HTML],
+                ['text' => '<b>O oxygen</b>', 'format' => FORMAT_HTML],
+            ];
+        $fromform->{'subq:singlechoice:6:fraction'} = [
+                '0.0',
+                '1.0',
+                '0.0',
+            ];
+        $fromform->{'subq:singlechoice:6:feedback'} = [
+                ['text' => 'Carbon is conventionally black', 'format' => FORMAT_HTML],
+                ['text' => 'That is correct', 'format' => FORMAT_HTML],
+                ['text' => 'Oxygen is conventionally red', 'format' => FORMAT_HTML],
+            ];
+        $fromform->{'subq:singlechoice:6:generalfeedback'} = [
+            'text' => 'Your name for the white atoms is incorrect.', 'format' => FORMAT_HTML];
+
+        $fromform->{'subq:selectmenu:4:defaultmark'} = '0.2';
+        $fromform->{'subq:selectmenu:4:shuffleanswers'} = '0';
+        $fromform->{'subq:selectmenu:4:noofchoices'} = 7;
+        $fromform->{'subq:selectmenu:4:answer'} = [
+                'Wine',
+                'Vinagrette',
+                'Paint Thinner',
+                'Mayonnaise',
+        ];
+        $fromform->{'subq:selectmenu:4:generalfeedback'} = [
+              'text' => 'Your name for the mixture is incorrect.', 'format' => FORMAT_HTML];
+
+        test_question_maker::set_standard_combined_feedback_form_data($fromform);
+        $fromform->shownumcorrect = 0;
+        $fromform->penalty = '0.3333333';
+        $fromform->numhints = 2;
+        $fromform->hint = [
+                ['text' => 'First hint', 'format' => FORMAT_HTML],
+                ['text' => 'Second hint', 'format' => FORMAT_HTML],
+            ];
+        $fromform->hintclearwrong = [1, 1];
+        $fromform->hintshownumcorrect = [0, 0];
+
+        return $fromform;
+    }
+
+    /**
+     * Get the data from saving the form for a question with one pmatch subpart with synonyms.
+     *
+     * @return stdClass simulated form data.
+     */
+    public function get_combined_question_form_data_pmatchsynonyms(): stdClass {
+        $fromform = new stdClass();
+
+        $fromform->name = 'Combined pmatch with synonyms';
+        $fromform->questiontext = ['text' => 'The UK prime minister lives at [[1:pmatch]].',
+                'format' => FORMAT_HTML];
+        $fromform->defaultmark = 1.0;
+        if (class_exists('\core_question\local\bank\question_version_status')) {
+            $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+        }
+        $fromform->generalfeedback = [
+                'text' => "General feedback: The UK prime minister lives at 'Number 10' (Downing Street).",
+                'format' => FORMAT_HTML];
+
+        $fromform->subqfragment_id = [
+            'pmatch_1' => '1',
+        ];
+        $fromform->subqfragment_type = [
+            'pmatch_1' => 'pmatch',
+        ];
+
+        $fromform->{'subq:pmatch:1:defaultmark'} = '1.0';
+        $fromform->{'subq:pmatch:1:allowsubscript'} = '0';
+        $fromform->{'subq:pmatch:1:allowsuperscript'} = '0';
+        $fromform->{'subq:pmatch:1:usecase'} = '0';
+        $fromform->{'subq:pmatch:1:applydictionarycheck'} = '-';
+        $fromform->{'subq:pmatch:1:extenddictionary'} = '';
+        $fromform->{'subq:pmatch:1:sentencedividers'} = '.?!';
+        $fromform->{'subq:pmatch:1:converttospace'} = ',;:';
+        $fromform->{'subq:pmatch:1:modelanswer'} = 'ethanoic acid';
+        $fromform->{'nosynonymssubq:pmatch:1:synonymsdata'} = 1;
+        $fromform->{'subq:pmatch:1:synonymsdata'} = [['word' => 'ten', 'synonyms' => '10']];
+        $fromform->{'subq:pmatch:1:answer'} = ['match(number ten)'];
+        $fromform->{'subq:pmatch:1:generalfeedback'} = ['text' => 'That is not what we are looking for.',
+                'format' => FORMAT_HTML];
+
+        test_question_maker::set_standard_combined_feedback_form_data($fromform);
+        $fromform->shownumcorrect = 0;
+        $fromform->penalty = '0.3333333';
+        $fromform->numhints = 0;
+        $fromform->hint = [];
+        $fromform->hintclearwrong = [];
+        $fromform->hintshownumcorrect = [];
+
+        return $fromform;
+    }
+
+    /**
+     * Get the data from saving the form for a question with two numerical sub-parts.
+     *
+     * @return stdClass simulated form data.
+     */
+    public function get_combined_question_form_data_numerical(): stdClass {
+        $fromform = new stdClass();
+
+        $fromform->name = 'Combined numerical';
+        $fromform->questiontext = ['text' => 'What 1.5 + 5? [[no1:numeric:__10__]]<br/>' .
+                'What 10 + 1? [[no2:numeric:__10__]]', 'format' => FORMAT_HTML];
+        $fromform->defaultmark = 1.0;
+        if (class_exists('\core_question\local\bank\question_version_status')) {
+            $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+        }
+        $fromform->generalfeedback = [
+                'text' => "General feedback: 1.5 + 5 = 6.5. 10 + 1 = 11.",
+                'format' => FORMAT_HTML];
+
+        $fromform->subqfragment_id = [
+            'numeric_no1' => 'no1',
+            'numeric_no2' => 'no2',
+        ];
+        $fromform->subqfragment_type = [
+            'numeric_no1' => 'numeric',
+            'numeric_no2' => 'numeric',
+        ];
+
+        $fromform->{'subq:numeric:no1:defaultmark'} = '0.5';
+        $fromform->{'subq:numeric:no1:answer'} = ['6.5'];
+        $fromform->{'subq:numeric:no1:error'} = [''];
+        $fromform->{'subq:numeric:no1:requirescinotation'} = '0';
+        $fromform->{'subq:numeric:no1:generalfeedback'} = ['text' => 'That is not correct.',
+                'format' => FORMAT_HTML];
+
+        $fromform->{'subq:numeric:no2:defaultmark'} = '0.5';
+        $fromform->{'subq:numeric:no2:answer'} = ['11'];
+        $fromform->{'subq:numeric:no2:error'} = [''];
+        $fromform->{'subq:numeric:no2:requirescinotation'} = '0';
+        $fromform->{'subq:numeric:no2:generalfeedback'} = ['text' => 'That is not correct.',
+                'format' => FORMAT_HTML];
+
+        test_question_maker::set_standard_combined_feedback_form_data($fromform);
+        $fromform->shownumcorrect = 0;
+        $fromform->penalty = '0.3333333';
+        $fromform->numhints = 0;
+        $fromform->hint = [];
+        $fromform->hintclearwrong = [];
+        $fromform->hintshownumcorrect = [];
+
+        return $fromform;
+    }
 
     /**
      * @param array $qtypes, ... variable number of params accepted, they are all strings, qtypes whose helpers to include
@@ -49,12 +294,8 @@ class qtype_combined_test_helper {
      * @return qtype_gapselect_question
      */
     protected static function make_a_gapselect_question($name) {
-        // Once Moodle 3.8.4 is the oldest supported version, this can be claned up to just the if code.
-        if (method_exists('qtype_gapselect_test_helper', 'get_test_questions')) {
-            $gapselect = test_question_maker::make_question('gapselect');
-        } else {
-            $gapselect = qtype_gapselect_test_helper::make_a_gapselect_question();
-        }
+        /** @var qtype_gapselect_question $gapselect */
+        $gapselect = test_question_maker::make_question('gapselect');
         $gapselect->name = $name;
         $gapselect->questiontext = '[[1]][[2]][[3]]';
         $gapselect->generalfeedback = 'You made at least one incorrect choice.';
@@ -98,7 +339,7 @@ class qtype_combined_test_helper {
      * @return qtype_oumultiresponse_question
      */
     protected static function make_oumultiresponse_question_two_of_four($name) {
-        $mr = qtype_oumultiresponse_test_helper::make_oumultiresponse_question_two_of_four();
+        $mr = test_question_maker::make_question('oumultiresponse', 'two_of_four');
         $mr->name = $name;
         $mr->shuffleanswers = false;
         return $mr;
