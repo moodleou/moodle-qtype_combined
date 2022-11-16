@@ -457,6 +457,42 @@ class qtype_combined_test_helper extends question_test_helper {
     }
 
     /**
+     * @return qtype_combined_question
+     */
+    public static function make_a_combined_question_with_oumr_and_showworking_subquestion() {
+        question_bank::load_question_definition_classes('combined');
+        $combined = new qtype_combined_question();
+
+        test_question_maker::initialise_a_question($combined);
+
+        $combined->name = 'Combined with working';
+        $combined->questiontext = 'Choose correct 2 check boxes [[mc:multiresponse]]. '.
+            'Why do you think that? [[sw:showworking:__80x5__]]';
+        $combined->generalfeedback = 'You need to choose 2 of the 4 check boxes.';
+        $combined->qtype = question_bank::get_qtype('combined');
+
+        test_question_maker::set_standard_combined_feedback_fields($combined);
+
+        $combined->combiner = new qtype_combined_combiner_for_run_time_question_instance();
+        $combined->combiner->find_included_subqs_in_question_text($combined->questiontext);
+
+        $subq = $combined->combiner->find_or_create_question_instance('multiresponse', 'mc');
+        $subq->question = self::make_oumultiresponse_question_two_of_four('mc');
+        $subq->question->defaultmark = 1;
+
+        $subq = $combined->combiner->find_or_create_question_instance('showworking', 'sw');
+        $subq->question = new qtype_combined_showworking_fake_question('sw');
+        $subq->question->defaultmark = 0;
+
+        $combined->hints = [
+            new question_hint_with_parts(1, 'Hint 1.', FORMAT_HTML, true, false),
+            new question_hint_with_parts(2, 'Hint 2.', FORMAT_HTML, true, true),
+        ];
+
+        return $combined;
+    }
+
+    /**
      * @param string $name
      * @return qtype_pmatch_question
      */

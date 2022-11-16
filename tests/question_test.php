@@ -136,6 +136,23 @@ class question_test extends \advanced_testcase {
                         ['mc:choice0' => 1, 'mc:choice2' => 1, 'gs:p1' => 1, 'gs:p2' => 1, 'gs:p3' => 1]));
     }
 
+    public function test_classify_response() {
+        if ($notfound = \qtype_combined_test_helper::safe_include_test_helpers('oumultiresponse')) {
+            $this->markTestSkipped($notfound);
+        }
+
+        $question = \qtype_combined_test_helper::make_a_combined_question_with_oumr_and_showworking_subquestion();
+        $question->start_attempt(new question_attempt_step(), 1);
+
+        $this->assertEquals(
+                [
+                    'mc:multiresponse:13' => new \question_classified_response(13, 'One', 0.5),
+                    'mc:multiresponse:15' => new \question_classified_response(15, 'Three', 0.5),
+                ],
+                $question->classify_response(
+                        ['mc:choice0' => 1, 'mc:choice2' => 1, 'sw:answer' => 'A frog told me.']));
+    }
+
     public function test_get_num_parts_right() {
         if ($notfound = \qtype_combined_test_helper::safe_include_test_helpers('oumultiresponse', 'gapselect')) {
             $this->markTestSkipped($notfound);

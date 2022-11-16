@@ -125,6 +125,17 @@ class qtype_combined_showworking_fake_question {
     }
 
     /**
+     * Implement the classify_response method in question_definition.
+     *
+     * @param array $response a response, as might be passed to {@link grade_response()}.
+     * @return array subpartid => {@link question_classified_response} objects.
+     *      returns an empty array if no analysis is possible.
+     */
+    public function classify_response(array $response): array {
+        return [];
+    }
+
+    /**
      * Overwrite get_correct_response method in question_definition.
      *
      * @return array The correct response.
