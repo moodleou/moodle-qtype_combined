@@ -167,3 +167,19 @@ Feature: Preview a Combined question
     Then I should see "Parts of your answer require attention:"
     And I should see "Part no1 - You have used an illegal thousands separator \",\" in your answer. We only accept answers with a decimal separator \".\"."
     And I should see "Part no2 - You have not entered a number in a recognised format."
+
+  @javascript
+  Scenario: Test showing working editor work within a Combined question
+    Given the following "questions" exist:
+      | questioncategory | qtype    | template             | name                                       |
+      | Test questions   | combined | numericalshowworking | Test numerical questions with show working |
+    And I am on the "Test numerical questions with show working" "core_question > preview" page logged in as teacher
+    And I expand all fieldsets
+    And I should see "Showworking editor"
+    When I set the following fields to these values:
+      | Answer no1 | 5                                                                |
+      | Answer no2 | 4                                                                |
+      | Answer 5   | <p>The <b>cat</b> sat on the mat. Then it ate a <b>frog</b>.</p> |
+    And I press "Submit and finish"
+    Then I should see "sat on the mat"
+    And "b" "css_element" should exist in the ".qtype_combined_response" "css_element"

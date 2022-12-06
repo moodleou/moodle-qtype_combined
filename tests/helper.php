@@ -24,7 +24,7 @@
 class qtype_combined_test_helper extends question_test_helper {
 
     public function get_test_questions() {
-        return ['allsubparts', 'pmatchsynonyms', 'numerical'];
+        return ['allsubparts', 'pmatchsynonyms', 'numerical', 'numericalshowworking'];
     }
 
     /**
@@ -265,6 +265,20 @@ class qtype_combined_test_helper extends question_test_helper {
         $fromform->hintclearwrong = [];
         $fromform->hintshownumcorrect = [];
 
+        return $fromform;
+    }
+
+    /**
+     * Create a combine numerical question with show working.
+     *
+     * @return stdClass
+     */
+    public function get_combined_question_form_data_numericalshowworking(): stdClass {
+        $fromform = self::get_combined_question_form_data_numerical();
+        $fromform->questiontext = ['text' => 'What 1.5 + 5? [[no1:numeric:__10__]]<br/>' .
+            'What 10 + 1? [[no2:numeric:__10__]]<br/>' .
+            'Showworking editor [[5:showworking:__80x5__]]',
+            'format' => FORMAT_HTML];
         return $fromform;
     }
 

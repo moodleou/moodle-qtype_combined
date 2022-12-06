@@ -167,3 +167,7 @@ body#page-question-type-combined div[id^=fitem_id_subqsinglechoice][id*=fraction
 body#page-question-type-combined div[id^=fitem_id_subqsinglechoice][id*=feedback_] {
     border-bottom: 1px solid #bbb;
 }
+.que.combined .qtype_combined_response.readonly {
+    border: 1px solid #bbb;
+    padding: 4px;
+}

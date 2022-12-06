@@ -1799,4 +1799,66 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_standard_correct_combined_feedback_expectation(),
                 $this->get_contains_general_feedback_expectation($combined));
     }
+
+    /**
+     * Check question contain a textarea with correct id.
+     *
+     * @param string $subqname
+     * @return question_contains_tag_with_attributes
+     */
+    protected function get_contains_subq_textarea_expectation(string $subqname): question_contains_tag_with_attributes {
+
+        $fieldname = $this->quba->get_field_prefix($this->slot) . $subqname;
+        $expectedattributes = [
+            'id' => $fieldname . '_id',
+        ];
+        return new question_contains_tag_with_attributes('textarea', $expectedattributes);
+    }
+
+    /**
+     * Test interactive behaviour for combined question with showworking editor.
+     */
+    public function test_interactive_behaviour_for_combine_with_show_working_editor() {
+        global $PAGE;
+
+        if ($notfound = \qtype_combined_test_helper::safe_include_test_helpers('oumultiresponse')) {
+            $this->markTestSkipped($notfound);
+        }
+        // The current text editor depends on the users profile setting - so it needs a valid user.
+        $this->setAdminUser();
+        // Required to init a text editor.
+        $PAGE->set_url('/');
+
+        // Create a combined question with showworking.
+        $combined = qtype_combined_test_helper::make_a_combined_question_with_oumr_and_showworking_subquestion();
+        $this->start_attempt_at_question($combined, 'interactive', 3);
+
+        $this->render();
+
+        // Check the initial state.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+            $this->get_contains_mc_checkbox_expectation('mc:choice0', true, false),
+            $this->get_contains_mc_checkbox_expectation('mc:choice1', true, false),
+            $this->get_contains_mc_checkbox_expectation('mc:choice2', true, false),
+            $this->get_contains_mc_checkbox_expectation('mc:choice3', true, false),
+            $this->get_contains_subq_textarea_expectation('sw:answer'),
+            $this->get_contains_submit_button_expectation(true));
+
+        // Submit the right answer.
+        $this->process_submission([
+            'sw:answer' => '<p>The <b>cat</b> sat on the mat. Then it ate a <b>frog</b>.</p>',
+            'mc:choice0' => '1',
+            'mc:choice2' => '1',
+            '-submit' => '1'
+            ]);
+
+        // Verify.
+        $this->check_current_output(
+            $this->get_contains_mc_checkbox_expectation('mc:choice0', false, true),
+            $this->get_contains_mc_checkbox_expectation('mc:choice2', false, true),
+        );
+        $this->check_output_contains('<p>The <b>cat</b> sat on the mat. Then it ate a <b>frog</b>.</p>');
+    }
 }

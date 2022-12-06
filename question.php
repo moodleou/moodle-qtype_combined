@@ -107,7 +107,7 @@ class qtype_combined_question extends question_graded_automatically_with_countba
         if ($component == 'question' && $filearea == 'hint') {
             return $this->check_hint_file_access($qa, $options, $args);
         }
-
+        // TODO: We will add check file access after MDL-76582 is finished to allow upload files in editor.
         // If this is not a hint then first arg is question id.
         list($qid, $filename) = $args;
         $subq = $this->combiner->find_subq_with_id($qid);
