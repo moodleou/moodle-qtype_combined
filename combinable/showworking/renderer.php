@@ -26,40 +26,37 @@ class qtype_combined_showworking_embedded_renderer extends qtype_renderer
 
     public function subquestion(question_attempt $qa, question_display_options $options, qtype_combined_combinable_base $subq,
             $placeno) {
-
-        $currentanswer = $qa->get_last_qt_var($subq->step_data_name('answer'));
+        $currentanswer = format_text($qa->get_last_qt_var($subq->step_data_name('answer')), FORMAT_HTML);
         $inputname = $qa->get_qt_field_name($subq->step_data_name('answer'));
-        $attributes = [
-            'class' => 'answer',
-            'name' => $inputname,
-            'id' => $inputname
-        ];
-
         if ($options->readonly) {
-            $attributes['readonly'] = 'readonly';
-        }
-
-        list($rows, $cols) = $subq->get_size();
-
-        if ($rows > 1) {
-            $attributes['rows'] = $rows;
-            $attributes['cols'] = $cols;
-            $input = html_writer::tag('textarea', $currentanswer, $attributes);
+            $inputinplace = html_writer::tag('div', $currentanswer, [
+                    'role' => 'textbox',
+                    'aria-readonly' => 'true',
+                    'aria-labelledby' => $inputname . '_label',
+                    'class' => 'qtype_combined_response readonly',
+                ]);
         } else {
-            $inputattributes = [
-                'type' => 'text',
-                'value' => $currentanswer
-            ];
-            $inputattributes['size'] = $cols;
-            $input = html_writer::empty_tag('input', $inputattributes + $attributes);
+            // Setup editor.
+            $id = $inputname . '_id';
+            $coreeditor = editors_get_preferred_editor(FORMAT_HTML);
+            // TODO: We will add the third param after MDL-76582 is finished to allow upload files in editor.
+            $coreeditor->use_editor($id, question_utils::get_editor_options($options->context));
+            // Set value.
+            $coreeditor->set_text($currentanswer);
+            [$rows, $cols] = $subq->get_size();
+            $inputinplace = html_writer::tag('div', html_writer::tag('textarea', s($currentanswer), [
+                'id' => $id,
+                'name' => $inputname,
+                'class' => 'form-control',
+                'rows' => $rows,
+                'cols' => $cols,
+            ]));
+            $inputinplace .= html_writer::tag('label', get_string('answer') . ' ' . $subq->get_identifier(), [
+                'class' => 'accesshide',
+                'for' => $id,
+            ]);
         }
-
-        $inputinplace = html_writer::tag('label', get_string('answer'),
-            ['for' => $attributes['id'], 'class' => 'accesshide']);
-        $inputinplace .= $input;
-
         $result = html_writer::tag('div', $inputinplace, ['class' => 'qtext']);
-
         return html_writer::div($result, 'combined-showworking-input');
     }
 }
