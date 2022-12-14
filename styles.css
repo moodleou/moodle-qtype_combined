@@ -20,15 +20,14 @@
 .que.combined .subqspecificfeedback {
     margin: 0 5px;
     background: #fff8eb;
-    border: 1px solid #fff8eb;
-    padding: 3px;
+    padding: 0 3px;
     display: inline-block;
     width: 98%;
 }
 
 .que.combined .qtext .answer div.r0,
 .que.combined .qtext .answer div.r1 {
-    padding: 0;
+    padding: 2px 0 0 0;
     text-indent: 0;
     display: flex;
     align-items: flex-start;
@@ -41,7 +40,7 @@
 .que.combined .qtext span.answer span.r0,
 .que.combined .qtext span.answer span.r1 {
     display: inline-flex;
-    align-items: baseline;
+    align-items: flex-start;
 }
 
 .que.combined .qtext span.answer span.r0 label,
@@ -79,6 +78,15 @@ body.ie .que.combined .qtext span.answer span.r1.incorrect img.icon,
 body.ie .que.combined .qtext span.answer span.r0.correct img.icon,
 body.ie .que.combined .qtext span.answer span.r1.correct img.icon {
     flex: 1 0 auto;
+}
+
+.que.combined .qtext div.horizontal .answer input[type="radio"],
+.que.combined .qtext div.horizontal .answer input[type="checkbox"] {
+    margin: 4px 4px 0 4px;
+}
+.que.combined .qtext .answer .r0.partiallycorrect i.icon,
+.que.combined .qtext .answer .r1.partiallycorrect i.icon {
+    vertical-align: 1px;
 }
 
 .que.combined .qtext .horizontal span.answer span.r0 div.feedback span.subqspecificfeedback,
