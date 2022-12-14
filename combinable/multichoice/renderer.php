@@ -85,7 +85,7 @@ class qtype_combined_multichoice_embedded_renderer extends qtype_renderer
 
             $class = 'r' . ($value % 2);
             if ($options->correctness && $isselected) {
-                $feedbackimg[] = $this->feedback_image($ans->fraction);
+                $feedbackimg[] = html_writer::span($this->feedback_image($ans->fraction), 'ml-1');
                 $class .= ' ' . $this->feedback_class($ans->fraction);
             } else {
                 $feedbackimg[] = '';
