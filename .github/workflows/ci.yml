@@ -11,16 +11,19 @@ jobs:
           - php: '8.0'
             moodle-branch: 'master'
             database: 'pgsql'
+          - php: '8.0'
+            moodle-branch: 'MOODLE_401_STABLE'
+            database: 'mariadb'
           - php: '7.4'
             moodle-branch: 'MOODLE_400_STABLE'
-            database: 'mariadb'
+            database: 'pgsql'
           - php: '7.3'
             moodle-branch: 'MOODLE_311_STABLE'
-            database: 'pgsql'
+            database: 'mariadb'
 
     services:
       postgres:
-        image: postgres:12
+        image: postgres:13
         env:
           POSTGRES_USER: 'postgres'
           POSTGRES_HOST_AUTH_METHOD: 'trust'

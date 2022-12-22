@@ -3,14 +3,15 @@
 ## Changes in 2.2
 
 * This version is compatible with Moodle 4.0 (and 3.11).
-* There is a new type of 'Part' that can be used within this question type. It is not a
+* There is a new type of 'text input' (showworking) that can be used within this question type. It is not a
   graded item, but rather an un-graded text box where you can ask students to 'show their working',
   or type anything else you ask them to.
 * 'Clear incorrect responses' option added in 'Interactive with multiple tries' mode.
 * What used to be referred to as 'Sub-questions' are now called 'Parts'. We thought that was clearer.
 * Improved display of sample placeholders that you might want to copy on the editing form.
 * Display of embedded multi-choice questions update to match the styling of the stand-alone
-  versions of those question types.
+  versions of those question types, at least we did that once. I think Moodle core changed layout again,
+  so we might need to redo this.
 * If the student has not answered all parts of the question, the validation message they get is now clearer.
 
 
