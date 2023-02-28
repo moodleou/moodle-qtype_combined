@@ -53,6 +53,51 @@ require_once($CFG->dirroot . '/question/type/combined/tests/helper.php');
  * @covers \qtype_combined_combinable_type_base
  */
 class walkthrough_test extends \qbehaviour_walkthrough_test_base {
+
+    /**
+     * Helper method: Store a test file with a given name and contents in a
+     * draft file area.
+     *
+     * @param int $usercontextid user context id.
+     * @param int $draftitemid draft item id.
+     * @param string $filename filename.
+     * @param string $contents file contents.
+     */
+    protected function save_file_to_draft_area(int $usercontextid, int $draftitemid, string $filename, string $contents): void {
+        $fs = get_file_storage();
+
+        $filerecord = new \stdClass();
+        $filerecord->contextid = $usercontextid;
+        $filerecord->component = 'user';
+        $filerecord->filearea = 'draft';
+        $filerecord->itemid = $draftitemid;
+        $filerecord->filepath = '/';
+        $filerecord->filename = $filename;
+        $fs->create_file_from_string($filerecord, $contents);
+    }
+
+    /**
+     * Prepare show working sub question type html data with sample file.
+     *
+     * @param string $answer answer identify field name.
+     * @param string $filename name of sample file.
+     * @return array [$html, $itemid] html data and itemid for the editor field.
+     */
+    protected function prepare_show_working_response_with_file(string $answer, string $filename): array {
+        global $CFG, $USER;
+        if (!preg_match('/' . $answer . ':itemid" value="(\d+)"/', $this->currentoutput, $matches)) {
+            throw new \coding_exception('Editor draft item id not found.');
+        }
+        $itemid = $matches[1];
+        $usercontextid = \context_user::instance($USER->id)->id;
+        $this->save_file_to_draft_area($usercontextid, $itemid, $filename, ':-)');
+
+        $html = '<p>The <b>cat</b> sat on the mat. Then it ate a <b>frog</b>.</p>' .
+            'Here is a picture: <img src="' . $CFG->wwwroot . "/draftfile.php/{$usercontextid}/user/draft/{$itemid}/$filename" .
+            '" alt="sampleimage">';
+        return [$html, $itemid];
+    }
+
     public function test_interactive_behaviour_for_combined_question_with_gapselect_subquestion() {
         if ($notfound = qtype_combined_test_helper::safe_include_test_helpers('gapselect')) {
             $this->markTestSkipped($notfound);
@@ -1834,7 +1879,6 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->start_attempt_at_question($combined, 'interactive', 3);
 
         $this->render();
-
         // Check the initial state.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
@@ -1845,14 +1889,12 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
             $this->get_contains_mc_checkbox_expectation('mc:choice3', true, false),
             $this->get_contains_subq_textarea_expectation('sw:answer'),
             $this->get_contains_submit_button_expectation(true));
-
+        [$html, $itemid] = $this->prepare_show_working_response_with_file('sw:answer', 'sampleimage.jpg');
         // Submit the right answer.
         $this->process_submission([
-            'sw:answer' => '<p>The <b>cat</b> sat on the mat. Then it ate a <b>frog</b>.</p>',
-            'mc:choice0' => '1',
-            'mc:choice2' => '1',
-            '-submit' => '1'
-            ]);
+            'sw:answer' => $html, 'sw:answer:itemid' => $itemid,
+            'mc:choice0' => '1', 'mc:choice2' => '1', '-submit' => '1'
+        ]);
 
         // Verify.
         $this->check_current_output(
@@ -1860,5 +1902,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
             $this->get_contains_mc_checkbox_expectation('mc:choice2', false, true),
         );
         $this->check_output_contains('<p>The <b>cat</b> sat on the mat. Then it ate a <b>frog</b>.</p>');
+        $this->check_output_contains('<img src="https://www.example.com/moodle/pluginfile.php/1/question/response_swanswer/');
+        $this->check_output_contains('sampleimage.jpg" alt="sampleimage"');
     }
 }

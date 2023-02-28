@@ -96,7 +96,7 @@ class qtype_combined_showworking_fake_question {
      * @return array Array with name => value to take all the raw submitted data belonging to this question.
      */
     public function get_expected_data(): array {
-        return ['answer' => PARAM_RAW_TRIMMED];
+        return ['answer' => question_attempt::PARAM_RAW_FILES];
     }
 
     /**
