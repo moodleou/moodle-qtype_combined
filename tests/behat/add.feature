@@ -30,6 +30,7 @@ Feature: Test creating a Combined question
     # Follow sub-questions (The order of sub-questions comes from the question text).
     # Numeric part.
     And I expand all fieldsets
+    And the field "Answer must match" matches value "match ()"
     And I set the following fields to these values:
       | id_subqnumeric1defaultmark     | 20%                                     |
       | id_subqnumeric1answer_0        | 2.88                                    |
