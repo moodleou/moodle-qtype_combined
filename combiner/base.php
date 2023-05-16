@@ -78,8 +78,8 @@ abstract class qtype_combined_combiner_base {
                     preg_quote(static::EMBEDDED_CODE_POSTFIX, '~')
                     .'~';
 
-        $matches = array();
-        $result = preg_match_all($pattern, $questiontext, $matches);
+        $matches = [];
+        $result = preg_match_all($pattern, $questiontext ?? '', $matches);
         $realsubqfound = false;
         foreach ($matches[1] as $codeinsideprepostfix) {
             // TODO this should be using qtype_combined_combinable_type_base::is_real_subquestion,
