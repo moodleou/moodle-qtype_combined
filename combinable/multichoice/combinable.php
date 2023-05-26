@@ -91,7 +91,7 @@ class qtype_combined_combinable_multichoice extends qtype_combined_combinable_ac
 
         // Answer text.
         $answerels[] = $mform->createElement('editor', $this->form_field_name('answer'),
-                get_string('choiceno', 'qtype_multichoice', '{no}'), ['rows' => 1]);
+                get_string('choiceno', 'qtype_multichoice', '{no}'), ['rows' => 2]);
         $mform->setType($this->form_field_name('answer'), PARAM_RAW);
 
         // Answer grade.
@@ -101,7 +101,7 @@ class qtype_combined_combinable_multichoice extends qtype_combined_combinable_ac
 
         // Answer feedback.
         $answerels[] = $mform->createElement('editor', $this->form_field_name('feedback'),
-                get_string('feedback', 'qtype_multichoice'), ['rows' => 1]);
+                get_string('feedback', 'qtype_multichoice'), ['rows' => 2]);
         $mform->setType($this->form_field_name('feedback'), PARAM_RAW);
 
         if (isset($this->questionrec->options)) {
