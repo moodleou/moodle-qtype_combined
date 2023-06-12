@@ -168,14 +168,13 @@ class qtype_combined_text_entry_renderer_base extends qtype_renderer
                                          qtype_combined_combinable_base $subq,
                                          $placeno) {
         $question = $subq->question;
-        $currentanswer = $qa->get_last_qt_var($subq->step_data_name('answer'));
+        $currentanswer = $this->prepare_current_answer($options, $qa->get_last_qt_var($subq->step_data_name('answer')), $subq);
 
         $inputname = $qa->get_qt_field_name($subq->step_data_name('answer'));
-        $generalattributes = array(
+        $generalattributes = array_merge([
             'id' => $inputname,
             'class' => 'answer'
-        );
-
+        ], $this->get_extra_input_attributes());
         $size = $subq->get_width();
 
         $feedbackimg = '';
@@ -226,5 +225,27 @@ class qtype_combined_text_entry_renderer_base extends qtype_renderer
         $input = $inputinplace .= $input;
 
         return $input;
+    }
+
+    /**
+     * Get the current answer. Allow the subq to override so they can modify the current answer.
+     *
+     * @param question_display_options $options $options controls what should and should not be displayed.
+     * @param string|null $currentanswer
+     * @param qtype_combined_combinable_base $subq
+     * @return string|null
+     */
+    protected function prepare_current_answer(question_display_options $options, ?string $currentanswer,
+        qtype_combined_combinable_base $subq): ?string {
+        return $currentanswer;
+    }
+
+    /**
+     * Get extra attributes for answer field.
+     *
+     * @return array
+     */
+    protected function get_extra_input_attributes(): array {
+        return [];
     }
 }
