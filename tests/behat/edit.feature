@@ -25,8 +25,8 @@ Feature: Test editing a Combined question
   Scenario: Edit a Combined question
     When I am on the "A combined question" "core_question > edit" page logged in as teacher
     And the following fields match these values:
-      | Question name   | A combined question                                                                                                                                                                                                                                                                                                                                      |
-      | Question text   | What is the pH of a 0.1M solution? [[1:numeric:__10__]]<br/>What is the IUPAC name of the molecule? [[2:pmatch:__20__]]<br/>Which elements are shown? [[3:multiresponse]]<br/>Which element is shown as white? [[6:singlechoice]]<br/>When a solution is combined with oil the result is a [[4:selectmenu:2]]<br/>Showworking [[5:showworking:__80x5__]] |
+      | Question name   | A combined question                                                                                                                                                                                                                                                                                                                                             |
+      | Question text   | <p>What is the pH of a 0.1M solution? [[1:numeric:__10__]]<br/>What is the IUPAC name of the molecule? [[2:pmatch:__20__]]<br/>Which elements are shown? [[3:multiresponse]]<br/>Which element is shown as white? [[6:singlechoice]]<br/>When a solution is combined with oil the result is a [[4:selectmenu:2]]<br/>Showworking [[5:showworking:__80x5__]]</p> |
 
       | id_subqnumeric1defaultmark     | 20%                                     |
       | id_subqnumeric1answer_0        | 2.88                                    |
@@ -84,8 +84,8 @@ Feature: Test editing a Combined question
     # The next line can only be un-commented once we no longer support 3.11.
     # And I should see "Version 2"
     And the following fields match these values:
-      | Question name   | Edited combined question                                                                                                                                                                                                                                                                                                                                 |
-      | Question text   | What is the pH of a 0.1M solution? [[1:numeric:__10__]]<br/>What is the IUPAC name of the molecule? [[2:pmatch:__20__]]<br/>Which elements are shown? [[3:multiresponse]]<br/>Which element is shown as white? [[6:singlechoice]]<br/>When a solution is combined with oil the result is a [[4:selectmenu:2]]<br/>Showworking [[5:showworking:__80x5__]] |
+      | Question name   | Edited combined question                                                                                                                                                                                                                                                                                                                                        |
+      | Question text   | <p>What is the pH of a 0.1M solution? [[1:numeric:__10__]]<br/>What is the IUPAC name of the molecule? [[2:pmatch:__20__]]<br/>Which elements are shown? [[3:multiresponse]]<br/>Which element is shown as white? [[6:singlechoice]]<br/>When a solution is combined with oil the result is a [[4:selectmenu:2]]<br/>Showworking [[5:showworking:__80x5__]]</p> |
 
       | id_subqnumeric1defaultmark     | 20%                                     |
       | id_subqnumeric1answer_0        | 2.88                                    |
