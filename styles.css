@@ -157,3 +157,6 @@ body#page-question-type-combined div[id^=fitem_id_subqsinglechoice][id*=feedback
     border: 1px solid #bbb;
     padding: 4px;
 }
+.que.combined .combined-pmatch-input .editor_ousupsub {
+    max-width: 100%;
+}

@@ -194,6 +194,7 @@ class qtype_combined_text_entry_renderer_base extends qtype_renderer
         }
 
         if ($usehtml && $options->readonly) {
+            $generalattributes['class'] .= ' mw-100 text-wrap';
             $input = html_writer::tag('span', $currentanswer, $generalattributes);
         } else if ($usehtml) {
             $textareaattributes = array('name' => $inputname, 'rows' => 2, 'cols' => $size);
