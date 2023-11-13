@@ -156,6 +156,7 @@ body#page-question-type-combined div[id^=fitem_id_subqsinglechoice][id*=feedback
 .que.combined .qtype_combined_response.readonly {
     border: 1px solid #bbb;
     padding: 4px;
+    min-height: 2.2em;
 }
 .que.combined .combined-pmatch-input .editor_ousupsub {
     max-width: 100%;
