@@ -29,6 +29,24 @@ class qtype_combined_question extends question_graded_automatically_with_countba
      */
     public $combiner;
 
+    /** @var string Feedback for any correct response. */
+    public $correctfeedback;
+
+    /** @var int format of $correctfeedback. */
+    public $correctfeedbackformat;
+
+    /** @var string Feedback for any partially correct response. */
+    public $partiallycorrectfeedback;
+
+    /** @var int format of $partiallycorrectfeedback. */
+    public $partiallycorrectfeedbackformat;
+
+    /** @var string Feedback for any incorrect response. */
+    public $incorrectfeedback;
+
+    /** @var int format of $incorrectfeedback. */
+    public $incorrectfeedbackformat;
+
     public function start_attempt(question_attempt_step $step, $variant) {
         $this->combiner->call_all_subqs('start_attempt', new qtype_combined_step_param($step), $variant);
     }
