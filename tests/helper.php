@@ -70,6 +70,7 @@ class qtype_combined_test_helper extends question_test_helper {
 
         $fromform->{'subq:numeric:1:defaultmark'} = '0.2';
         $fromform->{'subq:numeric:1:answer'} = ['2.88'];
+        $fromform->{'subq:numeric:1:feedback'} = [0 => ['text' => '', 'format' => FORMAT_HTML]];
         $fromform->{'subq:numeric:1:error'} = [''];
         $fromform->{'subq:numeric:1:requirescinotation'} = '0';
         $fromform->{'subq:numeric:1:generalfeedback'} = ['text' => 'You have the incorrect value for the pH',
@@ -247,13 +248,15 @@ class qtype_combined_test_helper extends question_test_helper {
         $fromform->{'subq:numeric:no1:answer'} = ['6.5'];
         $fromform->{'subq:numeric:no1:error'} = [''];
         $fromform->{'subq:numeric:no1:requirescinotation'} = '0';
+        $fromform->{'subq:numeric:no1:feedback'} = [0 => ['text' => '', 'format' => FORMAT_HTML]];
         $fromform->{'subq:numeric:no1:generalfeedback'} = ['text' => 'That is not correct.',
-                'format' => FORMAT_HTML];
+                'format' => FORMAT_HTML,];
 
         $fromform->{'subq:numeric:no2:defaultmark'} = '0.5';
         $fromform->{'subq:numeric:no2:answer'} = ['11'];
         $fromform->{'subq:numeric:no2:error'} = [''];
         $fromform->{'subq:numeric:no2:requirescinotation'} = '0';
+        $fromform->{'subq:numeric:no2:feedback'} = [0 => ['text' => '', 'format' => FORMAT_HTML,]];
         $fromform->{'subq:numeric:no2:generalfeedback'} = ['text' => 'That is not correct.',
                 'format' => FORMAT_HTML];
 
@@ -575,7 +578,7 @@ class qtype_combined_test_helper extends question_test_helper {
         $vn->answers[0] = new qtype_varnumericset_answer('1', // Id.
                                                          '-4.2',  // Answer.
                                                          '1',     // Fraction.
-                                                         '<p>Your answer is correct.</p>', // Feedback.
+                                                         '<p>Varnumberic answer:-4.2. Your answer is correct.</p>', // Feedback.
                                                          'html',  // Feedbackformat.
                                                          '0',     // Sigfigs.
                                                          '',      // Error.
