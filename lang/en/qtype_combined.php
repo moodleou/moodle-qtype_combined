@@ -28,6 +28,7 @@ $string['controlnamegapselectplural'] = 'drop down boxes';
 $string['controlnamemultichoice'] = 'radio group';
 $string['controlnameshowworking'] = 'text input';
 $string['correct_choice_embed_code'] = '[[{$a->qid}:{$a->qtype}:{correct choice}]]';
+$string['correctfeedback'] = 'Feedback for correct response';
 $string['embeddedquestionremovedfromform'] = 'One or more embedded questions have been removed from the question text. The question data for these questions is still shown below, but it will be permanently removed when you either press the \'Update the form\' or \'Save changes\' button, unless you put the embed codes back in the question text again.';
 $string['err_accepts_vertical_or_horizontal_layout_param'] = '<p>The \'{$a}\' question type allows you to specify the layout of your question type as follows:<ul>
 <li>[[{question identifier}:{$a}:v]] vertical OR</li>
