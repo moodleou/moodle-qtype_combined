@@ -1611,6 +1611,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
             $this->get_does_not_contain_try_again_button_expectation());
 
         $this->process_submission(array('-finish' => '1'));
+        $this->check_output_contains('<div class="subqspecificfeedback">Varnumberic answer:-4.2. Your answer is correct.</div>');
 
         // Verify.
         $this->check_current_state(question_state::$gradedright);
