@@ -183,3 +183,9 @@ Feature: Preview a Combined question
     And I press "Submit and finish"
     Then I should see "sat on the mat"
     And "b" "css_element" should exist in the ".qtype_combined_response" "css_element"
+    And I set the following fields to these values:
+      | How questions behave | Interactive with multiple tries |
+    And I press "Start again with these options"
+    And I press "Submit and finish"
+    And I should see "Mark 0.00 out of 1.00"
+    And I should see "That is not correct."

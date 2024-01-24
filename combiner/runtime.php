@@ -139,7 +139,11 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
         $allresponses = new qtype_combined_array_of_response_arrays_param($responses);
         foreach ($this->subqs as $subqno => $subq) {
             $subqresponses = $allresponses->for_subq($subq);
-            if (is_a($subq->question, 'question_automatically_gradable_with_countback')) {
+            if (empty($subqresponses)) {
+                // We can't use compute_final_grade when there have been no attempts.
+                // This matches what qbehaviour_interactive does. It treats no responses as 'gave up'.
+                $subqfinalgrade = 0;
+            } else if (is_a($subq->question, 'question_automatically_gradable_with_countback')) {
                 // Question may still need some help to get grading right.
                 // Look at final response and see if that response has been given before.
                 // If it has, grade that response given before and ignore all responses after.
