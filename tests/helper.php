@@ -586,7 +586,8 @@ class qtype_combined_test_helper extends question_test_helper {
                                                          '0',     // Checknumerical.
                                                          '0',     // Checkscinotation.
                                                          '0',     // Checkpowerof10.
-                                                         '0');    // Checkrounding.
+                                                         '0',     // Checkrounding.
+                                                         '0');    // Checkscinotationformat.
         return $vn;
     }
 
