@@ -174,7 +174,7 @@ class qtype_combined_text_entry_renderer_base extends qtype_renderer
         $generalattributes = array_merge([
             'id' => $inputname,
             'class' => 'answer'
-        ], $this->get_extra_input_attributes());
+        ], $this->get_extra_input_attributes($question));
         $size = $subq->get_width();
 
         $feedbackimg = '';
@@ -244,9 +244,10 @@ class qtype_combined_text_entry_renderer_base extends qtype_renderer
     /**
      * Get extra attributes for answer field.
      *
+     * @param question_graded_automatically $question question object contain properties for each question type.
      * @return array
      */
-    protected function get_extra_input_attributes(): array {
+    protected function get_extra_input_attributes(question_graded_automatically $question): array {
         return [];
     }
 }
