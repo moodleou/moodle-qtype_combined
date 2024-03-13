@@ -31,7 +31,7 @@ Feature: Preview a Combined question
       | Marks                | Show mark and max               |
       | Specific feedback    | Shown                           |
       | Right answer         | Shown                           |
-    And I press "Start again with these options"
+    And I press "id_saverestart"
 
     # Test validation that all parts are answered by submitting an incomplete response.
     When I set the field "Answer 1" to "2.88"
@@ -70,7 +70,7 @@ Feature: Preview a Combined question
       | Marks                | Show mark and max               |
       | Specific feedback    | Shown                           |
       | Right answer         | Shown                           |
-    And I press "Start again with these options"
+    And I press "id_saverestart"
 
     When I set the field "Answer 1" to "2.7"
     And I set the field "Answer 2" to "formic acid"
@@ -100,7 +100,7 @@ Feature: Preview a Combined question
       | Marks                | Show mark and max               |
       | Specific feedback    | Shown                           |
       | Right answer         | Shown                           |
-    And I press "Start again with these options"
+    And I press "id_saverestart"
 
     When I press "Fill in correct responses"
     Then the field "Answer 2" matches value "ethanoic acid"
@@ -140,7 +140,7 @@ Feature: Preview a Combined question
     And I expand all fieldsets
     And I set the following fields to these values:
       | How questions behave | Immediate feedback |
-    And I press "Start again with these options"
+    And I press "id_saverestart"
 
     When I press "Check"
     Then I should see "Parts of your answer require attention:"
@@ -158,7 +158,7 @@ Feature: Preview a Combined question
     And I expand all fieldsets
     And I set the following fields to these values:
       | How questions behave | Immediate feedback |
-    And I press "Start again with these options"
+    And I press "id_saverestart"
 
     When I set the following fields to these values:
       | Answer no1 | 6,5    |
@@ -185,7 +185,7 @@ Feature: Preview a Combined question
     And "b" "css_element" should exist in the ".qtype_combined_response" "css_element"
     And I set the following fields to these values:
       | How questions behave | Interactive with multiple tries |
-    And I press "Start again with these options"
+    And I press "id_saverestart"
     And I press "Submit and finish"
     And I should see "Mark 0.00 out of 1.00"
     And I should see "That is not correct."
