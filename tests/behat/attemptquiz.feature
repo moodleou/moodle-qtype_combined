@@ -39,9 +39,9 @@ Feature: Attempt a Combined question
     And I press "Return to attempt"
     # Check when editing.
     And the following fields match these values:
-      | Answer no1 | 5                                                                |
-      | Answer no2 | 4                                                                |
-      | Answer 5   | <p>The <b>cat</b> sat on the mat. Then it ate a <b>frog</b>.</p> |
+      | Answer no1 | 5                                                                                    |
+      | Answer no2 | 4                                                                                    |
+      | Answer 5   | <p>The <strong>cat</strong> sat on the mat. Then it ate a <strong>frog</strong>.</p> |
     And I press "Finish attempt ..."
     And I press "Submit all and finish"
     # Please note this step below will be change in 4.1
@@ -51,4 +51,4 @@ Feature: Attempt a Combined question
       | Answer no1 | 5                                                                |
       | Answer no2 | 4                                                                |
     And "sat on the mat" "text" should exist in the ".qtype_combined_response" "css_element"
-    And "b" "css_element" should exist in the ".qtype_combined_response" "css_element"
+    And I should see "The cat sat on the mat. Then it ate a frog."

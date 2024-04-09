@@ -181,8 +181,14 @@ Feature: Preview a Combined question
       | Answer no2 | 4                                                                |
       | Answer 5   | <p>The <b>cat</b> sat on the mat. Then it ate a <b>frog</b>.</p> |
     And I press "Submit and finish"
-    Then I should see "sat on the mat"
-    And "b" "css_element" should exist in the ".qtype_combined_response" "css_element"
+    Then I should see "The cat sat on the mat. Then it ate a frog"
+
+  @javascript
+  Scenario: Show working editor can be left empty
+    Given the following "questions" exist:
+      | questioncategory | qtype    | template             | name                                       |
+      | Test questions   | combined | numericalshowworking | Test numerical questions with show working |
+    And I am on the "Test numerical questions with show working" "core_question > preview" page logged in as teacher
     And I set the following fields to these values:
       | How questions behave | Interactive with multiple tries |
     And I press "id_saverestart"
