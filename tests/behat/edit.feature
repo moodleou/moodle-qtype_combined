@@ -38,18 +38,18 @@ Feature: Test editing a Combined question
       | id_subqpmatch2answer_0        | match_mw (ethanoic acid)           |
       | id_subqpmatch2generalfeedback | You have the incorrect IUPAC name. |
 
-      | id_subqmultiresponse3defaultmark     | 20%                                                                                                                                                                                                                                                         |
-      | id_subqmultiresponse3answer_0        | C/carbon                                                                                                                                                                                                                                                    |
-      | id_subqmultiresponse3correctanswer_0 | 1                                                                                                                                                                                                                                                           |
-      | id_subqmultiresponse3answer_1        | H/hydrogen                                                                                                                                                                                                                                                  |
-      | id_subqmultiresponse3correctanswer_1 | 1                                                                                                                                                                                                                                                           |
-      | id_subqmultiresponse3answer_2        | O/oxygen                                                                                                                                                                                                                                                    |
-      | id_subqmultiresponse3correctanswer_2 | 1                                                                                                                                                                                                                                                           |
-      | id_subqmultiresponse3answer_3        | N/nitrogen                                                                                                                                                                                                                                                  |
-      | id_subqmultiresponse3answer_4        | F/fluorine                                                                                                                                                                                                                                                  |
-      | id_subqmultiresponse3answer_5        | Cl/chlorine                                                                                                                                                                                                                                                 |
-      | id_subqmultiresponse3answer_6        | <b>Br/bromine</b>                                                                                                                                                                                                                                           |
-      | id_subqmultiresponse3generalfeedback | Your choice of elements is not entirely correct.                                                                                                                                                                                                            |
+      | id_subqmultiresponse3defaultmark     | 20%                                              |
+      | id_subqmultiresponse3answer_0        | C/carbon                                         |
+      | id_subqmultiresponse3correctanswer_0 | 1                                                |
+      | id_subqmultiresponse3answer_1        | H/hydrogen                                       |
+      | id_subqmultiresponse3correctanswer_1 | 1                                                |
+      | id_subqmultiresponse3answer_2        | O/oxygen                                         |
+      | id_subqmultiresponse3correctanswer_2 | 1                                                |
+      | id_subqmultiresponse3answer_3        | N/nitrogen                                       |
+      | id_subqmultiresponse3answer_4        | F/fluorine                                       |
+      | id_subqmultiresponse3answer_5        | Cl/chlorine                                      |
+      | id_subqmultiresponse3answer_6        | <p><strong>Br/bromine</strong></p>               |
+      | id_subqmultiresponse3generalfeedback | Your choice of elements is not entirely correct. |
 
       | id_subqselectmenu4defaultmark        | 20%           |
       | id_subqselectmenu4answer_0           | Wine          |
@@ -65,7 +65,7 @@ Feature: Test editing a Combined question
       | id_subqsinglechoice6answer_1        | H hydrogen                                  |
       | id_subqsinglechoice6fraction_1      | 1.0                                         |
       | id_subqsinglechoice6feedback_1      | That is correct                             |
-      | id_subqsinglechoice6answer_2        | <b>O oxygen</b>                             |
+      | id_subqsinglechoice6answer_2        | <p><strong>O oxygen</strong></p>            |
       | id_subqsinglechoice6fraction_2      | 0.0                                         |
       | id_subqsinglechoice6feedback_2      | Oxygen is conventionally red                |
       | id_subqsinglechoice6generalfeedback | Your name for the white atoms is incorrect. |
@@ -97,18 +97,18 @@ Feature: Test editing a Combined question
       | id_subqpmatch2answer_0        | match_mw (ethanoic acid)           |
       | id_subqpmatch2generalfeedback | You have the incorrect IUPAC name. |
 
-      | id_subqmultiresponse3defaultmark     | 20%                                                                                                                                                                                                                                                         |
-      | id_subqmultiresponse3answer_0        | C/carbon                                                                                                                                                                                                                                                    |
-      | id_subqmultiresponse3correctanswer_0 | 1                                                                                                                                                                                                                                                           |
-      | id_subqmultiresponse3answer_1        | H/hydrogen                                                                                                                                                                                                                                                  |
-      | id_subqmultiresponse3correctanswer_1 | 1                                                                                                                                                                                                                                                           |
-      | id_subqmultiresponse3answer_2        | O/oxygen                                                                                                                                                                                                                                                    |
-      | id_subqmultiresponse3correctanswer_2 | 1                                                                                                                                                                                                                                                           |
-      | id_subqmultiresponse3answer_3        | N/nitrogen                                                                                                                                                                                                                                                  |
-      | id_subqmultiresponse3answer_4        | F/fluorine                                                                                                                                                                                                                                                  |
-      | id_subqmultiresponse3answer_5        | Cl/chlorine                                                                                                                                                                                                                                                 |
-      | id_subqmultiresponse3answer_6        | <b>Br/bromine</b>                                                                                                                                                                                                                                           |
-      | id_subqmultiresponse3generalfeedback | Your choice of elements is not entirely correct.                                                                                                                                                                                                            |
+      | id_subqmultiresponse3defaultmark     | 20%                                              |
+      | id_subqmultiresponse3answer_0        | C/carbon                                         |
+      | id_subqmultiresponse3correctanswer_0 | 1                                                |
+      | id_subqmultiresponse3answer_1        | H/hydrogen                                       |
+      | id_subqmultiresponse3correctanswer_1 | 1                                                |
+      | id_subqmultiresponse3answer_2        | O/oxygen                                         |
+      | id_subqmultiresponse3correctanswer_2 | 1                                                |
+      | id_subqmultiresponse3answer_3        | N/nitrogen                                       |
+      | id_subqmultiresponse3answer_4        | F/fluorine                                       |
+      | id_subqmultiresponse3answer_5        | Cl/chlorine                                      |
+      | id_subqmultiresponse3answer_6        | <p><strong>Br/bromine</strong></p>               |
+      | id_subqmultiresponse3generalfeedback | Your choice of elements is not entirely correct. |
 
       | id_subqselectmenu4defaultmark        | 20%           |
       | id_subqselectmenu4answer_0           | Wine          |
@@ -124,7 +124,7 @@ Feature: Test editing a Combined question
       | id_subqsinglechoice6answer_1        | H hydrogen                                  |
       | id_subqsinglechoice6fraction_1      | 1.0                                         |
       | id_subqsinglechoice6feedback_1      | That is correct                             |
-      | id_subqsinglechoice6answer_2        | <b>O oxygen</b>                             |
+      | id_subqsinglechoice6answer_2        | <p><strong>O oxygen</strong></p>            |
       | id_subqsinglechoice6fraction_2      | 0.0                                         |
       | id_subqsinglechoice6feedback_2      | Oxygen is conventionally red                |
       | id_subqsinglechoice6generalfeedback | Your name for the white atoms is incorrect. |
