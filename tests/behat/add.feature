@@ -31,6 +31,9 @@ Feature: Test creating a Combined question
     # Numeric part.
     And I expand all fieldsets
     And the field "Answer must match" matches value "match ()"
+    And "Help with Model answer" "icon" should exist
+    And I click on "Help with Model answer" "icon"
+    And I should see "Give one possible answer to this question that would be graded correct."
     And I set the following fields to these values:
       | id_subqnumeric1defaultmark     | 20%                                     |
       | id_subqnumeric1answer_0        | 2.88                                    |
