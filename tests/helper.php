@@ -24,7 +24,7 @@
 class qtype_combined_test_helper extends question_test_helper {
 
     public function get_test_questions() {
-        return ['allsubparts', 'pmatchsynonyms', 'numerical', 'numericalshowworking'];
+        return ['allsubparts', 'pmatchsynonyms', 'numerical', 'numericalshowworking', 'twopmatchs'];
     }
 
     /**
@@ -282,6 +282,76 @@ class qtype_combined_test_helper extends question_test_helper {
             'What 10 + 1? [[no2:numeric:__10__]]<br/>' .
             'Showworking editor [[5:showworking:__80x5__]]',
             'format' => FORMAT_HTML];
+        return $fromform;
+    }
+
+    /**
+     * Create a combine with two pmatch subquestion with sub-sup enable.
+     *
+     * @return stdClass
+     */
+    public function get_combined_question_form_data_twopmatchs(): stdClass {
+        $fromform = new stdClass();
+
+        $fromform->name = 'Combined 001';
+        $fromform->questiontext = ['text' => ' What 5 + 5 ? [[1:pmatch:__10__]].
+        <br/>What is the IUPAC name of the molecule? [[2:pmatch:__20__]].
+         <br/>What is the pH of a 0.1M solution?]', 'format' => FORMAT_HTML];
+        $fromform->defaultmark = 1.0;
+        if (class_exists('\core_question\local\bank\question_version_status')) {
+            $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+        }
+        $fromform->generalfeedback = [
+            'text' => "The molecule is ethanoic acid which is more commonly known as acetic acid or in dilute solution as vinegar.
+             The constituent elements are carbon (grey), hydrogen (white) and oxygen (red).
+              A 0.1M solution has a pH of 2.88 and when a solution is combined with oil the result is a vinaigrette.",
+            'format' => FORMAT_HTML];
+        $fromform->subqfragment_id = [
+            'pmatch_1' => '1',
+            'pmatch_2' => '2',
+        ];
+        $fromform->subqfragment_type = [
+            'pmatch_1' => 'pmatch',
+            'pmatch_2' => 'pmatch',
+        ];
+        // Pmatch 1
+        $fromform->{'subq:pmatch:1:defaultmark'} = '0.5';
+        $fromform->{'subq:pmatch:1:applydictionarycheck'} = '-';
+        $fromform->{'subq:pmatch:1:answer'} = ['match_mw (ethanoic acid)'];
+        $fromform->{'subq:pmatch:1:responsetemplate'} = 'ethaic aicd';
+        $fromform->{'subq:pmatch:1:generalfeedback'} = [0 => ['text' => 'You have the incorrect IUPAC name.',
+            'format' => FORMAT_HTML]];
+        $fromform->{'subq:pmatch:1:synonymsdata'} = [];
+        $fromform->{'subq:pmatch:1:extenddictionary'} = '';
+        $fromform->{'subq:pmatch:1:sentencedividers'} = '.?!';
+        $fromform->{'subq:pmatch:1:converttospace'} = ',;:';
+        $fromform->{'nosynonymssubq:pmatch:1:synonymsdata'} = 1;
+        $fromform->{'subq:pmatch:1:usecase'} = '0';
+        $fromform->{'subq:pmatch:1:modelanswer'} = 'ethanoic acid';
+        // Pmatch 2
+        $fromform->{'subq:pmatch:2:defaultmark'} = '0.5';
+        $fromform->{'subq:pmatch:2:applydictionarycheck'} = '-';
+        $fromform->{'subq:pmatch:2:answer'} = ['match_m (10)'];
+        $fromform->{'subq:pmatch:2:responsetemplate'} = '5';
+        $fromform->{'subq:pmatch:2:allowsubscript'} = '1';
+        $fromform->{'subq:pmatch:2:allowsuperscript'} = '1';
+        $fromform->{'subq:pmatch:2:modelanswer'} = '10';
+        $fromform->{'subq:pmatch:2:generalfeedback'} = [0 => ['text' => 'You have the incorrect IUPAC name.',
+                'format' => FORMAT_HTML]];
+        $fromform->{'nosynonymssubq:pmatch:2:synonymsdata'} = 1;
+        $fromform->{'subq:pmatch:2:synonymsdata'} = [];
+        $fromform->{'subq:pmatch:2:extenddictionary'} = '';
+        $fromform->{'subq:pmatch:2:sentencedividers'} = '.?!';
+        $fromform->{'subq:pmatch:2:converttospace'} = ',;:';
+        $fromform->{'subq:pmatch:2:usecase'} = '0';
+
+        test_question_maker::set_standard_combined_feedback_form_data($fromform);
+        $fromform->shownumcorrect = 0;
+        $fromform->penalty = '0.3333333';
+        $fromform->numhints = 0;
+        $fromform->hint = [];
+        $fromform->hintclearwrong = [];
+        $fromform->hintshownumcorrect = [];
         return $fromform;
     }
 
