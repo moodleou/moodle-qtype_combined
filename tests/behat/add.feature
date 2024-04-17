@@ -42,11 +42,11 @@ Feature: Test creating a Combined question
 
     # Pattern-match part.
     And I set the following fields to these values:
-      | id_subqpmatch2defaultmark     | 20%                                |
-      | Spell checking                | Do not check spelling of student   |
-      | id_subqpmatch2answer_0        | match_mw (ethanoic acid)           |
-      | id_subqpmatch2generalfeedback | You have the incorrect IUPAC name. |
-      | Model answer                  | ethanoic acid                      |
+      | id_subqpmatch2defaultmark          | 20%                                |
+      | id_subqpmatch2applydictionarycheck | Do not check spelling of student   |
+      | id_subqpmatch2answer_0             | match_mw (ethanoic acid)           |
+      | id_subqpmatch2generalfeedback      | You have the incorrect IUPAC name. |
+      | id_subqpmatch2modelanswer          | ethanoic acid                      |
 
     # Multi-response part.
     And I press "Blanks for 3 more choices"
