@@ -203,7 +203,8 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
      */
     public function find_subq_with_id($id) {
         foreach ($this->subqs as $subq) {
-            if ($subq->question->id === $id) {
+            // Show working question don't have an id attribute.
+            if (isset($subq->question->id) && $subq->question->id === $id) {
                 return $subq;
             }
         }
