@@ -189,13 +189,21 @@ class form_test extends \advanced_testcase {
         // Try an empty numeric answer (should not validate).
         $fromform['subq:numeric:2:answer'] = array('');
         $errors = $mform->validation($fromform, array());
-        $this->assertNotEmpty($errors);
+        $this->assertEquals('You need to enter a valid number here in the answer field.', $errors['subq:numeric:2:answergroup']);
 
         // Check duplicate synonym.
         $fromform['subq:numeric:2:answer'] = array(0);
         $fromform['subq:pmatch:3:synonymsdata'][] = array('word' => 'AA', 'synonyms' => 'BB');
         $errors = $mform->validation($fromform, array());
         $this->assertNotEmpty($errors);
+
+        // Check var numberic qtype has HTML in answer.
+        $fromform['subq:numeric:2:answer'] = ['3 x 10<sup>8</sup>'];
+        $errors = $mform->validation($fromform, array());
+        $this->assertEquals(
+            'You must not use HTML in the answer formula. Input numbers like 3.e8 or 3.14159.',
+            $errors['subq:numeric:2:answergroup']
+        );
 
         // Check model answer.
         $fromform['subq:pmatch:3:modelanswer'] = 'frog';
