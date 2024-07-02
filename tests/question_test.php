@@ -270,6 +270,20 @@ class question_test extends \advanced_testcase {
                 $newquestion->validate_can_regrade_with_other_version($question));
     }
 
+    public function test_validate_can_regrade_with_other_version_with_show_woring(): void {
+        if (!method_exists('question_definition', 'validate_can_regrade_with_other_version')) {
+            $this->markTestSkipped('This test is only relevant ot Moodle 4.0+.');
+        }
+
+        if ($notfound = \qtype_combined_test_helper::safe_include_test_helpers('oumultiresponse')) {
+            $this->markTestSkipped($notfound);
+        }
+
+        $question = \qtype_combined_test_helper::make_a_combined_question_with_oumr_and_showworking_subquestion();
+        $newquestion = $this->make_second_version($question);
+        $this->assertNull($question->validate_can_regrade_with_other_version($newquestion));
+    }
+
     public function test_update_attempt_state_date_from_old_version_ok() {
         if (!method_exists('question_definition', 'validate_can_regrade_with_other_version')) {
             $this->markTestSkipped('This test is only relevant ot Moodle 4.0+.');
@@ -293,5 +307,30 @@ class question_test extends \advanced_testcase {
 
         $this->assertEquals($expected,
                 $newquestion->update_attempt_state_data_for_new_version($oldstep, $question));
+    }
+
+    public function test_update_attempt_state_date_from_old_version_with_show_working(): void {
+        if (!method_exists('question_definition', 'validate_can_regrade_with_other_version')) {
+            $this->markTestSkipped('This test is only relevant ot Moodle 4.0+.');
+        }
+        if ($notfound = \qtype_combined_test_helper::safe_include_test_helpers('oumultiresponse')) {
+            $this->markTestSkipped($notfound);
+        }
+
+        $question = \qtype_combined_test_helper::make_a_combined_question_with_oumr_and_showworking_subquestion();
+
+        $newquestion = $this->make_second_version($question);
+        $oldstep = new question_attempt_step();
+        $oldstep->set_qt_var('_sw:answer', 'Test show working');
+        $oldstep->set_qt_var('_mc:choice0', '1');
+        $oldstep->set_qt_var('_mc:order', '1,2,3,4');
+
+        $expected = [
+            '_mc:order' => '1,2,3,4',
+            '_sw:answer' => 'Test show working',
+            '_mc:choice0' => '1',
+        ];
+        $this->assertEquals($expected,
+            $newquestion->update_attempt_state_data_for_new_version($oldstep, $question));
     }
 }
