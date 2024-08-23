@@ -649,7 +649,7 @@ class qtype_combined_test_helper extends question_test_helper {
                                                          '-4.2',  // Answer.
                                                          '1',     // Fraction.
                                                          '<p>Varnumberic answer:-4.2. Your answer is correct.</p>', // Feedback.
-                                                         'html',  // Feedbackformat.
+                                                         FORMAT_HTML,  // Feedbackformat.
                                                          '0',     // Sigfigs.
                                                          '',      // Error.
                                                          '0.1',   // Syserrorpenalty.
