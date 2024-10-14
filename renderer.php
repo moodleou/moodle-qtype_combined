@@ -74,9 +74,9 @@ class qtype_combined_renderer extends qtype_with_combined_feedback_renderer {
         }
 
         if ($options->feedback) {
-            $subqincorrect = $this->feedback_for_suqs_not_graded_correct($qa, $options);
-            $output .= html_writer::nonempty_tag('div', $subqincorrect,
-                                                 array('class' => 'subqincorrectfeedback'));
+            $output .= html_writer::nonempty_tag('div',
+                                                $qa->get_question()->combiner->feedback_for_suqs($qa, $options),
+                                                ['class' => 'subqfeedback']);
         }
 
         if ($hint) {
@@ -89,25 +89,6 @@ class qtype_combined_renderer extends qtype_with_combined_feedback_renderer {
         }
 
         return $output;
-    }
-
-
-    protected function feedback_for_suqs_not_graded_correct(question_attempt $qa, question_display_options $options) {
-        $feedback = '';
-        $question = $qa->get_question();
-        $mainquestionresponse = $qa->get_last_qt_data();
-        $subqresponses = new qtype_combined_response_array_param($mainquestionresponse);
-        if ($question->is_gradable_response($mainquestionresponse)) {
-            $gradeandstates = $question->combiner->call_all_subqs('grade_response', $subqresponses);
-            foreach ($gradeandstates as $subqno => $gradeandstate) {
-                list(, $state) = $gradeandstate;
-                if ($state !== question_state::$gradedright) {
-                    $feedback .= $question->combiner->call_subq($subqno, 'format_generalfeedback', $qa);
-                }
-            }
-        }
-        return $feedback;
-
     }
 
     protected function num_parts_correct(question_attempt $qa) {

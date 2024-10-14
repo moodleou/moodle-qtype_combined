@@ -1360,7 +1360,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                                         '-submit' => '1'));
 
         // Verify.
-        $this->check_output_contains('<div class="subqspecificfeedback">General feedback -4.2.</div>');
+        $this->check_output_contains('<p>General feedback -4.2.</p>');
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
         $this->check_current_output(
@@ -1521,8 +1521,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
             $this->get_does_not_contain_try_again_button_expectation(),
             $this->get_contains_correct_expectation(),
             $this->get_contains_standard_correct_combined_feedback_expectation());
-        $this->check_output_contains('<div class="subqspecificfeedback">' .
-            'Varnumberic answer:-4.2. Your answer is correct.</div>');
+            $this->check_output_contains('<p>Varnumberic answer:-4.2. Your answer is correct.</p>');
     }
 
 
@@ -1611,7 +1610,6 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
             $this->get_does_not_contain_try_again_button_expectation());
 
         $this->process_submission(array('-finish' => '1'));
-        $this->check_output_contains('<div class="subqspecificfeedback">Varnumberic answer:-4.2. Your answer is correct.</div>');
 
         // Verify.
         $this->check_current_state(question_state::$gradedright);
