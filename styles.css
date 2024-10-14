@@ -13,7 +13,7 @@
 }
 
 .que.combined .numpartscorrect,
-.que.combined .subqincorrectfeedback {
+.que.combined .subqfeedback {
     margin: 0 0 0.5em;
 }
 
@@ -99,10 +99,6 @@ body.ie .que.combined .qtext span.answer span.r1.correct img.icon {
     margin: 0;
 }
 
-.que.combined .combined-varnumeric .subqspecificfeedback {
-    margin-top: 0.5em;
-}
-
 /* Hack specific style for Safari. */
 body.safari .que.combined .qtext .horizontal span.answer span.r0 input,
 body.safari .que.combined .qtext .horizontal span.answer span.r1 input {
@@ -117,8 +113,7 @@ body.safari .que.combined .qtext .horizontal span.answer span.r1 input {
 }
 
 .que.combined .qtext .answer div.r0 div.feedback,
-.que.combined .qtext .answer div.r1 div.feedback,
-.que.combined .qtext .combined-varnumeric div.feedback {
+.que.combined .qtext .answer div.r1 div.feedback {
     flex: 1 1 100%;
 }
 

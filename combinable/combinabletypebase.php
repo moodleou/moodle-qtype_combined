@@ -54,6 +54,23 @@ abstract class qtype_combined_combinable_type_base {
     }
 
     /**
+     * Render incorrect/correct feedback for a sub question.
+     *
+     * @param question_attempt $qa the question attempt.
+     * @param qtype_combined_combinable_base $subq the sub question in the main question.
+     * @return string HTMl of feedback sub question.
+     */
+    public function render_feedback(question_attempt $qa, qtype_combined_combinable_base $subq): string {
+        $feedback = '';
+        $subqresponse = $qa->get_last_qt_var($subq->step_data_name('answer'));
+        [, $state] = $subq->question->grade_response(['answer' => $subqresponse]);
+        if ($state !== question_state::$gradedright) {
+            $feedback = $subq->question->format_generalfeedback($qa);
+        }
+        return $feedback;
+    }
+
+    /**
      * @return qtype_renderer
      */
     public function embedded_renderer() {

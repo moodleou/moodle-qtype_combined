@@ -85,6 +85,22 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
     }
 
     /**
+     * Render feedback for each sub question.
+     *
+     * @param question_attempt $qa the question attempt.
+     * @return string HTML string for all feedback in the sub questions.
+     */
+    public function feedback_for_suqs(question_attempt $qa): string {
+        $feedbacks = '';
+        if ($qa->get_question()->is_gradable_response($qa->get_last_qt_data())) {
+            foreach ($this->subqs as $subq) {
+                $feedbacks .= $subq->type->render_feedback($qa, $subq);
+            }
+        }
+        return $feedbacks;
+    }
+
+    /**
      * Call a method on question_definition object for all sub-questions.
      * @param string $methodname
      * @param qtype_combined_param_to_pass_through_to_subq_base|mixed  $params,.... a variable number of arguments (or none)
