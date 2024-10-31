@@ -198,10 +198,10 @@ class qtype_combined_showworking_fake_question {
     /**
      * Provide validate_can_regrade_with_other_version from question_definition.
      *
-     * @param question_definition $otherversion
+     * @param qtype_combined_showworking_fake_question $otherversion
      * @return string|null
      */
-    public function validate_can_regrade_with_other_version(question_definition $otherversion): ?string {
+    public function validate_can_regrade_with_other_version(qtype_combined_showworking_fake_question $otherversion): ?string {
         if (get_class($otherversion) !== get_class($this)) {
             return get_string('cannotregradedifferentqtype', 'question');
         }
@@ -213,11 +213,11 @@ class qtype_combined_showworking_fake_question {
      * Provide update_attempt_state_data_for_new_version from question_definition.
      *
      * @param question_attempt_step $oldstep
-     * @param question_definition $oldquestion
+     * @param qtype_combined_showworking_fake_question $oldquestion
      * @return array
      */
     public function update_attempt_state_data_for_new_version(
-            question_attempt_step $oldstep, question_definition $oldquestion) {
+            question_attempt_step $oldstep, qtype_combined_showworking_fake_question $oldquestion) {
         $message = $this->validate_can_regrade_with_other_version($oldquestion);
         if ($message) {
             throw new coding_exception($message);
