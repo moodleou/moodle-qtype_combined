@@ -1360,6 +1360,10 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                                         '-submit' => '1'));
 
         // Verify.
+        $this->check_output_contains('<div class="subqfeedback">');
+        $this->check_output_contains('<div>The odd numbers are One and Three.</div>');
+        $this->check_output_contains('<div>You made at least one incorrect choice.</div>');
+        $this->check_output_contains('<div>Generalfeedback: Tom, Dick or Harry are all possible answers.</div>');
         $this->check_output_contains('<p>General feedback -4.2.</p>');
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);

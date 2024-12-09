@@ -195,3 +195,27 @@ Feature: Preview a Combined question
     And I press "Submit and finish"
     And I should see "Mark 0.00 out of 1.00"
     And I should see "That is not correct."
+
+    @javascript
+    Scenario: Test showing correct and incorrect feedback for subquestions in a Combined question
+      Given the following "questions" exist:
+        | questioncategory | qtype    | template    | name                                          |
+        | Test questions   | combined | allsubparts | Test all subparts questions with show working |
+      And I am on the "Test all subparts questions with show working" "core_question > preview" page logged in as teacher
+      And I set the following fields to these values:
+        | Answer 1 | 5    |
+        | Answer 2 | 4    |
+        | Answer 4 | Wine |
+      And I click on "C carbon" "qtype_multichoice > Answer"
+      And I click on "Br/bromine" "qtype_multichoice > Answer"
+      When I press "Submit and finish"
+      Then I should see "You have the incorrect value for the pH"
+      And I should see "You have the incorrect IUPAC name"
+      And I should see "Your choice of elements is not entirely correct."
+      And I should see "Your name for the white atoms is incorrect."
+      And I should see "Your name for the mixture is incorrect."
+      And I press "Start again"
+      And I press "Fill in correct responses"
+      And I press "Submit and finish"
+      And I should see "Well done!"
+      And I should not see "You have the incorrect value for the pHYou have the incorrect IUPAC name"

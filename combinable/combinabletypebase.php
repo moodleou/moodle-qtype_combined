@@ -62,11 +62,12 @@ abstract class qtype_combined_combinable_type_base {
      */
     public function render_feedback(question_attempt $qa, qtype_combined_combinable_base $subq): string {
         $feedback = '';
-        $subqresponse = $qa->get_last_qt_var($subq->step_data_name('answer'));
-        [, $state] = $subq->question->grade_response(['answer' => $subqresponse]);
+        $subqresponses = new qtype_combined_response_array_param($qa->get_last_qt_data());
+        [, $state] = $subq->question->grade_response($subqresponses->for_subq($subq));
         if ($state !== question_state::$gradedright) {
-            $feedback = $subq->question->format_generalfeedback($qa);
+            $feedback = html_writer::tag('div', $subq->question->format_generalfeedback($qa));
         }
+
         return $feedback;
     }
 
