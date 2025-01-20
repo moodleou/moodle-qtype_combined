@@ -77,6 +77,7 @@ class qtype_combined_test_helper extends question_test_helper {
                 'format' => FORMAT_HTML];
 
         $fromform->{'subq:pmatch:2:defaultmark'} = '0.2';
+        $fromform->{'subq:pmatch:2:quotematching'} = 0;
         $fromform->{'subq:pmatch:2:allowsubscript'} = '0';
         $fromform->{'subq:pmatch:2:allowsuperscript'} = '0';
         $fromform->{'subq:pmatch:2:usecase'} = '0';
@@ -193,6 +194,7 @@ class qtype_combined_test_helper extends question_test_helper {
         $fromform->{'subq:pmatch:1:defaultmark'} = '1.0';
         $fromform->{'subq:pmatch:1:allowsubscript'} = '0';
         $fromform->{'subq:pmatch:1:allowsuperscript'} = '0';
+        $fromform->{'subq:pmatch:1:quotematching'} = 0;
         $fromform->{'subq:pmatch:1:usecase'} = '0';
         $fromform->{'subq:pmatch:1:applydictionarycheck'} = '-';
         $fromform->{'subq:pmatch:1:extenddictionary'} = '';
@@ -328,6 +330,7 @@ class qtype_combined_test_helper extends question_test_helper {
         $fromform->{'nosynonymssubq:pmatch:1:synonymsdata'} = 1;
         $fromform->{'subq:pmatch:1:usecase'} = '0';
         $fromform->{'subq:pmatch:1:modelanswer'} = 'ethanoic acid';
+        $fromform->{'subq:pmatch:1:quotematching'} = 0;
         // Pmatch 2
         $fromform->{'subq:pmatch:2:defaultmark'} = '0.5';
         $fromform->{'subq:pmatch:2:applydictionarycheck'} = '-';
@@ -344,6 +347,7 @@ class qtype_combined_test_helper extends question_test_helper {
         $fromform->{'subq:pmatch:2:sentencedividers'} = '.?!';
         $fromform->{'subq:pmatch:2:converttospace'} = ',;:';
         $fromform->{'subq:pmatch:2:usecase'} = '0';
+        $fromform->{'subq:pmatch:2:quotematching'} = 0;
 
         test_question_maker::set_standard_combined_feedback_form_data($fromform);
         $fromform->shownumcorrect = 0;
