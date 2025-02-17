@@ -68,4 +68,15 @@ class utils {
         }
         return $hasversionning;
     }
+
+    /**
+     * Replace the placeholder in subquestion id/name.
+     *
+     * @param string $stringtodisplay
+     * @return string the place holder to display in the UI.
+     */
+    public static function replace_embed_placeholder(string $stringtodisplay): string {
+        return str_replace(\qtype_combined_combiner_base::EMBEDDED_CODE_PLACEHOLDER,
+            \qtype_combined_combiner_base::EMBEDDED_CODE_PLACEHOLDER_DISPLAY, $stringtodisplay);
+    }
 }

@@ -48,6 +48,9 @@ class qtype_combined_gapselect_embedded_renderer extends qtype_renderer
         if ($options->readonly) {
             $attributes['disabled'] = 'disabled';
         }
+        if (!$value) {
+            $attributes['class'] = 'required';
+        }
 
         $orderedchoices = $question->get_ordered_choices($group);
         $selectoptions = array();

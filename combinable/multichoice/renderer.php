@@ -40,9 +40,14 @@ class qtype_combined_multichoice_embedded_renderer extends qtype_renderer
         } else {
             $response = -1;
         }
-        $commonattributes = array(
-            'type' => 'radio'
-        );
+        $class = '';
+        if ($response === -1) {
+            $class = 'required';
+        }
+        $commonattributes = [
+            'type' => 'radio',
+            'class' => $class
+        ];
         if ($options->readonly) {
             $commonattributes['disabled'] = 'disabled';
         }

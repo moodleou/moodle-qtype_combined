@@ -89,6 +89,7 @@ class qtype_combined_question extends question_graded_automatically_with_countba
         $summarytexts = array();
         foreach ($subqsummaries as $subqno => $summary) {
             $subqname = $this->combiner->get_subq_property($subqno, 'name');
+            $subqname = \qtype_combined\utils::replace_embed_placeholder($subqname);
             $summarytexts[] = "$subqname [{$summary}]";
         }
         return implode(', ', $summarytexts);

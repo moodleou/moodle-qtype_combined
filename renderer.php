@@ -152,9 +152,14 @@ class qtype_combined_text_entry_renderer_base extends qtype_renderer
         $currentanswer = $this->prepare_current_answer($options, $qa->get_last_qt_var($subq->step_data_name('answer')), $subq);
 
         $inputname = $qa->get_qt_field_name($subq->step_data_name('answer'));
+
+        $inputclass = 'answer';
+        if (!$currentanswer) {
+            $inputclass .= ' required';
+        }
         $generalattributes = array_merge([
             'id' => $inputname,
-            'class' => 'answer'
+            'class' => $inputclass,
         ], $this->get_extra_input_attributes($question));
         $size = $subq->get_width();
 

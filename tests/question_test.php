@@ -134,6 +134,16 @@ class question_test extends \advanced_testcase {
                 'mc [One; Three], gs [{quick} {fox} {lazy}]',
                 $question->summarise_response(
                         ['mc:choice0' => 1, 'mc:choice2' => 1, 'gs:p1' => 1, 'gs:p2' => 1, 'gs:p3' => 1]));
+
+        $question =
+            \qtype_combined_test_helper::make_a_combined_question_with_oumr_and_gapselect_subquestion_with_new_placeholder();
+        $question->start_attempt(new question_attempt_step(), 1);
+
+        $this->assertEquals(
+            'Part 1 [One; Three], Part 2 [{quick} {fox} {lazy}]',
+            $question->summarise_response(
+                ['Part_1:choice0' => 1, 'Part_1:choice2' => 1, 'Part_2:p1' => 1, 'Part_2:p2' => 1, 'Part_2:p3' => 1]));
+
     }
 
     public function test_classify_response() {
