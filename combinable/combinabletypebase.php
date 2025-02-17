@@ -253,7 +253,7 @@ abstract class qtype_combined_combinable_type_base {
         $prefix = qtype_combined_combiner_base::EMBEDDED_CODE_PREFIX;
         $postfix = qtype_combined_combiner_base::EMBEDDED_CODE_POSTFIX;
         $separator = qtype_combined_combiner_base::EMBEDDED_CODE_SEPARATOR;
-        $parts = array($questionname, $this->identifier);
+        $parts = [qtype_combined_combiner_base::EMBEDDED_CODE_PLACEHOLDER . $questionname, $this->identifier];
         $thirdparam = $this->third_param_for_default_question_text();
         if (!is_null($thirdparam)) {
             $parts[] = $thirdparam;

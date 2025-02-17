@@ -98,7 +98,7 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
                 $mform->setType($subq->form_field_name('notincludedinquestiontextwilldelete'), PARAM_BOOL);
             }
         }
-        $mform->setType("subqfragment_id", PARAM_ALPHANUM);
+        $mform->setType("subqfragment_id", PARAM_ALPHANUMEXT);
         $mform->setType("subqfragment_type", PARAM_ALPHANUMEXT);
     }
 
@@ -197,8 +197,8 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
      * Adds subq objects for anything in submitted form data that is not in question text.
      */
     public function find_subqs_in_submitted_data() {
-        $ids = optional_param_array('subqfragment_id', array(), PARAM_ALPHANUM);
-        $qtypeids = optional_param_array('subqfragment_type', array(), PARAM_ALPHANUM);
+        $ids = optional_param_array('subqfragment_id', [], PARAM_ALPHANUMEXT);
+        $qtypeids = optional_param_array('subqfragment_type', [], PARAM_ALPHANUMEXT);
         foreach ($ids as $subqkey => $id) {
             $this->find_or_create_question_instance($qtypeids[$subqkey], $id);
         }

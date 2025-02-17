@@ -548,6 +548,30 @@ class qtype_combined_test_helper extends question_test_helper {
     }
 
     /**
+     * The combined question that have Part_number as place holder.
+     *
+     * @return qtype_combined_question
+     */
+    public static function make_a_combined_question_with_oumr_and_gapselect_subquestion_with_new_placeholder() {
+        $combined = qtype_combined_test_helper::make_a_combined_question_with_oumr_and_gapselect_subquestion();
+        $combined->questiontext = 'Choose correct 2 check boxes [[Part_1:multiresponse]]. '.
+            'The [[Part_2:selectmenu:1]] brown [[Part_2:selectmenu:2]] jumped over the [[Part_2:selectmenu:3]] dog.';
+
+        $combined->combiner = new qtype_combined_combiner_for_run_time_question_instance();
+        $combined->combiner->find_included_subqs_in_question_text($combined->questiontext);
+
+        $subq = $combined->combiner->find_or_create_question_instance('multiresponse', 'Part_1');
+        $subq->question = self::make_oumultiresponse_question_two_of_four('Part_1');
+        $subq->question->defaultmark = 0.5;
+
+        $subq = $combined->combiner->find_or_create_question_instance('selectmenu', 'Part_2');
+        $subq->question = self::make_a_gapselect_question('Part_2');
+        $subq->question->defaultmark = 0.5;
+
+        return $combined;
+    }
+
+    /**
      * @return qtype_combined_question
      */
     public static function make_a_combined_question_with_oumr_and_showworking_subquestion() {

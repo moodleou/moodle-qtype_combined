@@ -63,6 +63,23 @@
     flex: 1 1;
 }
 
+.que.combined.invalidanswer input[type="radio"].required:not(:checked),
+.que.combined.invalidanswer input[type="checkbox"].required:not(:checked) {
+    border: 1px solid #ca3120;
+    width: 15px;
+    height: 13px;
+    appearance: none; /* remove default browser styles */
+}
+.que.combined.invalidanswer input[type="radio"].required:not(:checked) {
+    border-radius: 50%; /* make it circular */
+}
+
+.que.combined.invalidanswer input.required,
+.que.combined.invalidanswer select.required {
+    border-color: #ca3120;
+    border-width: 1px;
+}
+
 /* Hack specific style for IE */
 body.ie .que.combined .qtext .horizontal span.answer {
     width: 100%;

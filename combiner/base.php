@@ -57,8 +57,12 @@ abstract class qtype_combined_combiner_base {
 
     const EMBEDDED_CODE_SEPARATOR = ':';
 
-    /** Question identifier must be one or more alphanumeric characters. */
-    const VALID_QUESTION_IDENTIFIER_PATTTERN = '[a-zA-Z0-9]+';
+    const EMBEDDED_CODE_PLACEHOLDER = 'Part_';
+
+    const EMBEDDED_CODE_PLACEHOLDER_DISPLAY = 'Part ';
+
+    /** Question identifier must be one or more alphanumeric characters, including underscores, space. */
+    const VALID_QUESTION_IDENTIFIER_PATTTERN = '[a-zA-Z0-9_]+';
 
     /**
      * Prefix both for field names in sub-question form fragments and also for collecting student responses in run-time question.
