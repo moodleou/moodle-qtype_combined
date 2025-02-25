@@ -85,23 +85,6 @@
     border: 1px solid #ca3120
 }
 
-/* Hack specific style for IE */
-body.ie .que.combined .qtext .horizontal span.answer {
-    width: 100%;
-}
-
-body.ie .que.combined .qtext span.answer span.r0 label p,
-body.ie .que.combined .qtext span.answer span.r1 label p {
-    flex-basis: auto;
-}
-
-body.ie .que.combined .qtext span.answer span.r0.incorrect img.icon,
-body.ie .que.combined .qtext span.answer span.r1.incorrect img.icon,
-body.ie .que.combined .qtext span.answer span.r0.correct img.icon,
-body.ie .que.combined .qtext span.answer span.r1.correct img.icon {
-    flex: 1 0 auto;
-}
-
 .que.combined .qtext div.horizontal .answer input[type="radio"],
 .que.combined .qtext div.horizontal .answer input[type="checkbox"] {
     margin: 4px 4px 0 4px;
