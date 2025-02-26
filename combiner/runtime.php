@@ -236,10 +236,7 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
         foreach ($this->subqs as $subqno => $subq) {
             if (!$this->call_subq($subqno, 'is_complete_response', $response)) {
                 $questionerror = $this->call_subq($subqno, 'get_validation_error', $response);
-                // Replaces only the first occurrence of place holder code.
-                $identifier = preg_replace('~' . self::EMBEDDED_CODE_PLACEHOLDER . '~',
-                    '', $subq->get_identifier(), 1);
-
+                $identifier = \qtype_combined\utils::replace_embed_placeholder($subq->get_identifier(), true);
                 $a = new stdClass();
                 $a->error = $questionerror;
                 $a->identifier = $identifier;

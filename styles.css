@@ -63,6 +63,10 @@
     flex: 1 1;
 }
 
+.qtype_combined_placeholder {
+    max-width: 230px;
+}
+
 .que.combined.invalidanswer input[type="radio"].required:not(:checked),
 .que.combined.invalidanswer input[type="checkbox"].required:not(:checked) {
     border: 1px solid #ca3120;

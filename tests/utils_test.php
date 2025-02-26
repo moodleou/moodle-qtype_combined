@@ -66,4 +66,25 @@ class utils_test extends \advanced_testcase {
         $actual = utils::number_in_style($num, 'ABC');
         $this->assertEquals('ERR', $actual);
     }
+
+    public function test_replace_embed_placeholder(): void {
+        global $CFG;
+        require_once($CFG->dirroot.'/question/type/combined/combiner/base.php');
+
+        $placeholderstrings = [
+            'Normal' => 'Part_1:multiresponse',
+            'Multiple underscores' => 'Part_1_c:multiresponse',
+            'Duplicate place holder' => 'Part_1_Part_1_c:multiresponse',
+        ];
+        $expected = ['Part 1:multiresponse', 'Part 1 c:multiresponse', 'Part 1 Part 1 c:multiresponse'];
+        $expectedplaceholderemoved = ['1:multiresponse', '1 c:multiresponse', '1 Part 1 c:multiresponse'];
+        $i = 0;
+        foreach ($placeholderstrings as $key => $value) {
+            $actual = utils::replace_embed_placeholder($value, true);
+            $actual2 = utils::replace_embed_placeholder($value);
+            $this->assertEquals($expectedplaceholderemoved[$i], $actual);
+            $this->assertEquals($expected[$i], $actual2);
+            $i++;
+        }
+    }
 }
