@@ -154,12 +154,13 @@ class qtype_combined_text_entry_renderer_base extends qtype_renderer
         $inputname = $qa->get_qt_field_name($subq->step_data_name('answer'));
 
         $inputclass = 'answer';
+        $requireclass = '';
         if (!$currentanswer) {
-            $inputclass .= ' required';
+            $requireclass = ' required';
         }
         $generalattributes = array_merge([
             'id' => $inputname,
-            'class' => $inputclass,
+            'class' => $inputclass . $requireclass,
         ], $this->get_extra_input_attributes($question));
         $size = $subq->get_width();
 
@@ -186,7 +187,7 @@ class qtype_combined_text_entry_renderer_base extends qtype_renderer
             $textareaattributes = array('name' => $inputname, 'rows' => 2, 'cols' => $size);
             $input = html_writer::tag('span', html_writer::tag('textarea', $currentanswer,
                                                                $textareaattributes + $generalattributes),
-                                                               array('class' => 'answerwrap'));
+                                                               ['class' => 'answerwrap' . $requireclass]);
             $supsuboptions = array(
                 'supsub' => $supsuboption
             );
