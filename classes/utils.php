@@ -73,10 +73,17 @@ class utils {
      * Replace the placeholder in subquestion id/name.
      *
      * @param string $stringtodisplay
+     * @param bool $isremoved Default = false, if true, we will replace the placeholder with empty string.
      * @return string the place holder to display in the UI.
      */
-    public static function replace_embed_placeholder(string $stringtodisplay): string {
-        return str_replace(\qtype_combined_combiner_base::EMBEDDED_CODE_PLACEHOLDER,
-            \qtype_combined_combiner_base::EMBEDDED_CODE_PLACEHOLDER_DISPLAY, $stringtodisplay);
+    public static function replace_embed_placeholder(string $stringtodisplay, bool $isremoved = false): string {
+        // We replace placeholder with empty string or display string.
+        $replacestring = $isremoved ? '' : \qtype_combined_combiner_base::EMBEDDED_CODE_PLACEHOLDER_DISPLAY;
+        // Replaces only the first occurrence of place holder code.
+        $text = preg_replace('~' . \qtype_combined_combiner_base::EMBEDDED_CODE_PLACEHOLDER . '~',
+            $replacestring, $stringtodisplay, 1);
+        // Replace all the underscore of the string to space.
+        $text = str_replace('_', ' ', $text);
+        return $text;
     }
 }
