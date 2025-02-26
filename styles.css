@@ -72,12 +72,13 @@
 }
 .que.combined.invalidanswer input[type="radio"].required:not(:checked) {
     border-radius: 50%; /* make it circular */
+    height: 15px;
 }
 
 .que.combined.invalidanswer input.required,
-.que.combined.invalidanswer select.required {
-    border-color: #ca3120;
-    border-width: 1px;
+.que.combined.invalidanswer select.required,
+.que.combined.invalidanswer .answerwrap.required .editor_ousupsub .ousupsub-wrap {
+    border: 1px solid #ca3120
 }
 
 /* Hack specific style for IE */
