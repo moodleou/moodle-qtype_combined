@@ -24,7 +24,8 @@
 class qtype_combined_test_helper extends question_test_helper {
 
     public function get_test_questions() {
-        return ['allsubparts', 'pmatchsynonyms', 'numerical', 'numericalshowworking', 'twopmatchs'];
+        return ['allsubparts', 'pmatchsynonyms', 'numerical', 'numericalshowworking', 'twopmatchs',
+            'numericalshowworkingplaceholder'];
     }
 
     /**
@@ -284,6 +285,61 @@ class qtype_combined_test_helper extends question_test_helper {
             'What 10 + 1? [[no2:numeric:__10__]]<br/>' .
             'Showworking editor [[5:showworking:__80x5__]]',
             'format' => FORMAT_HTML];
+        return $fromform;
+    }
+
+    /**
+     * Create a combine numerical question with show working that using the new place holder.
+     *
+     * @return stdClass
+     */
+    public function get_combined_question_form_data_numericalshowworkingplaceholder(): stdClass {
+        $fromform = new stdClass();
+
+        $fromform->name = 'Combined numerical with new place holder';
+        $fromform->questiontext = ['text' => 'What 1.5 + 5? [[Part_1_a:numeric:__10__]]<br/>' .
+            'What 10 + 1? [[Part_1_b:numeric:__10__]]', 'format' => FORMAT_HTML];
+        $fromform->defaultmark = 1.0;
+        if (class_exists('\core_question\local\bank\question_version_status')) {
+            $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+        }
+        $fromform->generalfeedback = [
+            'text' => "General feedback: 1.5 + 5 = 6.5. 10 + 1 = 11.",
+            'format' => FORMAT_HTML];
+
+        $fromform->subqfragment_id = [
+            'numeric_no1' => 'Part_1_a',
+            'numeric_no2' => 'Part_1_b',
+        ];
+        $fromform->subqfragment_type = [
+            'numeric_no1' => 'numeric',
+            'numeric_no2' => 'numeric',
+        ];
+
+        $fromform->{'subq:numeric:Part_1_a:defaultmark'} = '0.5';
+        $fromform->{'subq:numeric:Part_1_a:answer'} = ['6.5'];
+        $fromform->{'subq:numeric:Part_1_a:error'} = [''];
+        $fromform->{'subq:numeric:Part_1_a:requirescinotation'} = '0';
+        $fromform->{'subq:numeric:Part_1_a:feedback'} = [0 => ['text' => '', 'format' => FORMAT_HTML]];
+        $fromform->{'subq:numeric:Part_1_a:generalfeedback'} = ['text' => 'That is not correct.',
+            'format' => FORMAT_HTML,];
+
+        $fromform->{'subq:numeric:Part_1_b:defaultmark'} = '0.5';
+        $fromform->{'subq:numeric:Part_1_b:answer'} = ['11'];
+        $fromform->{'subq:numeric:Part_1_b:error'} = [''];
+        $fromform->{'subq:numeric:Part_1_b:requirescinotation'} = '0';
+        $fromform->{'subq:numeric:Part_1_b:feedback'} = [0 => ['text' => '', 'format' => FORMAT_HTML,]];
+        $fromform->{'subq:numeric:Part_1_b:generalfeedback'} = ['text' => 'That is not correct.',
+            'format' => FORMAT_HTML];
+
+        test_question_maker::set_standard_combined_feedback_form_data($fromform);
+        $fromform->shownumcorrect = 0;
+        $fromform->penalty = '0.3333333';
+        $fromform->numhints = 0;
+        $fromform->hint = [];
+        $fromform->hintclearwrong = [];
+        $fromform->hintshownumcorrect = [];
+
         return $fromform;
     }
 

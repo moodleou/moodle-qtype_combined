@@ -72,7 +72,7 @@ class utils {
     /**
      * Replace the placeholder in subquestion id/name.
      *
-     * @param string $stringtodisplay
+     * @param string $stringtodisplay subquestion identifier.
      * @param bool $isremoved Default = false, if true, we will replace the placeholder with empty string.
      * @return string the place holder to display in the UI.
      */
