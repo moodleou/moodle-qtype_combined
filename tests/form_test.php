@@ -243,6 +243,18 @@ class form_test extends \advanced_testcase {
                 'Question combined [[1:numeric:__10__]]<br>1 [[2:showworking:____<br>2 [[3:showworking:__80x5__]]',
                 ['questiontext' => get_string('err_invalid_width_specifier_postfix_showworking', 'qtype_combined', 'showworking')]
             ],
+            'invalid_input_format_editor_type_for_showworking_option_plain' => [
+                'Question combined [[1:numeric:__10__]] <br> 1 [[2:showworking:__20x5__:text]]' .
+                '<br> 2 [[2:showworking:__20x5__:plaintext]]',
+                ['questiontext' => get_string('err_invalid_width_specifier_postfix_showworking',
+                    'qtype_combined', 'showworking')]
+            ],
+            'invalid_input_format_editor_type_for_showworking_option_editor' => [
+                'Question combined [[1:numeric:__10__]] <br> 1 [[2:showworking:__editor]]' .
+                '<br> 2 [[2:showworking:__editor]]',
+                ['questiontext' => get_string('err_invalid_width_specifier_postfix_showworking',
+                    'qtype_combined', 'showworking')]
+            ],
             'invalid_showworking' => [
                 'Question combined [[1:numeric:__10__]]<br>1 [[2:showworking:__A__]]',
                 ['questiontext' => get_string('err_invalid_width_specifier_postfix_showworking', 'qtype_combined', 'showworking')]

@@ -188,12 +188,16 @@ Feature: Preview a Combined question
     Given the following "questions" exist:
       | questioncategory | qtype    | template             | name                                       |
       | Test questions   | combined | numericalshowworking | Test numerical questions with show working |
-    And I am on the "Test numerical questions with show working" "core_question > preview" page logged in as teacher
+    When I am on the "Test numerical questions with show working" "core_question > preview" page logged in as teacher
+    # Check the editor is shown with TinyMCE and textarea.
+    And I wait until ".combined-showworking-input textarea.form-control[data-fieldtype='editor'] + .tox-tinymce" "css_element" exists
+    And ".combined-showworking-input textarea.form-control[data-fieldtype='editor'] + .tox-tinymce" "css_element" should be visible
+    And ".combined-showworking-input textarea.form-control:not([data-fieldtype='editor'])" "css_element" should be visible
     And I set the following fields to these values:
       | How questions behave | Interactive with multiple tries |
     And I press "id_saverestart"
     And I press "Submit and finish"
-    And I should see "Mark 0.00 out of 1.00"
+    Then I should see "Mark 0.00 out of 1.00"
     And I should see "That is not correct."
 
     @javascript

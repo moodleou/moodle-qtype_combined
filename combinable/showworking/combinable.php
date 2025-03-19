@@ -46,7 +46,7 @@ class qtype_combined_combinable_type_showworking extends qtype_combined_combinab
     }
 
     public function third_param_for_default_question_text() {
-        return '__80x5__';
+        return '__80x5__:editor';
     }
 
     public function save($oldsubq, $subqdata, int $oldsubqid) {
@@ -60,7 +60,7 @@ class qtype_combined_combinable_type_showworking extends qtype_combined_combinab
 class qtype_combined_combinable_showworking extends qtype_combined_combinable_text_entry {
 
     /** Pattern extra to validate for 'show working' widget. */
-    const THIRD_PARAM_PATTERN_EXTRA = '~^_+([0-9]+)x([0-9]+)_+$~';
+    const THIRD_PARAM_PATTERN_EXTRA = '~^_+([0-9]+)x([0-9]+)_+(?::plain|:editor)?$~';
 
     /**
      * @var string|null The extra info found in square brackets.

@@ -64,7 +64,7 @@
 }
 
 .qtype_combined_placeholder {
-    max-width: 230px;
+    max-width: 280px;
 }
 
 .que.combined.invalidanswer input[type="radio"].required:not(:checked),

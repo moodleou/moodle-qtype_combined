@@ -87,6 +87,7 @@ class qtype_combined_edit_form extends question_edit_form {
         $subq = $mform->createElement('static', 'subq', get_string('subquestiontypes', 'qtype_combined'),
                 implode("\n", $placeholders));
         $mform->insertElementBefore($subq, $insertbefore);
+        $mform->addHelpButton('subq', 'subquestiontypes', 'qtype_combined');
 
         $verify = $mform->createElement('submit', 'updateform', get_string('updateform', 'qtype_combined'));
         $mform->insertElementBefore($verify, $insertbefore);

@@ -44,16 +44,13 @@ $string['err_invalid_width_specifier_postfix'] = '<p>The \'{$a}\' question type 
 <li>[[{question identifier}:{$a}:____]] where the width of the input box will depend on the number of underscores or</li>
 <li>[[{question identifier}:{$a}:__10__]] where the width of the input box will depend on the number.</li></ul>
 <p>You should not enter anything else after the second colon.</p>';
-$string['err_invalid_width_specifier_postfix_showworking'] = '<p>The \'{$a}\' question type allows you to specify the width of your question type as follows:
+$string['err_invalid_width_specifier_postfix_showworking'] = '<p>The \'{$a}\' question type allows you to specify the plain text input box size and format as follows:</p>
 <ul>
- <li>[[{question identifier}:{$a}:____]] where the width of the input box will depend on
-  the number of underscores or</li>
-  <li>[[{question identifier}:{$a}:__10__]] where the width of the input box will depend on
-  the number.</li>
-  <li>[[{question identifier}:{$a}:__80x5__]] where the width and height of the input box will depend on
-  the number.</li>
-</ul>
-<p>You should not enter anything else after the second colon.</p>';
+  <li>[[{question identifier}:showworking:____:plain]] where the width of the input box depends on the number of underscores.</li>
+  <li>[[{question identifier}:showworking:__10__:plain]] where the width of the input box depends on the number.</li>
+  <li>[[{question identifier}:showworking:__80x5__:plain]] where the width and height of the input box depend on the numbers.</li>
+  <li>After {size} is set, you can specify \':plain\' or \':editor\' (editor is also the default). Note that due to the editor, you cannot control the input size width, only the height.</li>
+</ul>';
 $string['err_invalidquestionidentifier'] = 'Your question identifier code consist of one or more alphanumeric characters.';
 $string['err_subq_not_included_in_question_text'] = 'It seems you have removed this question from the question text. Embed this question in the form with the code {$a} or it will be removed when you submit this form again.';
 $string['err_thisqtypecannothavemorethanonecontrol'] = 'You have tried to embed more than one control for question type \'{$a->qtype}\' with question instance name \'{$a->qid}\'. This question type only allows you to embed one control per question instance.';
@@ -98,6 +95,12 @@ $string['singlechoice'] = 'Default options for singlechoice sub-questions';
 $string['subqheader'] = '\'{$a->qtype}\' input \'{$a->qid}\'';
 $string['subqheader_not_in_question_text'] = '\'{$a->qtype}\' input \'{$a->qid}\' (not embedded in question text).';
 $string['subquestiontypes'] = 'Sub-question placeholders';
+$string['subquestiontypes_help'] = 'You can place a variety of sub-questions inline within the question text, including unmarked \'show working\' boxes. Each sub-question placeholder is composed of two to four parts. Each part is separated by a colon (:).
+
+* Name: this is used for the specific sub-question in this authoring form, but will also display to students if they forget to respond as part of their answer. For this reason, we use the pattern of \'Part_n\' (where the underscore is converted to a space), as this should also make sense to a student, but it is fully customisable.
+* Sub-question type: Combined currently supports \'multiple response\', \'numeric\', \'pattern match\', \'select menu\' (drop-downs), and \'single choice\'. It also allows a \'show your workings\' area.
+* Response direction or field size: this varies by sub-question type. \'Multiple response\' and \'single choice\' allow the responses to be listed vertically (v) or horizontally (h). \'Numeric\', \'pattern match\', and \'show working\' allow you to set the input field or area size through double underlines and a value, such as ```__10__``` or ```__20x2__```. For \'selectmenu\', you specify the correct answer in the choice list (note that you can reuse the same selectmenu multiple times).
+* \'Show working\' has one final configuration setting: although it defaults to a text editor, you can set it to use plain text through adding \':plain\' to the end, e.g. ```[[Part_5:showworking:__10x3__:plain]]```.';
 $string['subquestiontypenotinstalled'] = 'You are attempting to use a combined question with a sub-question type \'{$a}\' that is not installed.';
 $string['updateform'] = 'Update the form';
 $string['validationerror_part'] = 'Part {$a->identifier} - {$a->error}';
