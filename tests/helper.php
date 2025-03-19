@@ -283,7 +283,8 @@ class qtype_combined_test_helper extends question_test_helper {
         $fromform = self::get_combined_question_form_data_numerical();
         $fromform->questiontext = ['text' => 'What 1.5 + 5? [[no1:numeric:__10__]]<br/>' .
             'What 10 + 1? [[no2:numeric:__10__]]<br/>' .
-            'Showworking editor [[5:showworking:__80x5__]]',
+            'Showworking editor [[5:showworking:__80x5__:editor]] <br/>' .
+            'Showworking plaintext [[6:showworking:__80x5__:plain]]',
             'format' => FORMAT_HTML];
         return $fromform;
     }

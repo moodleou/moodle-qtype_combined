@@ -45,10 +45,21 @@ class qtype_combined_showworking_embedded_renderer extends qtype_renderer
             // Setup editor.
             $id = $inputname . '_id';
             $coreeditor = editors_get_preferred_editor(FORMAT_HTML);
-            $coreeditor->use_editor($id, question_utils::get_editor_options($options->context),
-                question_utils::get_filepicker_options($context, $draftitemid));
-            // Set value.
-            $coreeditor->set_text($currentanswer);
+            // This regex grouping the editor type.
+            // match[1] will take the name of the editor type.
+            $regex = '~_+[0-9]+x[0-9]+_+:(plain|editor)~';
+            $matches = [];
+            $embedcodes = array_values($subq->question_text_embed_codes())[0];
+            preg_match($regex, $embedcodes, $matches);
+            // If editor type is 'editor', use the system editor.
+            // If editor type is 'plain', use the textarea.
+            // If editor type doesn't match any regex pattern, default to using the system editor.
+            if ($subq->type->get_qtype_name() == 'showworking' && (empty($matches[1]) || $matches[1] == 'editor')) {
+                $coreeditor->use_editor($id, question_utils::get_editor_options($options->context),
+                    question_utils::get_filepicker_options($context, $draftitemid));
+                // Set value.
+                $coreeditor->set_text($currentanswer);
+            }
             [$rows, $cols] = $subq->get_size();
             $inputinplace = html_writer::tag('div', html_writer::tag('textarea', s($currentanswer), [
                 'id' => $id,
