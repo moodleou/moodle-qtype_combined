@@ -44,6 +44,29 @@ class restore_qtype_combined_plugin extends restore_qtype_plugin {
         return $paths; // And we return the interesting paths.
     }
 
+    #[\Override]
+    public static function convert_backup_to_questiondata(array $backupdata): \stdClass {
+        $questiondata = parent::convert_backup_to_questiondata($backupdata);
+        $qtype = $questiondata->qtype;
+        if (isset($backupdata["plugin_qtype_{$qtype}_question"]['combined'])) {
+            $questiondata->options = (object) array_merge(
+                (array) $questiondata->options,
+                $backupdata["plugin_qtype_{$qtype}_question"]['combined'][0],
+            );
+        }
+        return $questiondata;
+    }
+
+    #[\Override]
+    public static function remove_excluded_question_data(stdClass $questiondata, array $excludefields = []): stdClass {
+        // Those sub questions are being restored separately.
+        if (isset($questiondata->subquestions)) {
+            unset($questiondata->subquestions);
+        }
+
+        return parent::remove_excluded_question_data($questiondata, $excludefields);
+    }
+
     /**
      * Process the qtype/combined element.
      */
