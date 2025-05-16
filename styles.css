@@ -166,3 +166,8 @@ body#page-question-type-combined div[id^=fitem_id_subqsinglechoice][id*=feedback
 .que.combined .combined-pmatch-input .editor_ousupsub {
     max-width: 100%;
 }
+.combined-showworking-input textarea {
+    min-height: 20px;
+    margin-top: 2px;
+    resize: none;
+}
