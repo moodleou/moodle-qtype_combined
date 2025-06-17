@@ -41,6 +41,7 @@
 .que.combined .qtext span.answer span.r1 {
     display: inline-flex;
     align-items: flex-start;
+    padding: 2px 0 0 0;
 }
 
 .que.combined .qtext span.answer span.r0 label,
