@@ -22,6 +22,7 @@ use qtype_combined_combiner_for_question_type;
 use question_bank;
 use ReflectionMethod;
 use stdClass;
+use qtype_combined_test_helper;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -29,6 +30,7 @@ global $CFG;
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 require_once($CFG->dirroot . '/question/type/combined/combiner/forform.php');
 require_once($CFG->dirroot . '/question/type/combined/combiner/forquestiontype.php');
+require_once($CFG->dirroot . '/question/type/combined/tests/helper.php');
 
 /**
  * Unit tests for qtype_combined editing form.
@@ -71,9 +73,16 @@ class form_test extends \advanced_testcase {
 
         $gen = $this->getDataGenerator();
         $course = $gen->create_course();
-        $context = context_course::instance($course->id);
-        $contexts = $this->get_question_edit_contexts($context);
-        $category = question_make_default_categories($contexts->all());
+        if (qtype_combined_test_helper::plugin_is_installed('mod_qbank')) {
+            $qbank = $gen->create_module('qbank', ['course' => $course->id]);
+            $context = \context_module::instance($qbank->cmid);
+            $contexts = qtype_combined_test_helper::question_edit_contexts($context);
+            $category = question_get_default_category($context->id, true);
+        } else {
+            // TODO: remove this once Moodle 5.0 is the lowest supported version.
+            $contexts = qtype_combined_test_helper::question_edit_contexts(\context_course::instance($course->id));
+            $category = question_make_default_categories($contexts->all());
+        }
 
         $question = new stdClass();
         $question->category = $category->id;
@@ -231,7 +240,7 @@ class form_test extends \advanced_testcase {
      * Data provider for {@link test_validate_question_text()}.
      * @return array
      */
-    public function get_validate_question_text_provider(): array {
+    public static function get_validate_question_text_provider(): array {
 
         return [
             'valid' => [
