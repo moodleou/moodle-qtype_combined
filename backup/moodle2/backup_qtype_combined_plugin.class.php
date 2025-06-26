@@ -38,16 +38,17 @@ class backup_qtype_combined_plugin extends backup_qtype_plugin {
         $plugin->add_child($pluginwrapper);
 
         // Now create the qtype own structures.
-        $combined = new backup_nested_element('combined', array('id'), array(
+        $combined = new backup_nested_element('combined', ['id'], [
             'correctfeedback', 'correctfeedbackformat',
             'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
-            'incorrectfeedback', 'incorrectfeedbackformat', 'shownumcorrect'));
+            'incorrectfeedback', 'incorrectfeedbackformat', 'shownumcorrect',
+        ]);
 
         // Now the own qtype tree.
         $pluginwrapper->add_child($combined);
 
         // Set source to populate the data.
-        $combined->set_source_table('qtype_combined', array('questionid' => backup::VAR_PARENTID));
+        $combined->set_source_table('qtype_combined', ['questionid' => backup::VAR_PARENTID]);
 
         // Don't need to annotate ids nor files.
 
@@ -57,13 +58,14 @@ class backup_qtype_combined_plugin extends backup_qtype_plugin {
     /**
      * Returns one array with filearea => mappingname elements for the qtype.
      *
-     * Used by {@link get_components_and_fileareas} to know about all the qtype
+     * Used by {@see get_components_and_fileareas} to know about all the qtype
      * files to be processed both in backup and restore.
      */
     public static function get_qtype_fileareas() {
-        return array(
+        return [
             'correctfeedback' => 'question_created',
             'partiallycorrectfeedback' => 'question_created',
-            'incorrectfeedback' => 'question_created');
+            'incorrectfeedback' => 'question_created',
+        ];
     }
 }

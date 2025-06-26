@@ -24,9 +24,9 @@ namespace qtype_combined;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \qtype_combined\utils;
  */
-class utils_test extends \advanced_testcase {
+final class utils_test extends \advanced_testcase {
 
-    public function test_number_in_style() {
+    public function test_number_in_style(): void {
         $numbers = [0, 1, 2, 3, 4];
 
         $expected = ['a. ', 'b. ', 'c. ', 'd. ', 'e. '];

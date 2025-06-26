@@ -27,6 +27,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  */
 class qtype_combined_test_helper extends question_test_helper {
 
+    #[\Override]
     public function get_test_questions() {
         return ['allsubparts', 'pmatchsynonyms', 'numerical', 'numericalshowworking', 'twopmatchs',
             'numericalshowworkingplaceholder'];
@@ -256,14 +257,18 @@ class qtype_combined_test_helper extends question_test_helper {
         $fromform->{'subq:numeric:no1:error'} = [''];
         $fromform->{'subq:numeric:no1:requirescinotation'} = '0';
         $fromform->{'subq:numeric:no1:feedback'} = [0 => ['text' => '', 'format' => FORMAT_HTML]];
-        $fromform->{'subq:numeric:no1:generalfeedback'} = ['text' => 'That is not correct.',
-                'format' => FORMAT_HTML,];
+        $fromform->{'subq:numeric:no1:generalfeedback'} = [
+            'text' => 'That is not correct.',
+            'format' => FORMAT_HTML,
+        ];
 
         $fromform->{'subq:numeric:no2:defaultmark'} = '0.5';
         $fromform->{'subq:numeric:no2:answer'} = ['11'];
         $fromform->{'subq:numeric:no2:error'} = [''];
         $fromform->{'subq:numeric:no2:requirescinotation'} = '0';
-        $fromform->{'subq:numeric:no2:feedback'} = [0 => ['text' => '', 'format' => FORMAT_HTML,]];
+        $fromform->{'subq:numeric:no2:feedback'} = [
+            0 => ['text' => '', 'format' => FORMAT_HTML],
+        ];
         $fromform->{'subq:numeric:no2:generalfeedback'} = ['text' => 'That is not correct.',
                 'format' => FORMAT_HTML];
 
@@ -326,14 +331,18 @@ class qtype_combined_test_helper extends question_test_helper {
         $fromform->{'subq:numeric:Part_1_a:error'} = [''];
         $fromform->{'subq:numeric:Part_1_a:requirescinotation'} = '0';
         $fromform->{'subq:numeric:Part_1_a:feedback'} = [0 => ['text' => '', 'format' => FORMAT_HTML]];
-        $fromform->{'subq:numeric:Part_1_a:generalfeedback'} = ['text' => 'That is not correct.',
-            'format' => FORMAT_HTML,];
+        $fromform->{'subq:numeric:Part_1_a:generalfeedback'} = [
+            'text' => 'That is not correct.',
+            'format' => FORMAT_HTML,
+        ];
 
         $fromform->{'subq:numeric:Part_1_b:defaultmark'} = '0.5';
         $fromform->{'subq:numeric:Part_1_b:answer'} = ['11'];
         $fromform->{'subq:numeric:Part_1_b:error'} = [''];
         $fromform->{'subq:numeric:Part_1_b:requirescinotation'} = '0';
-        $fromform->{'subq:numeric:Part_1_b:feedback'} = [0 => ['text' => '', 'format' => FORMAT_HTML,]];
+        $fromform->{'subq:numeric:Part_1_b:feedback'} = [
+            0 => ['text' => '', 'format' => FORMAT_HTML],
+        ];
         $fromform->{'subq:numeric:Part_1_b:generalfeedback'} = ['text' => 'That is not correct.',
             'format' => FORMAT_HTML];
 
@@ -377,7 +386,7 @@ class qtype_combined_test_helper extends question_test_helper {
             'pmatch_1' => 'pmatch',
             'pmatch_2' => 'pmatch',
         ];
-        // Pmatch 1
+        // Pmatch 1.
         $fromform->{'subq:pmatch:1:defaultmark'} = '0.5';
         $fromform->{'subq:pmatch:1:applydictionarycheck'} = '-';
         $fromform->{'subq:pmatch:1:answer'} = ['match_mw (ethanoic acid)'];
@@ -392,7 +401,7 @@ class qtype_combined_test_helper extends question_test_helper {
         $fromform->{'subq:pmatch:1:usecase'} = '0';
         $fromform->{'subq:pmatch:1:modelanswer'} = 'ethanoic acid';
         $fromform->{'subq:pmatch:1:quotematching'} = 0;
-        // Pmatch 2
+        // Pmatch 2.
         $fromform->{'subq:pmatch:2:defaultmark'} = '0.5';
         $fromform->{'subq:pmatch:2:applydictionarycheck'} = '-';
         $fromform->{'subq:pmatch:2:answer'} = ['match_m (10)'];
@@ -421,7 +430,9 @@ class qtype_combined_test_helper extends question_test_helper {
     }
 
     /**
-     * @param array $qtypes, ... variable number of params accepted, they are all strings, qtypes whose helpers to include
+     * Safely include test helpers for question types.
+     *
+     * @param mixed ...$qtypes The variable number of params accepted, they are all strings, qtypes whose helpers to include.
      * @return bool|string error - false or a message about qtypes that are not installed
      */
     public static function safe_include_test_helpers(...$qtypes) {
@@ -442,6 +453,8 @@ class qtype_combined_test_helper extends question_test_helper {
     }
 
     /**
+     * Make a gapselect question.
+     *
      * @param string $name
      * @return qtype_gapselect_question
      */
@@ -457,6 +470,8 @@ class qtype_combined_test_helper extends question_test_helper {
     }
 
     /**
+     * Make a combined question with a gapselect subquestion.
+     *
      * @return qtype_combined_question
      */
     public static function make_a_combined_question_with_gapselect_subquestion() {
@@ -478,15 +493,17 @@ class qtype_combined_test_helper extends question_test_helper {
         $subq = $combined->combiner->find_or_create_question_instance('selectmenu', 'gs');
         $subq->question = self::make_a_gapselect_question('gs');
 
-        $combined->hints = array(
+        $combined->hints = [
             new question_hint_with_parts(1, 'This is the first hint.', FORMAT_HTML, false, false),
             new question_hint_with_parts(2, 'This is the second hint.', FORMAT_HTML, true, true),
-        );
+        ];
 
         return $combined;
     }
 
     /**
+     * Make the oumultiresponse question.
+     *
      * @param string $name
      * @return qtype_oumultiresponse_question
      */
@@ -500,6 +517,8 @@ class qtype_combined_test_helper extends question_test_helper {
     }
 
     /**
+     * Make a multichoice question.
+     *
      * @param string $name
      * @return qtype_multichoice_single_question
      */
@@ -511,6 +530,8 @@ class qtype_combined_test_helper extends question_test_helper {
     }
 
     /**
+     * Make a combined question with oumultiresponse subquestion.
+     *
      * @return qtype_combined_question
      */
     public static function make_a_combined_question_with_oumr_subquestion() {
@@ -532,15 +553,17 @@ class qtype_combined_test_helper extends question_test_helper {
         $subq = $combined->combiner->find_or_create_question_instance('multiresponse', 'mc');
         $subq->question = self::make_oumultiresponse_question_two_of_four('mc');
 
-        $combined->hints = array(
+        $combined->hints = [
             new question_hint_with_parts(1, 'Hint 1.', FORMAT_HTML, true, false),
-            new question_hint_with_parts(2, 'Hint 2.', FORMAT_HTML, true, true)
-        );
+            new question_hint_with_parts(2, 'Hint 2.', FORMAT_HTML, true, true),
+        ];
 
         return $combined;
     }
 
     /**
+     * Make a combined question with a single response subquestion.
+     *
      * @return qtype_combined_question
      */
     public static function make_a_combined_question_with_multichoice_subquestion() {
@@ -562,15 +585,17 @@ class qtype_combined_test_helper extends question_test_helper {
         $subq = $combined->combiner->find_or_create_question_instance('singlechoice', 'sr');
         $subq->question = self::make_multichoice_question_one_of_four('sr');
 
-        $combined->hints = array(
+        $combined->hints = [
                 new question_hint_with_parts(1, 'Hint 1.', FORMAT_HTML, true, false),
-                new question_hint_with_parts(2, 'Hint 2.', FORMAT_HTML, true, true)
-        );
+                new question_hint_with_parts(2, 'Hint 2.', FORMAT_HTML, true, true),
+        ];
 
         return $combined;
     }
 
     /**
+     * Make a combined question with oumultiresponse and gapselect subquestions.
+     *
      * @return qtype_combined_question
      */
     public static function make_a_combined_question_with_oumr_and_gapselect_subquestion() {
@@ -599,11 +624,11 @@ class qtype_combined_test_helper extends question_test_helper {
         $subq->question = self::make_a_gapselect_question('gs');
         $subq->question->defaultmark = 0.5;
 
-        $combined->hints = array(
+        $combined->hints = [
             new question_hint_with_parts(1, 'Hint 1.', FORMAT_HTML, true, false),
             new question_hint_with_parts(2, 'Hint 2.', FORMAT_HTML, true, true),
-            new question_hint_with_parts(3, 'Hint 3.', FORMAT_HTML, true, true)
-        );
+            new question_hint_with_parts(3, 'Hint 3.', FORMAT_HTML, true, true),
+        ];
 
         return $combined;
     }
@@ -614,7 +639,7 @@ class qtype_combined_test_helper extends question_test_helper {
      * @return qtype_combined_question
      */
     public static function make_a_combined_question_with_oumr_and_gapselect_subquestion_with_new_placeholder() {
-        $combined = qtype_combined_test_helper::make_a_combined_question_with_oumr_and_gapselect_subquestion();
+        $combined = self::make_a_combined_question_with_oumr_and_gapselect_subquestion();
         $combined->questiontext = 'Choose correct 2 check boxes [[Part_1:multiresponse]]. '.
             'The [[Part_2:selectmenu:1]] brown [[Part_2:selectmenu:2]] jumped over the [[Part_2:selectmenu:3]] dog.';
 
@@ -633,6 +658,8 @@ class qtype_combined_test_helper extends question_test_helper {
     }
 
     /**
+     * Make a combined question with oumultiresponse and showworking subquestion.
+     *
      * @return qtype_combined_question
      */
     public static function make_a_combined_question_with_oumr_and_showworking_subquestion() {
@@ -669,6 +696,8 @@ class qtype_combined_test_helper extends question_test_helper {
     }
 
     /**
+     * Make a pmatch question.
+     *
      * @param string $name
      * @return qtype_pmatch_question
      */
@@ -681,6 +710,8 @@ class qtype_combined_test_helper extends question_test_helper {
     }
 
     /**
+     * Make combined question with oumultiresponse, pmatch and gapselect subquestion.
+     *
      * @return qtype_combined_question
      */
     public static function make_a_combined_question_with_oumr_pmatch_and_gapselect_subquestion() {
@@ -716,24 +747,26 @@ class qtype_combined_test_helper extends question_test_helper {
 
         $subq->question->defaultmark = 0.25;
 
-        $combined->hints = array(
+        $combined->hints = [
             new question_hint_with_parts(1, 'Hint 1.', FORMAT_HTML, true, false),
             new question_hint_with_parts(2, 'Hint 2.', FORMAT_HTML, true, true),
-            new question_hint_with_parts(3, 'Hint 3.', FORMAT_HTML, true, true)
-        );
+            new question_hint_with_parts(3, 'Hint 3.', FORMAT_HTML, true, true),
+        ];
 
         return $combined;
     }
 
 
     /**
+     * Make a varnumericset question.
+     *
      * @param string $name
      * @return qtype_varnumericset_question
      */
     protected static function make_a_varnumericset_question($name) {
         $vn = test_question_maker::make_question('varnumericset', 'no_accepted_error');
         $vn->name = $name;
-        $vn->answers = array();
+        $vn->answers = [];
         $vn->answers[0] = new qtype_varnumericset_answer('1', // Id.
                                                          '-4.2',  // Answer.
                                                          '1',     // Fraction.
@@ -751,6 +784,8 @@ class qtype_combined_test_helper extends question_test_helper {
     }
 
     /**
+     * Make a combined question with oumultiresponse, pmatch, numeric and gapselect subquestion.
+     *
      * @return qtype_combined_question
      */
     public static function make_a_combined_question_with_oumr_pmatch_varnum_and_gapselect_subquestion() {
@@ -790,11 +825,11 @@ class qtype_combined_test_helper extends question_test_helper {
         $subq->question = self::make_a_varnumericset_question('vn');
         $subq->question->defaultmark = 0.25;
 
-        $combined->hints = array(
+        $combined->hints = [
             new question_hint_with_parts(1, 'Hint 1.', FORMAT_HTML, true, false),
             new question_hint_with_parts(2, 'Hint 2.', FORMAT_HTML, true, true),
-            new question_hint_with_parts(3, 'Hint 3.', FORMAT_HTML, true, true)
-        );
+            new question_hint_with_parts(3, 'Hint 3.', FORMAT_HTML, true, true),
+        ];
 
         return $combined;
     }

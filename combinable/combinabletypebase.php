@@ -37,12 +37,14 @@ abstract class qtype_combined_combinable_type_base {
     protected $qtypename;
 
     /**
-     * @var int either @link qtype_combined_type_manager::FOUND_IN_COMBINABLE_DIR_OF_COMBINED
-     *          or @link qtype_combined_type_manager::FOUND_IN_OTHER_QTYPE_DIR
+     * @var int either {@see qtype_combined_type_manager::FOUND_IN_COMBINABLE_DIR_OF_COMBINED}
+     *          or {@see qtype_combined_type_manager::FOUND_IN_OTHER_QTYPE_DIR}
      */
     protected $foundwhere;
 
     /**
+     * Constructor.
+     *
      * @param string $qtypename this is the internal Moodle question type name
      * @param integer $foundwhere
      * @see qtype_combined_type_manager::FOUND_IN_COMBINABLE_DIR_OF_COMBINED
@@ -72,6 +74,8 @@ abstract class qtype_combined_combinable_type_base {
     }
 
     /**
+     * The renderer embedded.
+     *
      * @return qtype_renderer
      */
     public function embedded_renderer() {
@@ -86,7 +90,9 @@ abstract class qtype_combined_combinable_type_base {
     }
 
     /**
-     * @param $questionidentifier string the question identifier found in the question text or otherwise
+     * Create a new instance of the sub-question.
+     *
+     * @param string $questionidentifier the question identifier found in the question text or otherwise
      * @return qtype_combined_combinable_base
      */
     public function new_subq_instance($questionidentifier) {
@@ -117,6 +123,8 @@ abstract class qtype_combined_combinable_type_base {
     }
 
     /**
+     * Get the identifier.
+     *
      * @return string question type identifier used in question text that can be different to internal Moodle question type name.
      */
     public function get_identifier() {
@@ -124,13 +132,15 @@ abstract class qtype_combined_combinable_type_base {
     }
 
     /**
+     * Get the properties of combined feedback.
+     *
      * @param bool $withparts
      * @return array
      */
     protected function combined_feedback_properties($withparts = true) {
-        $properties = array();
-        foreach (array('correct', 'partiallycorrect', 'incorrect') as $feedbacktype) {
-            $properties[$feedbacktype.'feedback'] = array('text' => '', 'format' => FORMAT_HTML);
+        $properties = [];
+        foreach (['correct', 'partiallycorrect', 'incorrect'] as $feedbacktype) {
+            $properties[$feedbacktype.'feedback'] = ['text' => '', 'format' => FORMAT_HTML];
         }
         if ($withparts) {
             $properties['shownumcorrect'] = 1;
@@ -170,7 +180,7 @@ abstract class qtype_combined_combinable_type_base {
      * Default just adds defaults from extra_question_properties but this might be extended in
      * child class if we also need to do something more complex.
      *
-     * @param $questiondata
+     * @param stdClass $questiondata
      * @return object transformed question data to be passed to qtype save_question method.
      */
     protected function add_question_properties($questiondata) {
@@ -192,6 +202,8 @@ abstract class qtype_combined_combinable_type_base {
     }
 
     /**
+     * Get the qtype name.
+     *
      * @return string question type name as per directory name in question/type/
      */
     public function get_qtype_name() {
@@ -199,6 +211,8 @@ abstract class qtype_combined_combinable_type_base {
     }
 
     /**
+     * Get qtype object.
+     *
      * @return question_type object for this subq type
      */
     protected function get_qtype_obj() {
@@ -206,23 +220,29 @@ abstract class qtype_combined_combinable_type_base {
     }
 
     /**
-     * @param $questiondata stdClass question record object. Options are added to $questiondata->options
+     * Get question options.
+     *
+     * @param stdClass $questiondata question record object. Options are added to $questiondata->options
      */
     public function get_question_options($questiondata) {
         $this->get_qtype_obj()->get_question_options($questiondata);
     }
 
     /**
+     * Delete a sub-question.
+     *
      * @param integer $subquestionid
      * @param integer $contextid
      */
     public function delete_question($subquestionid, $contextid) {
         global $DB;
-        $DB->delete_records('question', array('id' => $subquestionid));
+        $DB->delete_records('question', ['id' => $subquestionid]);
         $this->get_qtype_obj()->delete_question($subquestionid, $contextid);
     }
 
     /**
+     * Save the subquestion data.
+     *
      * @param stdClass $oldsubq
      * @param stdClass $subqdata
      * @param int $oldsubqid previous id of this subquestion.
@@ -246,9 +266,15 @@ abstract class qtype_combined_combinable_type_base {
      * false value means default empty.
      */
     public function subq_form_fragment_question_option_fields() {
-        return array();
+        return [];
     }
 
+    /**
+     * Get the embedded code to use in the default question text.
+     *
+     * @param string $questionname the name of the question, this is used as a placeholder in the text.
+     * @return string The embedded code to use in the default question text.
+     */
     public function embedded_code_for_default_question_text($questionname) {
         $prefix = qtype_combined_combiner_base::EMBEDDED_CODE_PREFIX;
         $postfix = qtype_combined_combiner_base::EMBEDDED_CODE_POSTFIX;

@@ -25,10 +25,17 @@
 class qtype_combined_gapselect_embedded_renderer extends qtype_renderer
     implements qtype_combined_subquestion_renderer_interface {
 
+    /**
+     * The box id for the gap select question.
+     *
+     * @param question_attempt $qa The question attempt.
+     * @param string $place The place in the question.
+     */
     protected function box_id(question_attempt $qa, $place) {
         return str_replace(':', '_', $qa->get_qt_field_name($place));
     }
 
+    #[\Override]
     public function subquestion(question_attempt $qa,
                                 question_display_options $options,
                                 qtype_combined_combinable_base $subq,
@@ -41,9 +48,9 @@ class qtype_combined_gapselect_embedded_renderer extends qtype_renderer
 
         $value = $qa->get_last_qt_var($fieldname);
 
-        $attributes = array(
+        $attributes = [
             'id' => str_replace(':', '_', $qa->get_qt_field_name($fieldname)),
-        );
+        ];
 
         if ($options->readonly) {
             $attributes['disabled'] = 'disabled';
@@ -53,7 +60,7 @@ class qtype_combined_gapselect_embedded_renderer extends qtype_renderer
         }
 
         $orderedchoices = $question->get_ordered_choices($group);
-        $selectoptions = array();
+        $selectoptions = [];
         foreach ($orderedchoices as $orderedchoicevalue => $orderedchoice) {
             $selectoptions[$orderedchoicevalue] = $orderedchoice->text;
         }
@@ -73,7 +80,7 @@ class qtype_combined_gapselect_embedded_renderer extends qtype_renderer
 
         // Add accessibility label for input.
         $labelhtml = html_writer::tag('label', get_string('answer') . ' ' . $subq->get_identifier(),
-                array('for' => $attributes['id'], 'class' => 'accesshide'));
-        return html_writer::tag('span', $labelhtml . $selecthtml, array('class' => 'control'));
+            ['for' => $attributes['id'], 'class' => 'accesshide']);
+        return html_writer::tag('span', $labelhtml . $selecthtml, ['class' => 'control']);
     }
 }

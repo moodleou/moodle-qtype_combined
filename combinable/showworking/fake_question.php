@@ -14,13 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * The fake question class for showworking.
+ *
+ * @package qtype_combined
+ * @copyright 2025 The Open University
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * This class implements just enough of the question_definition API so that we can
  * handle showworking instances like other question types.
  *
- * @package    qtype_showworking
+ * @package    qtype_combined
  * @copyright  2022 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -38,6 +46,11 @@ class qtype_combined_showworking_fake_question {
     /** @var float penalty factor of this question. */
     public $penalty = 0;
 
+    /**
+     * Constructor.
+     *
+     * @param string $name The name of the question.
+     */
     public function __construct(string $name) {
         $this->qtype = new qtype_combined_showworking_fake_qtype();
         $this->name = $name;
@@ -46,7 +59,7 @@ class qtype_combined_showworking_fake_question {
     /**
      * Overwrite start_attempt method in question_definition.
      *
-     * @param question_attempt_step The first step of the {@link question_attempt} being started.
+     * @param question_attempt_step $step The first step of the {@see question_attempt} being started.
      * @param int $variant which variant of this question to start.
      */
     public function start_attempt(question_attempt_step $step, int $variant): void {
@@ -55,7 +68,7 @@ class qtype_combined_showworking_fake_question {
     /**
      * Overwrite apply_attempt_state method in question_definition.
      *
-     * @param question_attempt_step The first step of the question_attempt being loaded.
+     * @param question_attempt_step $step The first step of the question_attempt being loaded.
      */
     public function apply_attempt_state(question_attempt_step $step): void {
     }
@@ -127,8 +140,8 @@ class qtype_combined_showworking_fake_question {
     /**
      * Implement the classify_response method in question_definition.
      *
-     * @param array $response a response, as might be passed to {@link grade_response()}.
-     * @return array subpartid => {@link question_classified_response} objects.
+     * @param array $response a response, as might be passed to {@see grade_response()}.
+     * @return array subpartid => {@see question_classified_response} objects.
      *      returns an empty array if no analysis is possible.
      */
     public function classify_response(array $response): array {
@@ -231,6 +244,8 @@ class qtype_combined_showworking_fake_question {
 /**
  * This class implements just enough of the question_type API so that we can
  * handle showworking instances like other question types.
+ *
+ * @package qtype_combined
  */
 class qtype_combined_showworking_fake_qtype {
 

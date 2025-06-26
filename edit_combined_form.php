@@ -42,11 +42,22 @@ class qtype_combined_edit_form extends question_edit_form {
      */
     protected $combiner;
 
+    /**
+     * Constructor.
+     * @param string $submiturl The URL to submit the form to.
+     * @param question_definition $question The question being edited.
+     * @param stdClass|core_course_category $category The category the question belongs to.
+     * @param context[] $contexts The contexts the question belongs to.
+     * @param bool $formeditable Whether the form is editable.
+     */
     public function __construct($submiturl, $question, $category, $contexts, $formeditable = true) {
         $this->combiner = new qtype_combined_combiner_for_form();
         parent::__construct($submiturl, $question, $category, $contexts, $formeditable);
     }
 
+    /**
+     * Get the current question text.
+     */
     protected function get_current_question_text() {
         if ($submitteddata = optional_param_array('questiontext', null, PARAM_RAW)) {
             return $submitteddata['text'];
@@ -55,11 +66,7 @@ class qtype_combined_edit_form extends question_edit_form {
         }
     }
 
-    /**
-     * @param MoodleQuickForm $mform
-     * @return void
-     * @throws coding_exception
-     */
+    #[\Override]
     protected function definition_inner($mform) {
         if (isset($this->question->id)) {
             $qid = $this->question->id;
@@ -98,6 +105,7 @@ class qtype_combined_edit_form extends question_edit_form {
         $this->add_interactive_settings(true, true);
     }
 
+    #[\Override]
     protected function data_preprocessing($toform) {
         $toform = parent::data_preprocessing($toform);
         $toform = $this->data_preprocessing_combined_feedback($toform, true);
@@ -108,6 +116,7 @@ class qtype_combined_edit_form extends question_edit_form {
         return $toform;
     }
 
+    #[\Override]
     public function validation($fromform, $files) {
         $errors = parent::validation($fromform, $files);
 
@@ -117,6 +126,7 @@ class qtype_combined_edit_form extends question_edit_form {
     }
 
 
+    #[\Override]
     public function qtype() {
         return 'combined';
     }

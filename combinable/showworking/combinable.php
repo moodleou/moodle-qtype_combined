@@ -17,7 +17,7 @@
 /**
  * Defines the hooks necessary to make the showworking question type combinable
  *
- * @package    qtype_showworking
+ * @package    qtype_combined
  * @copyright  2022 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,24 +31,32 @@ require_once(__DIR__ . '/fake_question.php');
  */
 class qtype_combined_combinable_type_showworking extends qtype_combined_combinable_type_base {
 
+    /**
+     * @var string The identifier for showworking.
+     */
     protected $identifier = 'showworking';
 
+    #[\Override]
     protected function extra_question_properties() {
         return [];
     }
 
+    #[\Override]
     protected function extra_answer_properties() {
         return [];
     }
 
+    #[\Override]
     protected function transform_subq_form_data_to_full($subqdata) {
         return $subqdata;
     }
 
+    #[\Override]
     public function third_param_for_default_question_text() {
         return '__80x5__:editor';
     }
 
+    #[\Override]
     public function save($oldsubq, $subqdata, int $oldsubqid) {
     }
 }
@@ -67,29 +75,36 @@ class qtype_combined_combinable_showworking extends qtype_combined_combinable_te
      */
     protected $sizeparam = null;
 
+    #[\Override]
     public function is_real_subquestion(): bool {
         return false;
     }
 
+    #[\Override]
     public function add_form_fragment(moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
     }
 
+    #[\Override]
     public function validate() {
         return [];
     }
 
+    #[\Override]
     public function get_sup_sub_editor_option() {
         return null;
     }
 
+    #[\Override]
     public function has_submitted_data() {
         return false;
     }
 
+    #[\Override]
     protected function store_third_param($thirdparam) {
         $this->sizeparam = $thirdparam;
     }
 
+    #[\Override]
     protected function get_third_params() {
         return [$this->sizeparam];
     }
@@ -123,6 +138,7 @@ class qtype_combined_combinable_showworking extends qtype_combined_combinable_te
         return [$rows, $cols];
     }
 
+    #[\Override]
     public function validate_third_param($thirdparam) {
         if ($thirdparam === null) {
             return null;
@@ -136,18 +152,22 @@ class qtype_combined_combinable_showworking extends qtype_combined_combinable_te
         }
     }
 
+    #[\Override]
     protected function error_string_when_third_param_fails_validation($thirdparam) {
         $qtypeid = $this->type->get_identifier();
 
         return get_string('err_invalid_width_specifier_postfix_showworking', 'qtype_combined', $qtypeid);
     }
 
+    #[\Override]
     public function save($contextid) {
     }
 
+    #[\Override]
     public function delete() {
     }
 
+    #[\Override]
     public function make() {
         $this->question = new qtype_combined_showworking_fake_question(
                 $this->questionidentifier);

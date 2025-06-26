@@ -34,17 +34,18 @@ require_once($CFG->dirroot . '/question/type/combined/tests/helper.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \qtype_combined
  */
-class questiontype_test extends \question_testcase {
+final class questiontype_test extends \question_testcase {
     /** @var qtype_combined instance of the question type class to test. */
     protected $qtype;
 
     protected function setUp(): void {
+        parent::setUp();
         $this->qtype = question_bank::get_qtype('combined');
     }
 
-    public function test_export_to_xml() {
+    public function test_export_to_xml(): void {
         $qdata =
-            (object)array(
+            (object)[
                 'id' => '8862',
                 'category' => '1299,2005',
                 'parent' => '0',
@@ -67,7 +68,7 @@ class questiontype_test extends \question_testcase {
                 'modifiedby' => '2',
                 'idnumber' => null,
                 'options' =>
-                    (object)array(
+                    (object)[
                         'id' => '126',
                         'questionid' => '8862',
                         'correctfeedback' => 'Your answer is correct.',
@@ -77,7 +78,7 @@ class questiontype_test extends \question_testcase {
                         'incorrectfeedback' => 'Your answer is incorrect.',
                         'incorrectfeedbackformat' => '1',
                         'shownumcorrect' => '1',
-                    ),
+                    ],
                 'hints' => [
                     (object)[
                         'id' => 1,
@@ -85,7 +86,7 @@ class questiontype_test extends \question_testcase {
                         'hint' => 'Hint 1',
                         'hintformat' => FORMAT_HTML,
                         'shownumcorrect' => 0,
-                        'clearwrong' => 0
+                        'clearwrong' => 0,
                     ],
                     (object)[
                         'id' => 2,
@@ -93,13 +94,13 @@ class questiontype_test extends \question_testcase {
                         'hint' => 'Hint 2',
                         'hintformat' => FORMAT_HTML,
                         'shownumcorrect' => 1,
-                        'clearwrong' => 1
+                        'clearwrong' => 1,
                     ],
                 ],
                 'subquestions' =>
-                    array(
+                    [
                         8864 =>
-                            (object)array(
+                            (object)[
                                 'id' => '8864',
                                 'category' => '1299',
                                 'parent' => '8862',
@@ -122,7 +123,7 @@ class questiontype_test extends \question_testcase {
                                 'idnumber' => null,
                                 'contextid' => '2005',
                                 'options' =>
-                                    (object)array(
+                                    (object)[
                                         'id' => '1452',
                                         'questionid' => '8864',
                                         'layout' => '0',
@@ -138,9 +139,9 @@ class questiontype_test extends \question_testcase {
                                         'showstandardinstruction' => true,
                                         'shownumcorrect' => '1',
                                         'answers' =>
-                                            array(
+                                            [
                                                 28406 =>
-                                                    (object)array(
+                                                    (object)[
                                                         'id' => '28406',
                                                         'question' => '8864',
                                                         'answer' => '<p>Barcelona</p>',
@@ -148,9 +149,9 @@ class questiontype_test extends \question_testcase {
                                                         'fraction' => '0.0000000',
                                                         'feedback' => '',
                                                         'feedbackformat' => '1',
-                                                    ),
+                                                    ],
                                                 28407 =>
-                                                    (object)array(
+                                                    (object)[
                                                         'id' => '28407',
                                                         'question' => '8864',
                                                         'answer' => '<p>Madrid</p>',
@@ -158,9 +159,9 @@ class questiontype_test extends \question_testcase {
                                                         'fraction' => '1.0000000',
                                                         'feedback' => '',
                                                         'feedbackformat' => '1',
-                                                    ),
+                                                    ],
                                                 28408 =>
-                                                    (object)array(
+                                                    (object)[
                                                         'id' => '28408',
                                                         'question' => '8864',
                                                         'answer' => '<p>Salamanca</p>',
@@ -168,13 +169,13 @@ class questiontype_test extends \question_testcase {
                                                         'fraction' => '0.0000000',
                                                         'feedback' => '',
                                                         'feedbackformat' => '1',
-                                                    ),
-                                            ),
-                                    ),
+                                                    ],
+                                            ],
+                                    ],
                                 'hints' =>
-                                    array(),
+                                    [],
                                 'categoryobject' =>
-                                    (object)array(
+                                    (object)[
                                         'id' => '1299',
                                         'name' => 'qtype_svg-icons',
                                         'contextid' => '2005',
@@ -184,10 +185,10 @@ class questiontype_test extends \question_testcase {
                                         'parent' => '1298',
                                         'sortorder' => '999',
                                         'idnumber' => null,
-                                    ),
-                            ),
+                                    ],
+                            ],
                         8863 =>
-                            (object)array(
+                            (object)[
                                 'id' => '8863',
                                 'category' => '1299',
                                 'parent' => '8862',
@@ -210,7 +211,7 @@ class questiontype_test extends \question_testcase {
                                 'idnumber' => null,
                                 'contextid' => '2005',
                                 'options' =>
-                                    (object)array(
+                                    (object)[
                                         'id' => '1451',
                                         'questionid' => '8863',
                                         'layout' => '0',
@@ -226,9 +227,9 @@ class questiontype_test extends \question_testcase {
                                         'showstandardinstruction' => true,
                                         'shownumcorrect' => '1',
                                         'answers' =>
-                                            array(
+                                            [
                                                 28403 =>
-                                                    (object)array(
+                                                    (object)[
                                                         'id' => '28403',
                                                         'question' => '8863',
                                                         'answer' => '<p>Berlin</p>',
@@ -236,9 +237,9 @@ class questiontype_test extends \question_testcase {
                                                         'fraction' => '1.0000000',
                                                         'feedback' => '',
                                                         'feedbackformat' => '1',
-                                                    ),
+                                                    ],
                                                 28404 =>
-                                                    (object)array(
+                                                    (object)[
                                                         'id' => '28404',
                                                         'question' => '8863',
                                                         'answer' => '<p>Bonn</p>',
@@ -246,9 +247,9 @@ class questiontype_test extends \question_testcase {
                                                         'fraction' => '0.2000000',
                                                         'feedback' => '',
                                                         'feedbackformat' => '1',
-                                                    ),
+                                                    ],
                                                 28405 =>
-                                                    (object)array(
+                                                    (object)[
                                                         'id' => '28405',
                                                         'question' => '8863',
                                                         'answer' => '<p>Hamburg</p>',
@@ -256,13 +257,13 @@ class questiontype_test extends \question_testcase {
                                                         'fraction' => '0.0000000',
                                                         'feedback' => '',
                                                         'feedbackformat' => '1',
-                                                    ),
-                                            ),
-                                    ),
+                                                    ],
+                                            ],
+                                    ],
                                 'hints' =>
-                                    array(),
+                                    [],
                                 'categoryobject' =>
-                                    (object)array(
+                                    (object)[
                                         'id' => '1299',
                                         'name' => 'qtype_svg-icons',
                                         'contextid' => '2005',
@@ -272,11 +273,11 @@ class questiontype_test extends \question_testcase {
                                         'parent' => '1298',
                                         'sortorder' => '999',
                                         'idnumber' => null,
-                                    ),
-                            ),
-                    ),
+                                    ],
+                            ],
+                    ],
                 'categoryobject' =>
-                    (object)array(
+                    (object)[
                         'id' => '1299',
                         'name' => 'qtype_svg-icons',
                         'contextid' => '2005',
@@ -286,23 +287,23 @@ class questiontype_test extends \question_testcase {
                         'parent' => '1298',
                         'sortorder' => '999',
                         'idnumber' => null,
-                    ),
+                    ],
                 'coursetagobjects' =>
-                    array(),
+                    [],
                 'coursetags' =>
-                    array(),
+                    [],
                 'tagobjects' =>
-                    array(),
+                    [],
                 'tags' =>
-                    array(),
+                    [],
                 'formoptions' =>
-                    (object)array(
+                    (object)[
                         'canedit' => true,
                         'canmove' => true,
                         'cansaveasnew' => true,
                         'repeatelements' => true,
                         'mustbeusable' => false,
-                    ),
+                    ],
                 'contextid' => '2005',
                 'scrollpos' => 0,
                 'categorymoveto' => '1299,2005',
@@ -310,8 +311,8 @@ class questiontype_test extends \question_testcase {
                 'returnurl' => '/question/edit.php?courseid=35&cat=1299%2C2005&recurse=1&showhidden=1&qbshowtext=0',
                 'makecopy' => 0,
                 'courseid' => '35',
-                'inpopup' => 0
-            );
+                'inpopup' => 0,
+            ];
 
         $exporter = new \qformat_xml();
         $xml = $exporter->writequestion($qdata);

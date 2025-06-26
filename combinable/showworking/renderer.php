@@ -17,13 +17,21 @@
 /**
  * Combined question embedded sub question renderer class.
  *
- * @package   qtype_showworking
+ * @package   qtype_combined
  * @copyright  2022 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_combined_showworking_embedded_renderer extends qtype_renderer
     implements qtype_combined_subquestion_renderer_interface {
 
+    /**
+     * The sub-question.
+     *
+     * @param question_attempt $qa The question attempt.
+     * @param question_display_options $options The display options.
+     * @param qtype_combined_combinable_base $subq The sub-question.
+     * @param int $placeno The placement number of the sub-question.
+     */
     public function subquestion(question_attempt $qa, question_display_options $options, qtype_combined_combinable_base $subq,
             $placeno) {
 

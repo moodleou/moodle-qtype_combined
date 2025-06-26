@@ -25,55 +25,64 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Class for the combined combinable gapselect questions.
+ */
 class qtype_combined_combinable_type_gapselect extends qtype_combined_combinable_type_base {
 
+    /**
+     * @var string The identifier for gapselect.
+     */
     protected $identifier = 'selectmenu';
 
+    #[\Override]
     protected function extra_question_properties() {
         return $this->combined_feedback_properties();
     }
 
+    #[\Override]
     protected function extra_answer_properties() {
-        return array();
+        return [];
     }
 
+    #[\Override]
     public function subq_form_fragment_question_option_fields() {
-        return array('shuffleanswers' => false);
+        return ['shuffleanswers' => false];
     }
 
+    #[\Override]
     protected function transform_subq_form_data_to_full($subqdata) {
         $data = parent::transform_subq_form_data_to_full($subqdata);
-        $data->choices = array();
+        $data->choices = [];
         foreach ($data->answer as $anskey => $answer) {
-            $data->choices[$anskey] = array('answer' => $answer, 'choicegroup' => '1');
+            $data->choices[$anskey] = ['answer' => $answer, 'choicegroup' => '1'];
         }
         return $this->add_per_answer_properties($data);
     }
 
+    #[\Override]
     protected function third_param_for_default_question_text() {
         return '1';
     }
 }
 
+/**
+ * Class qtype combine combinable gapselect.
+ */
 class qtype_combined_combinable_gapselect extends qtype_combined_combinable_accepts_numerical_param {
 
     /**
      * @var array of the correct choices taken from the third param of embedded code
      */
-    protected $correctchoices = array();
+    protected $correctchoices = [];
 
-    /**
-     * @param moodleform      $combinedform
-     * @param MoodleQuickForm $mform
-     * @param                 $repeatenabled
-     */
+    #[\Override]
     public function add_form_fragment(moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
         $mform->addElement('advcheckbox', $this->form_field_name('shuffleanswers'), get_string('shuffle', 'qtype_gapselect'));
 
-        $answerel = array($mform->createElement('text',
-                                                $this->form_field_name('answer'),
-                                                get_string('choicex', 'qtype_gapselect'),
-                                                array('size' => 57, 'class' => 'tweakcss')));
+        $answerel = [$mform->createElement('text',
+            $this->form_field_name('answer'), get_string('choicex', 'qtype_gapselect'),
+                ['size' => 57, 'class' => 'tweakcss'])];
 
         if ($this->questionrec !== null) {
             $countanswers = count($this->questionrec->options->answers);
@@ -90,7 +99,7 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
 
         $combinedform->repeat_elements($answerel,
                                         $repeatsatstart,
-                                        array(),
+                                        [],
                                         $this->form_field_name('noofchoices'),
                                         $this->form_field_name('morechoices'),
                                         QUESTION_NUMANS_ADD,
@@ -100,10 +109,11 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
 
     }
 
+    #[\Override]
     public function data_to_form($context, $fileoptions) {
-        $gapselectoptions = array('answer' => array());
+        $gapselectoptions = ['answer' => []];
         if ($this->questionrec !== null) {
-            $answers = array();
+            $answers = [];
             foreach ($this->questionrec->options->answers as $answer) {
                 $gapselectoptions['answer'][] = $answer->answer;
             }
@@ -111,10 +121,12 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
         return parent::data_to_form($context, $fileoptions) + $gapselectoptions;
     }
 
+    #[\Override]
     public function can_be_more_than_one_of_same_instance() {
         return true;
     }
 
+    #[\Override]
     public function validate_third_param($thirdparam) {
         if ($thirdparam === null) {
             $qtype = $this->type->get_identifier();
@@ -124,11 +136,10 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
         }
     }
 
-
-
+    #[\Override]
     public function validate() {
-        $errors = array();
-        $nonemptyanswerblanks = array();
+        $errors = [];
+        $nonemptyanswerblanks = [];
         foreach ($this->formdata->answer as $anskey => $answer) {
             if ('' !== trim($answer)) {
                 $nonemptyanswerblanks[] = $anskey;
@@ -152,12 +163,14 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
         return $errors;
     }
 
+    #[\Override]
     protected function code_construction_instructions() {
         return get_string('correct_choice_embed_code', 'qtype_combined', $this->get_string_hash());
     }
 
+    #[\Override]
     public function save($contextid) {
-        $this->formdata->questiontext = array();
+        $this->formdata->questiontext = [];
         $this->formdata->questiontext['text'] = '';
         foreach ($this->correctchoices as $correctchoice) {
             $this->formdata->questiontext['text'] .= " [[$correctchoice]] ";
@@ -165,14 +178,17 @@ class qtype_combined_combinable_gapselect extends qtype_combined_combinable_acce
         parent::save($contextid);
     }
 
+    #[\Override]
     public function store_third_param($thirdparam) {
         $this->correctchoices[] = $thirdparam;
     }
 
+    #[\Override]
     protected function get_third_params() {
         return $this->correctchoices;
     }
 
+    #[\Override]
     public function has_submitted_data() {
         return $this->submitted_data_array_not_empty('answer') || parent::has_submitted_data();
     }

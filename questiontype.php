@@ -41,6 +41,7 @@ require_once($CFG->dirroot . '/question/type/combined/combiner/runtime.php');
  */
 class qtype_combined extends question_type {
 
+    #[\Override]
     public function move_files($questionid, $oldcontextid, $newcontextid) {
         parent::move_files($questionid, $oldcontextid, $newcontextid);
         $this->move_files_in_combined_feedback($questionid, $oldcontextid, $newcontextid);
@@ -50,12 +51,14 @@ class qtype_combined extends question_type {
         $combiner->move_subq_files($questionid, $oldcontextid, $newcontextid);
     }
 
+    #[\Override]
     protected function delete_files($questionid, $contextid) {
         parent::delete_files($questionid, $contextid);
         $this->delete_files_in_combined_feedback($questionid, $contextid);
         $this->delete_files_in_hints($questionid, $contextid);
     }
 
+    #[\Override]
     public function save_question_options($fromform) {
         global $DB;
         $combiner = new qtype_combined_combiner_for_question_type();
@@ -96,7 +99,7 @@ class qtype_combined extends question_type {
      *       save_question is used to save imported questions."
      * Clearly that was never done.
      *
-     * @param $fromimport stdClass  Data from question import.
+     * @param stdClass $fromimport Data from question import.
      * @return bool|null            null if everything went OK, true if there is an error or false if a notice.
      */
     protected function save_imported_subquestion($fromimport) {
@@ -177,7 +180,7 @@ class qtype_combined extends question_type {
         return null;
     }
 
-
+    #[\Override]
     public function make_question($questiondata) {
         $question = parent::make_question($questiondata);
         $question->combiner = new qtype_combined_combiner_for_run_time_question_instance();
@@ -190,15 +193,18 @@ class qtype_combined extends question_type {
         return $question;
     }
 
+    #[\Override]
     protected function make_hint($hint) {
         return question_hint_with_parts::load_from_record($hint);
     }
 
+    #[\Override]
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
         $this->initialise_combined_feedback($question, $questiondata, true);
     }
 
+    #[\Override]
     public function get_question_options($question) {
         global $DB;
         if (false === parent::get_question_options($question)) {
@@ -209,6 +215,7 @@ class qtype_combined extends question_type {
         return true;
     }
 
+    #[\Override]
     public function get_random_guess_score($questiondata) {
         $overallrandomguessscore = 0;
         foreach ($questiondata->subquestions as $subqdata) {
@@ -218,6 +225,7 @@ class qtype_combined extends question_type {
         return $overallrandomguessscore;
     }
 
+    #[\Override]
     public function get_possible_responses($questiondata) {
         $allpossibleresponses = [];
         foreach ($questiondata->subquestions as $subqdata) {
@@ -234,6 +242,7 @@ class qtype_combined extends question_type {
         return $allpossibleresponses;
     }
 
+    #[\Override]
     public function export_to_xml($question, qformat_xml $format, $extra = null) {
         $output = '';
         $output .= $format->write_combined_feedback($question->options, $question->id, $question->contextid);
@@ -245,6 +254,7 @@ class qtype_combined extends question_type {
         return $output;
     }
 
+    #[\Override]
     public function import_from_xml($data, $question, qformat_xml $format, $extra=null) {
         if (!isset($data['@']['type']) || $data['@']['type'] != 'combined') {
             return false;

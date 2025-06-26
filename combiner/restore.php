@@ -33,11 +33,13 @@ require_once($CFG->dirroot.'/question/type/combined/combiner/base.php');
  */
 class qtype_combined_combiner_for_restore extends qtype_combined_combiner_base {
     /**
+     * Get the sub-question responses.
+     *
      * @param array $response main question response
      * @return array[] array of response arrays indexed by subqno
      */
     public function get_subq_responses(array $response) {
-        $subqresponses = array();
+        $subqresponses = [];
         foreach ($this->subqs as $subqno => $subq) {
             $subqresponses[$subqno] = $subq->get_substep(null)->filter_array($response);
         }
@@ -45,7 +47,9 @@ class qtype_combined_combiner_for_restore extends qtype_combined_combiner_base {
     }
 
     /**
-     * @param $subqno integer
+     * Get the sub-question type.
+     *
+     * @param int $subqno
      * @return string Moodle question type name
      */
     public function get_subq_type($subqno) {
@@ -53,8 +57,10 @@ class qtype_combined_combiner_for_restore extends qtype_combined_combiner_base {
     }
 
     /**
-     * @param $subqno integer
-     * @return integer sub-question id field from db
+     * Get the sub-question id for a given sub-question number.
+     *
+     * @param int $subqno
+     * @return int sub-question id field from db
      */
     public function get_subq_id($subqno) {
         return $this->subqs[$subqno]->get_id();

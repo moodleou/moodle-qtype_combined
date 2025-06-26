@@ -36,8 +36,8 @@ class qtype_combined_combiner_for_question_type extends qtype_combined_combiner_
     /**
      * Save subq data. Default values are added to the values from the form and then the data is passed through to the
      * save_question method for that question_type.
-     * @param $fromform stdClass Data from form
-     * @param $contextid integer question context id
+     * @param stdClass $fromform Data from form
+     * @param int $contextid question context id
      */
     public function save_subqs($fromform, $contextid) {
         $this->find_included_subqs_in_question_text($fromform->questiontext);
@@ -54,6 +54,13 @@ class qtype_combined_combiner_for_question_type extends qtype_combined_combiner_
         }
     }
 
+    /**
+     * Move subq files.
+     *
+     * @param int $questionid The question id.
+     * @param int $oldcontextid The old context id.
+     * @param int $newcontextid The new context id.
+     */
     public function move_subq_files($questionid, $oldcontextid, $newcontextid) {
         $subqrecs = $this->get_subq_data_from_db($questionid);
         foreach ($subqrecs as $subq) {
