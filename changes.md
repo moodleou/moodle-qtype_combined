@@ -1,5 +1,31 @@
 # Change log for the Combined question type
 
+## Changes in 2.3
+
+* This version is compatible with Moodle 5.0 and 4.5.
+* Fixed alignment issues for correct/incorrect icons in single-choice and multi-response sub-questions.
+* Show Your Working: Now available as both a textarea and an editor (supports file uploads).
+* Fixed backup and restore tests to run synchronously for Moodle 4.4.
+* Combined PMatch:
+  * First answer box now prefilled with match () to help authors.
+  * Added option to enable/disable spellcheck.
+  * Added missing help text for the model answer field.
+  * Added option to treat curly/straight punctuation marks as interchangeable (default = on).
+* Feedback textarea size increased to two lines.
+* Combined Numeric:
+  * Added Feedback for correct response field to the edit form.
+  * Added validation to ensure the teacher’s answer is in the correct format.
+* Combined:
+  * Fixed fatal error when Show Working area is blank.
+  * Fixed bug where Incorrect feedback displayed even when not needed.
+  * Answer fields now highlighted when unanswered.
+  * Improved display of incorrect feedback by replacing underscores with spaces in placeholders.
+  * Fixed Undefined property: qtype_combined_showworking_fake_question::$id error when attaching an image to Show Working.
+  * Fixed exception when editing a question with Show Working.
+* Defined excluded hash fields and implemented legacy backup data conversion (MDL-83541).
+* Fixed coding style issues and improved automated tests.
+
+
 ## Changes in 2.2
 
 * This version is compatible with Moodle 4.0 (and 3.11).
