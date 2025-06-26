@@ -33,6 +33,8 @@ class utils {
     const OP_GT = ">";
 
     /**
+     * Get the number in a specific style.
+     *
      * @param int $num The number, starting at 0.
      * @param string $style The style to render the number in. One of the
      * @return string the number $num in the requested style.

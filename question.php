@@ -47,14 +47,17 @@ class qtype_combined_question extends question_graded_automatically_with_countba
     /** @var int format of $incorrectfeedback. */
     public $incorrectfeedbackformat;
 
+    #[\Override]
     public function start_attempt(question_attempt_step $step, $variant) {
         $this->combiner->call_all_subqs('start_attempt', new qtype_combined_step_param($step), $variant);
     }
 
+    #[\Override]
     public function apply_attempt_state(question_attempt_step $step) {
         $this->combiner->call_all_subqs('apply_attempt_state', new qtype_combined_step_param($step));
     }
 
+    #[\Override]
     public function validate_can_regrade_with_other_version(question_definition $otherversion): ?string {
         $basemessage = parent::validate_can_regrade_with_other_version($otherversion);
         if ($basemessage) {
@@ -64,6 +67,7 @@ class qtype_combined_question extends question_graded_automatically_with_countba
         return $this->combiner->validate_can_regrade_with_other_version($otherversion->combiner);
     }
 
+    #[\Override]
     public function update_attempt_state_data_for_new_version(
             question_attempt_step $oldstep, question_definition $otherversion) {
         parent::update_attempt_state_data_for_new_version($oldstep, $otherversion);
@@ -72,21 +76,24 @@ class qtype_combined_question extends question_graded_automatically_with_countba
                 $oldstep, $otherversion->combiner);
     }
 
+    #[\Override]
     public function get_expected_data() {
         return $this->combiner->aggregate_response_arrays(
             $this->combiner->call_all_subqs('get_expected_data')
         );
     }
 
+    #[\Override]
     public function get_correct_response() {
         return $this->combiner->aggregate_response_arrays(
             $this->combiner->call_all_subqs('get_correct_response')
         );
     }
 
+    #[\Override]
     public function summarise_response(array $response) {
         $subqsummaries = $this->combiner->call_all_subqs('summarise_response', new qtype_combined_response_array_param($response));
-        $summarytexts = array();
+        $summarytexts = [];
         foreach ($subqsummaries as $subqno => $summary) {
             $subqname = $this->combiner->get_subq_property($subqno, 'name');
             $subqname = \qtype_combined\utils::replace_embed_placeholder($subqname);
@@ -95,6 +102,7 @@ class qtype_combined_question extends question_graded_automatically_with_countba
         return implode(', ', $summarytexts);
     }
 
+    #[\Override]
     public function is_complete_response(array $response) {
         $subqiscompletes = $this->combiner->call_all_subqs('is_complete_response',
                                                            new qtype_combined_response_array_param($response));
@@ -102,6 +110,12 @@ class qtype_combined_question extends question_graded_automatically_with_countba
         return (false === array_search(false, $subqiscompletes));
     }
 
+    /**
+     * Check if the response is gradable.
+     *
+     * @param array $response The response to check.
+     * @return bool True if the response is gradable, false otherwise.
+     */
     public function is_gradable_response(array $response) {
         $subqisgradables = $this->combiner->call_all_subqs('is_gradable_response',
                                                            new qtype_combined_response_array_param($response));
@@ -109,10 +123,12 @@ class qtype_combined_question extends question_graded_automatically_with_countba
         return (false !== array_search(true, $subqisgradables));
     }
 
+    #[\Override]
     public function get_validation_error(array $response) {
         return $this->combiner->get_validation_error(new qtype_combined_response_array_param($response));
     }
 
+    #[\Override]
     public function is_same_response(array $prevresponse, array $newresponse) {
         $subqssame = $this->combiner->call_all_subqs('is_same_response',
                                                      new qtype_combined_response_array_param($prevresponse),
@@ -121,6 +137,7 @@ class qtype_combined_question extends question_graded_automatically_with_countba
         return (false === array_search(false, $subqssame));
     }
 
+    #[\Override]
     public function check_file_access($qa, $options, $component, $filearea,
             $args, $forcedownload) {
         if ($component == 'question' && $filearea == 'hint') {
@@ -148,11 +165,11 @@ class qtype_combined_question extends question_graded_automatically_with_countba
             }
         } else if ($component == 'question' && $filearea == 'answerfeedback') {
             // We are (mis)using subq varnumberic answer feedback field to store correct feedback.
-            // We will override the answer feedback access control here for subqs
-            // So that subq answer feeback files can be shown whenever the answer is correct
+            // We will override the answer feedback access control here for subqs.
+            // So that subq answer feeback files can be shown whenever the answer is correct.
             return (bool) $options->correctness;
         } else if ($component == 'question' && in_array($filearea,
-                                                     array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback'))) {
+                ['correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback'])) {
             return $this->check_combined_feedback_file_access($qa, $options, $filearea, $args);
         } else {
             return parent::check_file_access($qa, $options, $component, $filearea,
@@ -160,10 +177,11 @@ class qtype_combined_question extends question_graded_automatically_with_countba
         }
     }
 
+    #[\Override]
     public function grade_response(array $response) {
         $subqsgradable =
             $this->combiner->call_all_subqs('is_gradable_response', new qtype_combined_response_array_param($response));
-        $subqstates = array();
+        $subqstates = [];
         $fractionsum = 0;
         foreach ($subqsgradable as $subqno => $gradable) {
             if ($gradable) {
@@ -176,11 +194,13 @@ class qtype_combined_question extends question_graded_automatically_with_countba
             }
             $fractionsum += $subqfraction * $this->combiner->get_subq_property($subqno, 'defaultmark');
         }
-        return array($fractionsum, $this->overall_state($subqstates));
+        return [$fractionsum, $this->overall_state($subqstates)];
     }
 
     /**
-     * @param $subqstates string[] of all states of subqs
+     * Overall state of the combined question.
+     *
+     * @param string[] $subqstates states of sub-questions.
      * @return string state of combined question
      */
     protected function overall_state($subqstates) {
@@ -204,10 +224,12 @@ class qtype_combined_question extends question_graded_automatically_with_countba
         }
     }
 
+    #[\Override]
     public function compute_final_grade($responses, $totaltries) {
         return $this->combiner->compute_final_grade($responses, $totaltries);
     }
 
+    #[\Override]
     public function get_num_parts_right(array $response) {
         $subqresponses = new qtype_combined_response_array_param($response);
         $subqsnumpartscorrect = $this->combiner->call_all_subqs('get_num_parts_right', $subqresponses);
@@ -222,11 +244,16 @@ class qtype_combined_question extends question_graded_automatically_with_countba
             $totalpartscorrect += $subqpartscorrect;
             $totalparts += $subqnumparts;
         }
-        return array($totalpartscorrect, $totalparts);
+        return [$totalpartscorrect, $totalparts];
     }
 
+    /**
+     * Classify the response for each sub-question.
+     *
+     * @param array $response
+     */
     public function classify_response(array $response) {
-        $aggregatedresponses = array();
+        $aggregatedresponses = [];
         $classifiedresps = $this->combiner->call_all_subqs('classify_response', new qtype_combined_response_array_param($response));
         foreach ($classifiedresps as $subqno => $subqclassifiedresponses) {
             $subqtype = $this->combiner->get_subq_property($subqno, 'qtype')->name();

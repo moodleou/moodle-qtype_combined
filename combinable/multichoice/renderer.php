@@ -25,10 +25,20 @@
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/question/type/multichoice/renderer.php');
 
-
+/**
+ * Class question type combined multichoice embedded renderer.
+ */
 class qtype_combined_multichoice_embedded_renderer extends qtype_renderer
     implements qtype_combined_subquestion_renderer_interface {
 
+    /**
+     * Renders a sub-question.
+     *
+     * @param question_attempt $qa The question attempt.
+     * @param question_display_options $options Display options for the question.
+     * @param qtype_combined_combinable_base $subq The sub-question being rendered.
+     * @param int $placeno The placement number of the sub-question.
+     */
     public function subquestion(question_attempt $qa,
                                 question_display_options $options,
                                 qtype_combined_combinable_base $subq,
@@ -46,20 +56,20 @@ class qtype_combined_multichoice_embedded_renderer extends qtype_renderer
         }
         $commonattributes = [
             'type' => 'radio',
-            'class' => $class
+            'class' => $class,
         ];
         if ($options->readonly) {
             $commonattributes['disabled'] = 'disabled';
         }
-        $rbuttons = array();
-        $feedbackimg = array();
-        $classes = array();
+        $rbuttons = [];
+        $feedbackimg = [];
+        $classes = [];
 
         $question = $subq->question;
         foreach ($question->get_order($qa) as $value => $ansid) {
             $inputname = $qa->get_qt_field_name($subq->step_data_name('answer'));
             $ans = $question->answers[$ansid];
-            $inputattributes = array();
+            $inputattributes = [];
             $inputattributes['name'] = $inputname;
             $inputattributes['value'] = $value;
             $inputattributes['id'] = $ansid;
@@ -80,10 +90,8 @@ class qtype_combined_multichoice_embedded_renderer extends qtype_renderer
 
             if ($options->feedback && $isselected && trim($ans->feedback)) {
                 $feedback[] = html_writer::tag('span',
-                    $question->make_html_inline($question->format_text(
-                        $ans->feedback, $ans->feedbackformat,
-                        $qa, 'question', 'answerfeedback', $ansid)),
-                    array('class' => ' subqspecificfeedback '));
+                    $question->make_html_inline($question->format_text($ans->feedback, $ans->feedbackformat,
+                        $qa, 'question', 'answerfeedback', $ansid)), ['class' => ' subqspecificfeedback ']);
             } else {
                 $feedback[] = '';
             }
@@ -113,10 +121,10 @@ class qtype_combined_multichoice_embedded_renderer extends qtype_renderer
                 $feedbackcontent = html_writer::div($feedback[$key], 'feedback');
             }
             $rbhtml .= html_writer::tag($inputwraptag, $rb . ' ' . $feedbackimg[$key] . $feedbackcontent,
-                    array('class' => $classes[$key])) . "\n";
+                ['class' => $classes[$key]]) . "\n";
         }
 
-        $result = html_writer::tag($inputwraptag, $rbhtml, array('class' => 'answer'));
+        $result = html_writer::tag($inputwraptag, $rbhtml, ['class' => 'answer']);
         $result = html_writer::div($result, $classname);
 
         // Load JS module for the question answers.

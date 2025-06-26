@@ -33,7 +33,7 @@ class restore_qtype_combined_plugin extends restore_qtype_plugin {
      */
     protected function define_question_plugin_structure() {
 
-        $paths = array();
+        $paths = [];
 
         // Add own qtype stuff.
         $elename = 'combined';
@@ -69,6 +69,8 @@ class restore_qtype_combined_plugin extends restore_qtype_plugin {
 
     /**
      * Process the qtype/combined element.
+     *
+     * @param array $data
      */
     public function process_combined($data) {
         global $DB;
@@ -98,20 +100,21 @@ class restore_qtype_combined_plugin extends restore_qtype_plugin {
      */
     public static function define_decode_contents() {
 
-        $contents = array();
+        $contents = [];
 
-        $fields = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
+        $fields = ['correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback'];
         $contents[] = new restore_decode_content('qtype_combined', $fields, 'qtype_combined');
 
         return $contents;
     }
 
+    #[\Override]
     public function recode_response($questionid, $sequencenumber, array $response) {
         $combiner = new qtype_combined_combiner_for_restore();
 
         $combiner->load_subq_data_from_db($questionid);
 
-        $recodedresponses = array();
+        $recodedresponses = [];
         $subqresponses = $combiner->get_subq_responses($response);
         foreach ($subqresponses as $subqno => $subqresponse) {
             $subqtype = $combiner->get_subq_type($subqno);

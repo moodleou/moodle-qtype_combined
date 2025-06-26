@@ -43,6 +43,8 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
     }
 
     /**
+     * Render the sub-questions.
+     *
      * @param string                   $questiontext question text with embed codes to replace
      * @param question_attempt         $qa
      * @param question_display_options $options
@@ -50,7 +52,7 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
      */
     public function render_subqs($questiontext, question_attempt $qa, question_display_options $options) {
         // This will be an array $startpos => array('length' => $embedcodelen, 'replacement' => $html).
-        $replacements = array();
+        $replacements = [];
 
         foreach ($this->subqs as $subq) {
             $embedcodes = $subq->question_text_embed_codes();
@@ -65,7 +67,7 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
                             ' code not found in question text ' . $questiontext);
                 }
                 $embedcodelen = strlen($embedcode);
-                $replacements[$pos] = array('length' => $embedcodelen, 'replacement' => $renderedembeddedquestion);
+                $replacements[$pos] = ['length' => $embedcodelen, 'replacement' => $renderedembeddedquestion];
                 $questiontext = substr_replace($questiontext,
                         str_repeat('X', $embedcodelen), $pos, $embedcodelen);
                 $currentpos = $pos + $embedcodelen;
@@ -102,12 +104,12 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
 
     /**
      * Call a method on question_definition object for all sub-questions.
-     * @param string $methodname
-     * @param qtype_combined_param_to_pass_through_to_subq_base|mixed  $params,.... a variable number of arguments (or none)
+     * @param string $methodname The method to call on each sub-question.
+     * @param qtype_combined_param_to_pass_through_to_subq_base|mixed ...$params a variable number of arguments (or none).
      * @return array of return values returned from method call on all subqs.
      */
     public function call_all_subqs($methodname, ...$params) {
-        $returned = array();
+        $returned = [];
 
         foreach ($this->subqs as $i => $unused) {
             // Call $this->call_subq($i, then same arguments as used to call this method).
@@ -119,9 +121,9 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
 
     /**
      * Call a method on question_definition object for all sub-questions.
-     * @param integer $i the index no of the sub-question
-     * @param string $methodname the method to call
-     * @param qtype_combined_param_to_pass_through_to_subq_base|mixed $params parameters to pass to the call
+     * @param int $i the index no of the sub-question.
+     * @param string $methodname the method to call.
+     * @param qtype_combined_param_to_pass_through_to_subq_base|mixed ...$params parameters to pass to the call.
      * @return array of return values returned from method call on all subqs.
      */
     public function call_subq($i, $methodname, ...$params) {
@@ -138,8 +140,10 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
     }
 
     /**
-     * @param $i
-     * @param $propertyname
+     * Get the sub-question property value.
+     *
+     * @param int $i The index of the sub-question
+     * @param string $propertyname the name of the property to get
      * @return mixed
      */
     public function get_subq_property($i, $propertyname) {
@@ -147,8 +151,10 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
     }
 
     /**
-     * @param $responses
-     * @param $totaltries
+     * Compute the final grade.
+     *
+     * @param array $responses
+     * @param int $totaltries
      * @return number
      */
     public function compute_final_grade($responses, $totaltries) {
@@ -179,8 +185,8 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
     /**
      * Used for computing final grade for sub-question. Find first identical response to final response for a question and remove
      * all responses  after that response.
-     * @param $question question_automatically_gradable
-     * @param $subqresponses
+     * @param question_automatically_gradable $question
+     * @param array $subqresponses
      * @return array all responses up to the first response that matches the final one.
      */
     protected function responses_upto_first_response_identical_to_final_response($question, $subqresponses) {
@@ -196,8 +202,8 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
     /**
      * If the subq is not a question_automatically_gradable_with_countback then we need to implement the count back grading
      * for the subq.
-     * @param $subq qtype_combined_combinable_base
-     * @param $subqresponses array
+     * @param qtype_combined_combinable_base $subq
+     * @param array $subqresponses
      * @return number fraction between 0 and 1.
      */
     public function compute_subq_final_grade($subq, $subqresponses) {
@@ -214,7 +220,9 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
     }
 
     /**
-     * @param $id integer
+     * Find the sub-question with the given id.
+     *
+     * @param int $id
      * @return null|qtype_combined_combinable_base
      */
     public function find_subq_with_id($id) {
@@ -228,11 +236,13 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
     }
 
     /**
-     * @param $response qtype_combined_response_array_param
+     * Get the validation error for the response.
+     *
+     * @param qtype_combined_response_array_param $response
      * @return string errors
      */
     public function get_validation_error($response) {
-        $errors = array();
+        $errors = [];
         foreach ($this->subqs as $subqno => $subq) {
             if (!$this->call_subq($subqno, 'is_complete_response', $response)) {
                 $questionerror = $this->call_subq($subqno, 'get_validation_error', $response);
@@ -340,12 +350,16 @@ class qtype_combined_combiner_for_run_time_question_instance extends qtype_combi
  */
 abstract class qtype_combined_param_to_pass_through_to_subq_base {
     /**
-     * @param $alldata
+     * Constructor.
+     *
+     * @param mixed $alldata
      */
     abstract public function __construct($alldata);
 
     /**
-     * @param $subq qtype_combined_combinable_base
+     * Get the data to pass to sub-question.
+     *
+     * @param qtype_combined_combinable_base $subq
      * @return mixed
      */
     abstract public function for_subq($subq);
@@ -362,16 +376,15 @@ class qtype_combined_response_array_param extends qtype_combined_param_to_pass_t
     protected $responsearray;
 
     /**
+     * Constructor.
+     *
      * @param array $responsearray
      */
     public function __construct($responsearray) {
         $this->responsearray = $responsearray;
     }
 
-    /**
-     * @param $subq qtype_combined_combinable_base
-     * @return array response filtered for subq
-     */
+    #[\Override]
     public function for_subq($subq) {
         return $subq->get_substep(null)->filter_array($this->responsearray);
     }
@@ -389,18 +402,17 @@ class qtype_combined_array_of_response_arrays_param extends qtype_combined_param
     protected $responsearrays;
 
     /**
-     * @param $responsearrays
+     * Contructor.
+     *
+     * @param array $responsearrays
      */
     public function __construct($responsearrays) {
         $this->responsearrays = $responsearrays;
     }
 
-    /**
-     * @param $subq qtype_combined_combinable_base
-     * @return array of arrays of filtered response for subq
-     */
+    #[\Override]
     public function for_subq($subq) {
-        $filtered = array();
+        $filtered = [];
         foreach ($this->responsearrays as $responseno => $responsearray) {
             $filtered[$responseno] = $subq->get_substep(null)->filter_array($responsearray);
         }
@@ -418,16 +430,15 @@ class qtype_combined_step_param extends qtype_combined_param_to_pass_through_to_
     protected $step;
 
     /**
-     * @param $step question_attempt_step for the main question.
+     * Constructor.
+     *
+     * @param question_attempt_step $step for the main question.
      */
     public function __construct($step) {
         $this->step = $step;
     }
 
-    /**
-     * @param $subq qtype_combined_combinable_base
-     * @return question_attempt_step_subquestion_adapter
-     */
+    #[\Override]
     public function for_subq($subq) {
         return $subq->get_substep($this->step);
     }

@@ -84,8 +84,7 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
                 $mform->setDefault($subq->form_field_name('defaultmark'), $weightingdefault);
                 $subq->add_form_fragment($combinedform, $mform, $repeatenabled);
                 $mform->addElement('editor', $subq->form_field_name('generalfeedback'),
-                    get_string('incorrectfeedback', 'qtype_combined'),
-                    array('rows' => 5), $combinedform->editoroptions);
+                    get_string('incorrectfeedback', 'qtype_combined'), ['rows' => 5], $combinedform->editoroptions);
                 $mform->setType($subq->form_field_name('generalfeedback'), PARAM_RAW);
             }
 
@@ -104,8 +103,8 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
 
     /**
      * Validate both the embedded codes in question text and the data from subq form fragments.
-     * @param $fromform array data from form
-     * @param $files array not used for now no subq type requires this.
+     * @param array $fromform data from form
+     * @param array $files not used for now no subq type requires this.
      * @return array of errors to display in form or empty array if no errors.
      */
     public function validate_subqs_data_in_form($fromform, $files) {
@@ -122,21 +121,21 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
     protected function validate_question_text($questiontext) {
         $questiontexterror = $this->find_included_subqs_in_question_text($questiontext);
         if ($questiontexterror !== null) {
-            $errors = array('questiontext' => $questiontexterror);
+            $errors = ['questiontext' => $questiontexterror];
         } else {
-            $errors = array();
+            $errors = [];
         }
         return $errors;
     }
 
     /**
      * Validate the subq form fragments data.
-     * @param $fromform array all data from form
+     * @param array $fromform all data from form
      * @return array of errors from subq form elements or empty array if no errors.
      */
     protected function validate_subqs($fromform) {
         $this->get_subq_data_from_form_data((object)$fromform);
-        $errors = array();
+        $errors = [];
         $fractionsum = 0;
 
         foreach ($this->subqs as $subq) {
@@ -146,7 +145,9 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
             if ($subq->is_in_form() && $subq->has_submitted_data()) {
                 $errors += $subq->validate();
             } else {
-                $errors += array($subq->form_field_name('defaultmark') => get_string('err_fillinthedetailshere', 'qtype_combined'));
+                $errors += [
+                    $subq->form_field_name('defaultmark') => get_string('err_fillinthedetailshere', 'qtype_combined'),
+                ];
             }
             if ($subq->is_in_question_text()) {
                 $defaultmarkfieldname = $subq->form_field_name('defaultmark');
@@ -157,15 +158,14 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
                 $qtmessage = get_string('embeddedquestionremovedfromform', 'qtype_combined');
                 $qtmessage = '<span class="not_in_question_text_message">'.$qtmessage.'</span>';
 
-                $errors += array($subq->form_field_name('defaultmark') => $message,
-                                 'questiontext' => $qtmessage);
+                $errors += [$subq->form_field_name('defaultmark') => $message, 'questiontext' => $qtmessage];
             }
         }
         if (abs($fractionsum - 1) > 0.00001) {
             foreach ($this->subqs as $subq) {
                 if ($subq->is_in_form()) {
-                    $errors += array($subq->form_field_name('defaultmark') =>
-                                     get_string('err_weightingsdonotaddup', 'qtype_combined'));
+                    $errors += [$subq->form_field_name('defaultmark') =>
+                        get_string('err_weightingsdonotaddup', 'qtype_combined')];
                 }
             }
         }
@@ -175,10 +175,10 @@ class qtype_combined_combiner_for_form extends qtype_combined_combiner_base {
 
     /**
      * Get data from db for subqs and transform it into data to populate form fields for subqs.
-     * @param $questionid
-     * @param $toform stdClass data for other parts of form to add the subq data to.
-     * @param $context context question context
-     * @param $fileoptions stdClass file options for form
+     * @param int $questionid The question id.
+     * @param stdClass $toform data for other parts of form to add the subq data to.
+     * @param context $context question context
+     * @param stdClass $fileoptions file options for form
      * @return stdClass data for form with subq data added
      */
     public function data_to_form($questionid, $toform, $context, $fileoptions) {

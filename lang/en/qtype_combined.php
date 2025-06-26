@@ -37,7 +37,6 @@ $string['err_accepts_vertical_or_horizontal_layout_param'] = '<p>The \'{$a}\' qu
 $string['err_duplicateids'] = 'Each embedded question instance should have a different identifier. You have used the following identifier(s) for more than one question \'{$a}\'.';
 $string['err_fillinthedetailsforsubq'] = 'You need to fill in the details to describe the sub-question \'{$a}\'.';
 $string['err_fillinthedetailshere'] = 'You need to fill in the details for this sub-question.';
-$string['err_questionidentifiertoolong'] = 'The sub-question name \'{$a}\' is too long. You can use up to 10 alphanumeric characters.';
 $string['err_insufficientnoofcodeparts'] = 'Error, your code to embed a question control \'{$a->fullcode}\' has too few colon separated parts. You should have at least a question indentifier id, followed by a question type identifier.';
 $string['err_invalid_number'] = 'The \'{$a}\' question type expects a number after the question type identifier, your embed code should be [[{your question id}:{$a}:{a number here}]]';
 $string['err_invalid_width_specifier_postfix'] = '<p>The \'{$a}\' question type allows you to specify the width of your question type as follows:<ul>
@@ -52,6 +51,7 @@ $string['err_invalid_width_specifier_postfix_showworking'] = '<p>The \'{$a}\' qu
   <li>After {size} is set, you can specify \':plain\' or \':editor\' (editor is also the default). Note that due to the editor, you cannot control the input size width, only the height.</li>
 </ul>';
 $string['err_invalidquestionidentifier'] = 'Your question identifier code consist of one or more alphanumeric characters.';
+$string['err_questionidentifiertoolong'] = 'The sub-question name \'{$a}\' is too long. You can use up to 10 alphanumeric characters.';
 $string['err_subq_not_included_in_question_text'] = 'It seems you have removed this question from the question text. Embed this question in the form with the code {$a} or it will be removed when you submit this form again.';
 $string['err_thisqtypecannothavemorethanonecontrol'] = 'You have tried to embed more than one control for question type \'{$a->qtype}\' with question instance name \'{$a->qid}\'. This question type only allows you to embed one control per question instance.';
 $string['err_thisqtypedoesnotacceptextrainfo'] = 'This question type is embedded with the code [[{your question id}:{$a}]]. You should not include anything after the qtype identifier, even a second colon.';
@@ -94,20 +94,20 @@ $string['shuffle'] = 'Shuffle';
 $string['singlechoice'] = 'Default options for singlechoice sub-questions';
 $string['subqheader'] = '\'{$a->qtype}\' input \'{$a->qid}\'';
 $string['subqheader_not_in_question_text'] = '\'{$a->qtype}\' input \'{$a->qid}\' (not embedded in question text).';
+$string['subquestiontypenotinstalled'] = 'You are attempting to use a combined question with a sub-question type \'{$a}\' that is not installed.';
 $string['subquestiontypes'] = 'Sub-question placeholders';
 $string['subquestiontypes_help'] = 'You can place a variety of sub-questions inline within the question text, including unmarked \'show working\' boxes. Each sub-question placeholder is composed of two to four parts. Each part is separated by a colon (:).
 
 * Name: this is used for the specific sub-question in this authoring form, but will also display to students if they forget to respond as part of their answer. For this reason, we use the pattern of \'Part_n\' (where the underscore is converted to a space), as this should also make sense to a student, but it is fully customisable.
 * Sub-question type: Combined currently supports \'multiple response\', \'numeric\', \'pattern match\', \'select menu\' (drop-downs), and \'single choice\'. It also allows a \'show your workings\' area.
-* Response direction or field size: this varies by sub-question type. \'Multiple response\' and \'single choice\' allow the responses to be listed vertically (v) or horizontally (h). \'Numeric\', \'pattern match\', and \'show working\' (plain text mode only) allow you to set the input field or area size through double underlines and a value, such as ```__10__``` or ```__20x2__```. For \'selectmenu\', you specify the correct answer in the choice list (note that you can reuse the same selectmenu multiple times).
-* \'Show working\' has one final configuration setting: although it defaults to a text editor, you can set it to use plain text through adding \':plain\' to the end, e.g. ```[[Part_5:showworking:__10x3__:plain]]```.';
-$string['subquestiontypenotinstalled'] = 'You are attempting to use a combined question with a sub-question type \'{$a}\' that is not installed.';
+* Response direction or field size: this varies by sub-question type. \'Multiple response\' and \'single choice\' allow the responses to be listed vertically (v) or horizontally (h). \'Numeric\', \'pattern match\', and \'show working\' (plain text mode only) allow you to set the input field or area size through double underlines and a value, such as *__10__* or *__20x2__*. For \'selectmenu\', you specify the correct answer in the choice list (note that you can reuse the same selectmenu multiple times).
+* \'Show working\' has one final configuration setting: although it defaults to a text editor, you can set it to use plain text through adding \':plain\' to the end, e.g. *[[Part_5:showworking:__10x3__:plain]]*.';
 $string['updateform'] = 'Update the form';
-$string['validationerror_part'] = 'Part {$a->identifier} - {$a->error}';
 $string['validationerror'] = 'Part of your answer requires attention: {$a}';
+$string['validationerror_part'] = 'Part {$a->identifier} - {$a->error}';
 $string['validationerrors'] = 'Parts of your answer require attention: {$a}';
 $string['vertical_or_horizontal_embed_code'] = '[[{$a->qid}:{$a->qtype}:v]] or [[{$a->qid}:{$a->qtype}:h]] depending on if you want the options layed out vertically or horizontally.';
 $string['weighting'] = 'Weighting';
 $string['widthspecifier_embed_code'] = '[[{$a->qid}:{$a->qtype}:{width specifier}]] or just [[{$a->qid}:{$a->qtype}]]';
-$string['yougotnright'] = '{$a->num} of your answers are correct.';
 $string['yougot1right'] = '1 of your answers is correct.';
+$string['yougotnright'] = '{$a->num} of your answers are correct.';

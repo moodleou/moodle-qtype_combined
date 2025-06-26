@@ -34,8 +34,8 @@ require_once($CFG->dirroot . '/question/type/combined/tests/helper.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \qtype_combined_question
  */
-class question_test extends \advanced_testcase {
-    public function test_get_expected_data() {
+final class question_test extends \advanced_testcase {
+    public function test_get_expected_data(): void {
         if ($notfound = \qtype_combined_test_helper::safe_include_test_helpers('oumultiresponse', 'gapselect')) {
             $this->markTestSkipped($notfound);
         }
@@ -49,7 +49,7 @@ class question_test extends \advanced_testcase {
                 $question->get_expected_data());
     }
 
-    public function test_is_complete_response() {
+    public function test_is_complete_response(): void {
         if ($notfound = \qtype_combined_test_helper::safe_include_test_helpers('oumultiresponse', 'gapselect')) {
             $this->markTestSkipped($notfound);
         }
@@ -64,7 +64,7 @@ class question_test extends \advanced_testcase {
         $this->assertFalse($question->is_complete_response(['gs:p1' => 1, 'gs:p2' => 2, 'gs:p3' => 3]));
     }
 
-    public function test_is_gradable_response() {
+    public function test_is_gradable_response(): void {
         if ($notfound = \qtype_combined_test_helper::safe_include_test_helpers('oumultiresponse', 'gapselect')) {
             $this->markTestSkipped($notfound);
         }
@@ -80,7 +80,7 @@ class question_test extends \advanced_testcase {
         $this->assertTrue($question->is_gradable_response(['gs:p1' => 1]));
     }
 
-    public function test_grading() {
+    public function test_grading(): void {
         if ($notfound = \qtype_combined_test_helper::safe_include_test_helpers('oumultiresponse')) {
             $this->markTestSkipped($notfound);
         }
@@ -95,7 +95,7 @@ class question_test extends \advanced_testcase {
                 ['mc:choice0' => 0, 'mc:choice1' => 0, 'mc:choice2' => 0, 'mc:choice3' => 1]));
     }
 
-    public function test_get_correct_response() {
+    public function test_get_correct_response(): void {
         if ($notfound = \qtype_combined_test_helper::safe_include_test_helpers('oumultiresponse', 'gapselect')) {
             $this->markTestSkipped($notfound);
         }
@@ -109,7 +109,7 @@ class question_test extends \advanced_testcase {
                 $question->get_correct_response());
     }
 
-    public function test_get_question_summary() {
+    public function test_get_question_summary(): void {
         if ($notfound = \qtype_combined_test_helper::safe_include_test_helpers('oumultiresponse', 'gapselect')) {
             $this->markTestSkipped($notfound);
         }
@@ -122,7 +122,7 @@ class question_test extends \advanced_testcase {
                 $question->get_question_summary());
     }
 
-    public function test_summarise_response() {
+    public function test_summarise_response(): void {
         if ($notfound = \qtype_combined_test_helper::safe_include_test_helpers('oumultiresponse', 'gapselect')) {
             $this->markTestSkipped($notfound);
         }
@@ -146,7 +146,7 @@ class question_test extends \advanced_testcase {
 
     }
 
-    public function test_classify_response() {
+    public function test_classify_response(): void {
         if ($notfound = \qtype_combined_test_helper::safe_include_test_helpers('oumultiresponse')) {
             $this->markTestSkipped($notfound);
         }
@@ -163,7 +163,7 @@ class question_test extends \advanced_testcase {
                         ['mc:choice0' => 1, 'mc:choice2' => 1, 'sw:answer' => 'A frog told me.']));
     }
 
-    public function test_get_num_parts_right() {
+    public function test_get_num_parts_right(): void {
         if ($notfound = \qtype_combined_test_helper::safe_include_test_helpers('oumultiresponse', 'gapselect')) {
             $this->markTestSkipped($notfound);
         }
@@ -190,7 +190,7 @@ class question_test extends \advanced_testcase {
         $this->assertEquals(0, $numpartsright);
     }
 
-    public function test_compute_final_grade() {
+    public function test_compute_final_grade(): void {
         if ($notfound = \qtype_combined_test_helper::safe_include_test_helpers('oumultiresponse', 'gapselect')) {
             $this->markTestSkipped($notfound);
         }
@@ -246,7 +246,7 @@ class question_test extends \advanced_testcase {
         return $subqsproperty->getValue($question->combiner);
     }
 
-    public function test_validate_can_regrade_with_other_version_ok() {
+    public function test_validate_can_regrade_with_other_version_ok(): void {
         if (!method_exists('question_definition', 'validate_can_regrade_with_other_version')) {
             $this->markTestSkipped('This test is only relevant ot Moodle 4.0+.');
         }
@@ -261,7 +261,7 @@ class question_test extends \advanced_testcase {
         $this->assertNull($newquestion->validate_can_regrade_with_other_version($question));
     }
 
-    public function test_validate_can_regrade_with_other_version_one_wrong_subquestion() {
+    public function test_validate_can_regrade_with_other_version_one_wrong_subquestion(): void {
         if (!method_exists('question_definition', 'validate_can_regrade_with_other_version')) {
             $this->markTestSkipped('This test is only relevant ot Moodle 4.0+.');
         }
@@ -294,7 +294,7 @@ class question_test extends \advanced_testcase {
         $this->assertNull($question->validate_can_regrade_with_other_version($newquestion));
     }
 
-    public function test_update_attempt_state_date_from_old_version_ok() {
+    public function test_update_attempt_state_date_from_old_version_ok(): void {
         if (!method_exists('question_definition', 'validate_can_regrade_with_other_version')) {
             $this->markTestSkipped('This test is only relevant ot Moodle 4.0+.');
         }

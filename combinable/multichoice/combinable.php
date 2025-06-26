@@ -26,21 +26,27 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/question/type/combined/combiner/base.php');
 require_once($CFG->dirroot . '/question/type/multichoice/questiontype.php');
 
-
+/**
+ * Class for the combined combinable multichoice questions.
+ */
 class qtype_combined_combinable_type_multichoice extends qtype_combined_combinable_type_base {
 
+    /** @var string The identifier for this question type. */
     protected $identifier = 'singlechoice';
 
+    #[\Override]
     protected function extra_question_properties() {
         $properties = $this->combined_feedback_properties();
         $properties['single'] = 1;
         return $properties;
     }
 
+    #[\Override]
     protected function extra_answer_properties() {
-        return array();
+        return [];
     }
 
+    #[\Override]
     public function subq_form_fragment_question_option_fields() {
         return [
             'shuffleanswers' => (bool) get_config('qtype_combined', 'shuffleanswers_singlechoice'),
@@ -48,34 +54,36 @@ class qtype_combined_combinable_type_multichoice extends qtype_combined_combinab
         ];
     }
 
+    #[\Override]
     protected function transform_subq_form_data_to_full($subqdata) {
         $data = parent::transform_subq_form_data_to_full($subqdata);
         foreach ($data->answer as $anskey => $answer) {
-            $data->answer[$anskey] = array('text' => $answer['text'], 'format' => $answer['format']);
+            $data->answer[$anskey] = ['text' => $answer['text'], 'format' => $answer['format']];
         }
         foreach ($data->feedback as $anskey => $feedback) {
-            $data->feedback[$anskey] = array('text' => $feedback['text'], 'format' => $feedback['format']);
+            $data->feedback[$anskey] = ['text' => $feedback['text'], 'format' => $feedback['format']];
         }
         return $this->add_per_answer_properties($data);
     }
 
+    #[\Override]
     protected function third_param_for_default_question_text() {
         return 'v';
     }
 
+    #[\Override]
     public function get_clear_wrong_response_value() {
         // For single choice question, we set the hidden field to -1 to clear the wrong response.
         return -1;
     }
 }
 
+/**
+ * Class for the combined combinable multichoice question type.
+ */
 class qtype_combined_combinable_multichoice extends qtype_combined_combinable_accepts_vertical_or_horizontal_layout_param {
 
-    /**
-     * @param moodleform      $combinedform
-     * @param MoodleQuickForm $mform
-     * @param                 $repeatenabled
-     */
+    #[\Override]
     public function add_form_fragment(moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
         $mform->addElement('advcheckbox', $this->form_field_name('shuffleanswers'),
                 get_string('shuffle', 'qtype_combined'));
@@ -87,7 +95,7 @@ class qtype_combined_combinable_multichoice extends qtype_combined_combinable_ac
         $mform->setDefault($this->form_field_name('answernumbering'),
                 get_config('qtype_combined', 'answernumbering_singlechoice'));
 
-        $answerels = array();
+        $answerels = [];
 
         // Answer text.
         $answerels[] = $mform->createElement('editor', $this->form_field_name('answer'),
@@ -112,7 +120,7 @@ class qtype_combined_combinable_multichoice extends qtype_combined_combinable_ac
 
         $combinedform->repeat_elements($answerels,
             $repeatsatstart,
-            array(),
+            [],
             $this->form_field_name('noofchoices'),
             $this->form_field_name('morechoices'),
             QUESTION_NUMANS_ADD,
@@ -120,8 +128,9 @@ class qtype_combined_combinable_multichoice extends qtype_combined_combinable_ac
             true);
     }
 
+    #[\Override]
     public function data_to_form($context, $fileoptions) {
-        $mcoptions = array('answer' => [], 'fraction' => [], 'feedback' => []);
+        $mcoptions = ['answer' => [], 'fraction' => [], 'feedback' => []];
         if ($this->questionrec !== null) {
             $mcoptions['single'] = $this->questionrec->options->single;
             foreach ($this->questionrec->options->answers as $answer) {
@@ -139,8 +148,9 @@ class qtype_combined_combinable_multichoice extends qtype_combined_combinable_ac
         return parent::data_to_form($context, $fileoptions) + $mcoptions;
     }
 
+    #[\Override]
     public function validate() {
-        $errors = array();
+        $errors = [];
         $answercount = 0;
 
         $maxfraction = -1;
@@ -177,6 +187,7 @@ class qtype_combined_combinable_multichoice extends qtype_combined_combinable_ac
         return $errors;
     }
 
+    #[\Override]
     public function has_submitted_data() {
         return $this->submitted_data_array_not_empty('fraction') ||
             $this->html_field_has_submitted_data($this->form_field_name('answer')) ||

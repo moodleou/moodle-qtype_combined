@@ -46,19 +46,31 @@ abstract class qtype_combined_combiner_base {
      * @var qtype_combined_combinable_base[] array of sub-questions, in question text,
      * in form and in db. One instance for each question instance.
      */
-    protected $subqs = array();
+    protected $subqs = [];
 
     /**
      * EMBEDDED_CODE_* and VALID_QUESTION_* defines the syntax for embedded subqs in question text.
      */
     const EMBEDDED_CODE_PREFIX = '[[';
 
+    /**
+     * The postfix for the embedded code in question text.
+     */
     const EMBEDDED_CODE_POSTFIX = ']]';
 
+    /**
+     * The separator between the three parts of the embedded code.
+     */
     const EMBEDDED_CODE_SEPARATOR = ':';
 
+    /**
+     * The placeholder for the embedded code in question text.
+     */
     const EMBEDDED_CODE_PLACEHOLDER = 'Part_';
 
+    /**
+     * The placeholder for the embedded code in question text when displayed in the question text.
+     */
     const EMBEDDED_CODE_PLACEHOLDER_DISPLAY = 'Part ';
 
     /** Question identifier must be one or more alphanumeric characters, including underscores, space. */
@@ -71,11 +83,11 @@ abstract class qtype_combined_combiner_base {
 
     /**
      * Creates array of subq objects from the embedded codes in the question text.
-     * @param $questiontext string the question text
+     * @param string $questiontext The question text
      * @return null|string either null if no error or an error message.
      */
     public function find_included_subqs_in_question_text($questiontext) {
-        $this->subqs = array();
+        $this->subqs = [];
         $pattern = '~'.
                     preg_quote(static::EMBEDDED_CODE_PREFIX, '~') .
                     '(.*?)'.
@@ -112,11 +124,13 @@ abstract class qtype_combined_combiner_base {
     }
 
     /**
+     * Find the duplicate question identifiers.
+     *
      * @return string[] array of duplicate ids.
      */
     protected function find_duplicate_question_identifiers() {
-        $listofsubqids = array();
-        $duplicateids = array();
+        $listofsubqids = [];
+        $duplicateids = [];
         foreach ($this->subqs as $subq) {
             $subqidentifier = $subq->get_identifier();
             if (false !== array_search($subqidentifier, $listofsubqids, true)) {
@@ -129,8 +143,8 @@ abstract class qtype_combined_combiner_base {
 
     /**
      * Create or just pass through the third embedded code param to each subq from question text.
-     * @param $codeinsideprepostfix string The embedded code minus the enclosing brackets.
-     * @param $controlno integer the control no, each subq can be responsible for more than one control in the question text.
+     * @param string $codeinsideprepostfix The embedded code minus the enclosing brackets.
+     * @param int $controlno the control no, each subq can be responsible for more than one control in the question text.
      * @return string|null first error encountered or null if no error.
      */
     protected function make_combinable_instance_from_code_in_question_text($codeinsideprepostfix, $controlno) {
@@ -175,9 +189,9 @@ abstract class qtype_combined_combiner_base {
     }
 
     /**
-     * Same as @see find_question_instance but creates subq instance if it does not exist.
-     * @param $qtypeidentifier
-     * @param $questionidentifier
+     * Same as {@see find_question_instance} but creates subq instance if it does not exist.
+     * @param string $qtypeidentifier
+     * @param string $questionidentifier
      * @return qtype_combined_combinable_base
      */
     public function find_or_create_question_instance($qtypeidentifier, $questionidentifier) {
@@ -199,14 +213,14 @@ abstract class qtype_combined_combiner_base {
     protected function decode_code_in_question_text($codeinsideprepostfix) {
         $codeparts = explode(static::EMBEDDED_CODE_SEPARATOR, $codeinsideprepostfix, 3);
         // Replace any missing parts with null before return.
-        $codeparts = $codeparts + array(null, null, null);
+        $codeparts = $codeparts + [null, null, null];
         return $codeparts;
     }
 
     /**
      * Used for question subq validation and saving. Run through question data and find or create the subq object
      * and pass through the form data to be stored in the subq object.
-     * @param $questiondata stdClass submitted question data
+     * @param stdClass $questiondata submitted question data
      */
     protected function get_subq_data_from_form_data($questiondata) {
         if (!isset($questiondata->subqfragment_id)) {
@@ -220,6 +234,8 @@ abstract class qtype_combined_combiner_base {
     }
 
     /**
+     * Load sub-question data from the database and create sub-question objects.
+     *
      * @param integer  $questionid The question id
      * @param bool     $getoptions Whether to also fetch the question options for each subq.
      */
@@ -270,7 +286,9 @@ abstract class qtype_combined_combiner_base {
     }
 
     /**
-     * @param $subquestions
+     * Create sub-question objects from the sub-question data.
+     *
+     * @param array $subquestions
      */
     public function create_subqs_from_subq_data($subquestions) {
         foreach ($subquestions as $subquestion) {
@@ -281,12 +299,14 @@ abstract class qtype_combined_combiner_base {
     }
 
     /**
+     * Aggregate the response arrays..
+     *
      * @param array $arrays array of response arrays returned from method subq_method_calls.
      * @param null|question_attempt_step $step
      * @return array aggregated array with prefixes added to each subqs response array keys.
      */
     public function aggregate_response_arrays($arrays, $step = null) {
-        $aggregated = array();
+        $aggregated = [];
         foreach ($arrays as $i => $array) {
             $substep = $this->subqs[$i]->get_substep($step);
             $aggregated += $this->add_prefixes_to_response_array($substep, $array);
@@ -304,7 +324,7 @@ abstract class qtype_combined_combiner_base {
         if ($response === null) {
             return [];
         }
-        $keysadded = array();
+        $keysadded = [];
         foreach ($response as $key => $value) {
             $keysadded[$substep->add_prefix($key)] = $value;
         }
@@ -340,7 +360,7 @@ class qtype_combined_type_manager {
     protected static function find_and_load_all_combinable_qtype_hook_classes() {
         global $CFG;
         if (null === self::$combinableplugins) {
-            self::$combinableplugins = array();
+            self::$combinableplugins = [];
             $pluginselsewhere = core_component::get_plugin_list_with_file('qtype', 'combinable/combinable.php', true);
             foreach ($pluginselsewhere as $qtypename => $unused) {
                 self::instantiate_type_class($qtypename, self::FOUND_IN_OTHER_QTYPE_DIR);
@@ -357,6 +377,8 @@ class qtype_combined_type_manager {
     }
 
     /**
+     * Instantiate the type class.
+     *
      * @param string $qtypename
      * @param integer $where FOUND_IN_COMBINABLE_DIR_OF_COMBINED or FOUND_IN_OTHER_QTYPE_DIR
      */
@@ -367,6 +389,8 @@ class qtype_combined_type_manager {
     }
 
     /**
+     * Check if the identifier is known.
+     *
      * @param string $typeidentifier the identifier as found in the question text.
      * @return bool
      */
@@ -376,8 +400,10 @@ class qtype_combined_type_manager {
     }
 
     /**
-     * @param $typeidentifier string
-     * @param $questionidentifier string
+     * Create a new sub-question instance.
+     *
+     * @param string $typeidentifier
+     * @param string $questionidentifier
      * @return qtype_combined_combinable_base
      */
     public static function new_subq_instance($typeidentifier, $questionidentifier) {
@@ -387,7 +413,9 @@ class qtype_combined_type_manager {
     }
 
     /**
-     * @param $qtypename string the qtype name as used within Moodle
+     * Translate the qtype to qtype identifier.
+     *
+     * @param string $qtypename the qtype name as used within Moodle
      * @return null|string null or identifier used as second param in question text embedded code.
      */
     public static function translate_qtype_to_qtype_identifier($qtypename) {
@@ -407,7 +435,7 @@ class qtype_combined_type_manager {
      */
     public static function get_example_placeholders(): array {
         $i = 1;
-        $codes = array();
+        $codes = [];
         self::find_and_load_all_combinable_qtype_hook_classes();
         $identifiers = array_keys(self::$combinableplugins);
         sort($identifiers);
@@ -421,13 +449,13 @@ class qtype_combined_type_manager {
 
     /**
      * Function used by response analysis reporting code to create unique id string for each response part.
-     * @param $subqid string second param of embed code
-     * @param $subqtype string Moodle question type
-     * @param $subqresponseid string the response part id string used within subq.
+     * @param string $subqid second param of embed code
+     * @param string $subqtype Moodle question type
+     * @param string $subqresponseid the response part id string used within subq.
      * @return string
      */
     public static function response_id($subqid, $subqtype, $subqresponseid) {
         $subtypeid = self::translate_qtype_to_qtype_identifier($subqtype);
-        return join(':', array($subqid, $subtypeid, $subqresponseid));
+        return join(':', [$subqid, $subtypeid, $subqresponseid]);
     }
 }
