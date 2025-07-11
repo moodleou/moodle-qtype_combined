@@ -76,11 +76,11 @@ final class form_test extends \advanced_testcase {
         if (qtype_combined_test_helper::plugin_is_installed('mod_qbank')) {
             $qbank = $gen->create_module('qbank', ['course' => $course->id]);
             $context = \context_module::instance($qbank->cmid);
-            $contexts = qtype_combined_test_helper::question_edit_contexts($context);
+            $contexts = $this->get_question_edit_contexts($context);
             $category = question_get_default_category($context->id, true);
         } else {
             // TODO: remove this once Moodle 5.0 is the lowest supported version.
-            $contexts = qtype_combined_test_helper::question_edit_contexts(\context_course::instance($course->id));
+            $contexts = $this->get_question_edit_contexts(\context_course::instance($course->id));
             $category = question_make_default_categories($contexts->all());
         }
 

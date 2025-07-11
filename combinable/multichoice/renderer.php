@@ -31,14 +31,7 @@ require_once($CFG->dirroot . '/question/type/multichoice/renderer.php');
 class qtype_combined_multichoice_embedded_renderer extends qtype_renderer
     implements qtype_combined_subquestion_renderer_interface {
 
-    /**
-     * Renders a sub-question.
-     *
-     * @param question_attempt $qa The question attempt.
-     * @param question_display_options $options Display options for the question.
-     * @param qtype_combined_combinable_base $subq The sub-question being rendered.
-     * @param int $placeno The placement number of the sub-question.
-     */
+    #[\Override]
     public function subquestion(question_attempt $qa,
                                 question_display_options $options,
                                 qtype_combined_combinable_base $subq,
