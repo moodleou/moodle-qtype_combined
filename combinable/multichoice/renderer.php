@@ -75,7 +75,7 @@ class qtype_combined_multichoice_embedded_renderer extends qtype_renderer
             }
 
             $choice = html_writer::div($question->format_text($ans->answer, $ans->answerformat, $qa,
-                'question', 'answer', $ansid), 'flex-fill ml-1');
+                'question', 'answer', $ansid), 'flex-fill ms-1');
             $rbuttons[] = html_writer::empty_tag('input', $inputattributes + $commonattributes) .
                 html_writer::div(html_writer::span(\qtype_combined\utils::number_in_style($value, $question->answernumbering),
                 'answernumber') . $choice, 'd-flex w-auto',
@@ -91,7 +91,7 @@ class qtype_combined_multichoice_embedded_renderer extends qtype_renderer
 
             $class = 'r' . ($value % 2);
             if ($options->correctness && $isselected) {
-                $feedbackimg[] = html_writer::span($this->feedback_image($ans->fraction), 'ml-1');
+                $feedbackimg[] = html_writer::span($this->feedback_image($ans->fraction), 'ms-1');
                 $class .= ' ' . $this->feedback_class($ans->fraction);
             } else {
                 $feedbackimg[] = '';
