@@ -89,7 +89,7 @@ class qtype_combined_edit_form extends question_edit_form {
                 function($placeholder) {
                     return html_writer::empty_tag('input', ['type' => 'text', 'readonly' => 'readonly', 'size' => '26',
                             'value' => $placeholder, 'onfocus' => 'this.select()',
-                            'class' => 'form-control-plaintext d-inline-block qtype_combined_placeholder mr-3']);
+                            'class' => 'form-control-plaintext d-inline-block qtype_combined_placeholder me-3']);
                 }, qtype_combined_type_manager::get_example_placeholders());
         $subq = $mform->createElement('static', 'subq', get_string('subquestiontypes', 'qtype_combined'),
                 implode("\n", $placeholders));
