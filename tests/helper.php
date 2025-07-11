@@ -847,19 +847,4 @@ class qtype_combined_test_helper extends question_test_helper {
         }
         return true;
     }
-
-    /**
-     * Retrieve the context object.
-     * @param \context $context the current context.
-     *
-     * @return question_edit_contexts The context object.
-     */
-    public static function question_edit_contexts(\context $context): object {
-        if (class_exists('\core_question\local\bank\question_edit_contexts')) {
-            $contexts = new \core_question\local\bank\question_edit_contexts($context);
-        } else {
-            $contexts = new \question_edit_contexts($context);
-        }
-        return $contexts;
-    }
 }
