@@ -135,4 +135,12 @@ class restore_qtype_combined_plugin extends restore_qtype_plugin {
 
         return $subqresponsesrecoded + $response;
     }
+
+    #[\Override]
+    public static function remove_excluded_question_data(stdClass $questiondata, array $excludefields = []): stdClass {
+        if (isset($questiondata->subquestions)) {
+            unset($questiondata->subquestions);
+        }
+        return parent::remove_excluded_question_data($questiondata, $excludefields);
+    }
 }
